@@ -1,0 +1,190 @@
+<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
+<!-- * * * * * * * * * * * The content below * * * * * * * * * * * -->
+<!-- * * * * * * * * * * is only a placeholder * * * * * * * * * * -->
+<!-- * * * * * * * * * * and can be replaced.  * * * * * * * * * * -->
+<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
+<!-- * * * * * * * * * Delete the template below * * * * * * * * * -->
+<!-- * * * * * * * to get started with your project! * * * * * * * -->
+<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
+
+<main class="main">
+  <div class="gym-tracker">
+    <div class="header">
+      <h1>Gym Tracker</h1>
+      <div class="header-actions">
+        @if (!currentWorkout) {
+        <p-button label="History" icon="pi pi-history" (onClick)="showWorkoutHistory = true"
+          styleClass="p-button-outlined">
+        </p-button>
+        }
+      </div>
+    </div>
+
+    <div class="content">
+      <!-- Start Screen -->
+      @if (!currentWorkout) {
+      <div class="start-screen">
+        <h2>Ready to train?</h2>
+        <p-button label="Start Workout" icon="pi pi-play" (onClick)="startWorkout()" size="large"
+          styleClass="start-workout-btn">
+        </p-button>
+      </div>
+      }
+
+      <!-- Active Workout -->
+      @if (currentWorkout) {
+      <div>
+        <p-card class="workout-info">
+          <h3>Today's Workout</h3>
+          <p>Started at {{ currentWorkout.startTime }}</p>
+        </p-card>
+
+        <!-- Exercises -->
+        @for (exercise of exercises; track exercise._id) {
+        <p-card class="exercise-card">
+          <ng-template pTemplate="header">
+            <div class="exercise-header">
+              <h4>{{ exercise.name }}</h4>
+              <p-button icon="pi pi-times" (onClick)="removeExercise(exercise._id!)"
+                styleClass="p-button-rounded p-button-danger p-button-text p-button-sm">
+              </p-button>
+            </div>
+          </ng-template>
+
+          @for (set of exercise.sets; track $index) {
+          <div class="set-row">
+            <span class="set-number">{{ $index + 1 }}</span>
+
+            <p-inputNumber [(ngModel)]="set.weight"
+              (onInput)="updateSet(exercise._id!, $index, 'weight', +($event.value ?? 0))" placeholder="Weight"
+              [showButtons]="true" suffix=" kg" [min]="0" [step]="2.5">
+            </p-inputNumber>
+
+            <p-inputNumber [(ngModel)]="set.reps"
+              (onInput)="updateSet(exercise._id!, $index, 'reps', +($event.value ?? 0))" placeholder="Reps"
+              [showButtons]="true" [min]="0" [step]="1">
+            </p-inputNumber>
+
+            <p-button icon="pi pi-minus" (onClick)="removeSet(exercise._id!, $index)"
+              styleClass="p-button-rounded p-button-danger p-button-text p-button-sm">
+            </p-button>
+          </div>
+          }
+
+          <ng-template pTemplate="footer">
+            <p-button label="Add Set" icon="pi pi-plus" (onClick)="addSet(exercise._id!)"
+              styleClass="p-button-outlined">
+            </p-button>
+          </ng-template>
+        </p-card>
+        }
+
+        <!-- Add Exercise Button -->
+        <p-button label="Add Exercise" icon="pi pi-plus" (onClick)="showAddExercise = true"
+          styleClass="add-exercise-btn p-button-lg">
+        </p-button>
+
+        <!-- Workout Actions -->
+        <div class="workout-actions">
+          <p-button label="Cancel Workout" icon="pi pi-times" (onClick)="confirmCancelWorkout()"
+            styleClass="p-button-danger">
+          </p-button>
+
+          <p-button label="Finish Workout" icon="pi pi-check" (onClick)="finishWorkout()" styleClass="p-button-success">
+          </p-button>
+        </div>
+      </div>
+      }
+    </div>
+
+    <!-- Add Exercise Dialog -->
+    <p-dialog header="Add Exercise" [(visible)]="showAddExercise" [modal]="true" [style]="{width: '450px'}"
+      [closable]="false">
+
+      <div class="add-exercise-content">
+        <div class="p-field">
+          <label for="exercise-name">Exercise Name</label>
+          <input id="exercise-name" type="text" pInputText [(ngModel)]="newExerciseName"
+            placeholder="Enter exercise name" class="w-full">
+        </div>
+
+        <div class="common-exercises">
+          <h4>Common Exercises:</h4>
+          <div class="exercise-buttons">
+            @for (exercise of commonExercises; track exercise) {
+            <p-button [label]="exercise" (onClick)="addExercise(exercise)" styleClass="p-button-outlined exercise-btn">
+            </p-button>
+            }
+          </div>
+        </div>
+      </div>
+
+      <ng-template pTemplate="footer">
+        <p-button label="Cancel" icon="pi pi-times" (onClick)="onAddExerciseCancel()" styleClass="p-button-text">
+        </p-button>
+        <p-button label="Add Custom" icon="pi pi-check" (onClick)="addExercise(newExerciseName)"
+          [disabled]="!newExerciseName.trim()">
+        </p-button>
+      </ng-template>
+    </p-dialog>
+
+    <!-- Workout History Dialog -->
+    <p-dialog header="Workout History" [(visible)]="showWorkoutHistory" [modal]="true"
+      [style]="{width: '80vw', height: '80vh'}" [maximizable]="true">
+
+      <div class="history-content">
+        @if (workouts.length === 0) {
+        <div class="empty-history">
+          <i class="pi pi-info-circle"></i>
+          <p>No workouts completed yet!</p>
+        </div>
+        }
+
+        @for (workout of workouts; track workout._id) {
+        <p-card class="workout-history-card">
+          <ng-template pTemplate="header">
+            <div class="workout-header">
+              <h4>{{ workout.createdAt }}</h4>
+              <span>{{ workout.startTime }} - {{ workout.endTime }}</span>
+            </div>
+          </ng-template>
+
+          <div class="workout-summary">
+            <p><i class="pi pi-clock"></i> {{ workout.exercises.length }} exercises</p>
+          </div>
+
+          @for (exercise of workout.exercises; track exercise._id) {
+          <div class="history-exercise">
+            <h5>{{ exercise.name }}</h5>
+            <div class="exercise-sets">
+              @for (set of exercise.sets; track $index) {
+              <span class="set-info">
+                Set {{ $index + 1 }}: {{ set.weight }}kg × {{ set.reps }} reps
+              </span>
+              }
+            </div>
+          </div>
+          }
+        </p-card>
+        }
+      </div>
+    </p-dialog>
+
+    <!-- Toast Messages -->
+    <p-toast></p-toast>
+
+    <!-- Confirmation Dialog -->
+    <p-confirmDialog></p-confirmDialog>
+  </div>
+</main>
+
+<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
+<!-- * * * * * * * * * * * The content above * * * * * * * * * * * * -->
+<!-- * * * * * * * * * * is only a placeholder * * * * * * * * * * * -->
+<!-- * * * * * * * * * * and can be replaced.  * * * * * * * * * * * -->
+<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
+<!-- * * * * * * * * * * End of Placeholder  * * * * * * * * * * * * -->
+<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
+
+
+<router-outlet />
