@@ -24,7 +24,7 @@ RUN npm run build --prod
 FROM nginx:alpine
 
 # Copy built files from previous stage
-COPY --from=build /app/dist/gym-tracker /usr/share/nginx/html
+COPY --from=build /dist/gym-tracker /usr/share/nginx/html
 
 # Copy custom nginx configuration if needed
 # COPY nginx.conf /etc/nginx/conf.d/default.conf
