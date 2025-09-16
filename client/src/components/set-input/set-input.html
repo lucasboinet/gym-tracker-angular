@@ -1,0 +1,15 @@
+<div class="set-row">
+  <span class="set-number">{{ index + 1 }}</span>
+
+  <p-inputNumber [(ngModel)]="set.weight" (onInput)="onUpdateSet(exercise._id!, index, 'weight', +($event.value ?? 0))"
+    placeholder="Weight" [showButtons]="true" suffix=" kg" [min]="0" [step]="2.5">
+  </p-inputNumber>
+
+  <p-inputNumber [(ngModel)]="set.reps" (onInput)="onUpdateSet(exercise._id!, index, 'reps', +($event.value ?? 0))"
+    placeholder="Reps" [showButtons]="true" [min]="0" [step]="1">
+  </p-inputNumber>
+
+  <p-button icon="pi pi-minus" (onClick)="onRemoveSet(exercise._id!, index)"
+    styleClass="p-button-rounded p-button-danger p-button-text p-button-sm">
+  </p-button>
+</div>

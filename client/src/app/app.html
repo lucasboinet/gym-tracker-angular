@@ -1,24 +1,6 @@
-<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
-<!-- * * * * * * * * * * * The content below * * * * * * * * * * * -->
-<!-- * * * * * * * * * * is only a placeholder * * * * * * * * * * -->
-<!-- * * * * * * * * * * and can be replaced.  * * * * * * * * * * -->
-<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
-<!-- * * * * * * * * * Delete the template below * * * * * * * * * -->
-<!-- * * * * * * * to get started with your project! * * * * * * * -->
-<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
-
 <main class="main">
   <div class="gym-tracker">
-    <div class="header">
-      <h1>Gym Tracker</h1>
-      <div class="header-actions">
-        @if (!currentWorkout) {
-        <p-button label="History" icon="pi pi-history" (onClick)="showWorkoutHistory = true"
-          styleClass="p-button-outlined">
-        </p-button>
-        }
-      </div>
-    </div>
+    <menu-bar (historyOpen)="showWorkoutHistory = true" />
 
     <div class="content">
       <!-- Start Screen -->
@@ -52,23 +34,9 @@
           </ng-template>
 
           @for (set of exercise.sets; track $index) {
-          <div class="set-row">
-            <span class="set-number">{{ $index + 1 }}</span>
-
-            <p-inputNumber [(ngModel)]="set.weight"
-              (onInput)="updateSet(exercise._id!, $index, 'weight', +($event.value ?? 0))" placeholder="Weight"
-              [showButtons]="true" suffix=" kg" [min]="0" [step]="2.5">
-            </p-inputNumber>
-
-            <p-inputNumber [(ngModel)]="set.reps"
-              (onInput)="updateSet(exercise._id!, $index, 'reps', +($event.value ?? 0))" placeholder="Reps"
-              [showButtons]="true" [min]="0" [step]="1">
-            </p-inputNumber>
-
-            <p-button icon="pi pi-minus" (onClick)="removeSet(exercise._id!, $index)"
-              styleClass="p-button-rounded p-button-danger p-button-text p-button-sm">
-            </p-button>
-          </div>
+          <set-input [exercise]="exercise" [set]="set" [index]="$index"
+            (removeSet)="removeSet($event.exerciseId, $event.index)"
+            (updateSet)="updateSet($event.exerciseId, $event.index, $event.type, $event.value)" />
           }
 
           <ng-template pTemplate="footer">
@@ -177,14 +145,5 @@
     <p-confirmDialog></p-confirmDialog>
   </div>
 </main>
-
-<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
-<!-- * * * * * * * * * * * The content above * * * * * * * * * * * * -->
-<!-- * * * * * * * * * * is only a placeholder * * * * * * * * * * * -->
-<!-- * * * * * * * * * * and can be replaced.  * * * * * * * * * * * -->
-<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
-<!-- * * * * * * * * * * End of Placeholder  * * * * * * * * * * * * -->
-<!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
-
 
 <router-outlet />

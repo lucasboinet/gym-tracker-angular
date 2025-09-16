@@ -11,8 +11,8 @@ import { Workout } from '../types/Workout';
 import { ExerciseType } from '../types/Exercise';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import { WorkoutService } from '../services/workout.service';
-import { toSignal } from '@angular/core/rxjs-interop';
-
+import { MenuBar } from '../components/menu/menu';
+import { SetInput } from '../components/set-input/set-input';
 @Component({
   selector: 'app-root',
   imports: [
@@ -24,6 +24,8 @@ import { toSignal } from '@angular/core/rxjs-interop';
     ToastModule, 
     ConfirmDialogModule, 
     FormsModule,
+    MenuBar,
+    SetInput,
   ],
   providers: [MessageService, ConfirmationService],
   templateUrl: './app.html',
@@ -57,7 +59,10 @@ export class App implements OnInit {
 
   async loadWorkouts() {
     try {
-      this.gymService.getWorkouts().subscribe((data) => this.workouts = data);
+      this.gymService.getWorkouts().subscribe((data) => {
+        this.workouts = data;
+        this.cdr.detectChanges();
+      });
     } catch (error) {
       this.messageService.add({
         severity: 'error',
@@ -91,8 +96,8 @@ export class App implements OnInit {
       this.gymService.createWorkout(workout).subscribe({
         next: (data) => {
           this.currentWorkout = data;
-          this.cdr.detectChanges();
           this.exercises = [];
+          this.cdr.detectChanges();
           this.messageService.add({
             severity: 'success',
             summary: 'Workout Started',
