@@ -19,18 +19,16 @@ export enum HttpMethod {
   DELETE = "delete",
   PUT = "put",
 }
-/**
- * Interface defining the configuration for an HTTP request.
- */
+
 export interface RequestConfig {
-  path: string;                 // Endpoint path.
-  formData?: FormData;          // Optional form data for the request.
-  body?: any;                   // Optional request body.
-  httpParams?: HttpParams;      // Optional HTTP parameters.
-  method?: HttpMethod;          // HTTP method (default is POST).
-  skipAuth?: boolean;           // Whether authentication should be skipped.
-  headerResponse?: boolean;     // Whether to include headers in the response.
+  path: string;
+  body?: any;
+  httpParams?: HttpParams;
+  method?: HttpMethod;
+  skipAuth?: boolean;
+  headerResponse?: boolean;
 }
+
 @Injectable({
   providedIn: 'root'
 })
@@ -52,16 +50,11 @@ export class AuthService implements HttpInterceptor {
     private localStorage: LocalStorageService,
   ) {}
 
-  /**
-   * Registers an observer that gets notified when the token expires.
-   */
+
   public addTokenExpiredObserver(observer: () => void) {
     this.tokenExpiredObserver.push(observer);
   }
-  /**
-   * Modifies the request header by adding the appropriate authorization token
-   * based on the request context.
-   */
+
   calculateRequestHeader(req: HttpRequest<any>) : HttpRequest<any> {
     let request = req.clone();
     if(req.context.has(TOKEN_CONTEXT)) {
@@ -78,10 +71,7 @@ export class AuthService implements HttpInterceptor {
     }
     return request;
   }
-  /**
-   * Intercepts outgoing HTTP requests, adding authentication headers
-   * and handling potential errors.
-   */
+
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     let request = this.calculateRequestHeader(req);
     return next.handle(request).pipe(
@@ -94,10 +84,7 @@ export class AuthService implements HttpInterceptor {
       finalize(() => { })
     );
   }
-  /**
-   * Attempts to refresh the authentication token.
-   * If a refresh token is available, it sends a request to refresh the access token.
-   */
+
   tryRefreshToken() {
     const refreshToken = this.getRefreshToken();
     if (refreshToken) {
@@ -110,13 +97,10 @@ export class AuthService implements HttpInterceptor {
         })
       );
     } else {
-      return throwError(() => new Error('No refresh token available, please log in again.'));
+      return throwError(() => new Error('Session expired, please log in again.'));
     }
   }
-  /**
-   * Manages the token refresh process.
-   * Ensures that only one refresh request is in progress at a time.
-   */
+
   refreshToken(): Observable<any> {
     if (this.refreshTokenInProgress) {
       console.log("Refresh token in progress");
@@ -152,9 +136,7 @@ export class AuthService implements HttpInterceptor {
       }
     }
   }
-  /**
-   * Handles HTTP response errors, particularly handling token expiration (401 errors).
-   */
+
   private handleResponseError(error: HttpErrorResponse, request?: HttpRequest<any>, next?: HttpHandler) {
     if(error.status === 401) {
       return this.refreshToken().pipe(
@@ -169,25 +151,19 @@ export class AuthService implements HttpInterceptor {
     } else {
       let errorMessage = 'An unknown error occurred!';
       if (error.error instanceof ErrorEvent) {
-        // Client-side error
         errorMessage = `Error: ${error.error.message}`;
       } else {
-        // Server-side error
         errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
       }
       return throwError(() => new Error(errorMessage));
     }
   }
-  /**
-   * Checks whether a given token has expired.
-   */
+
   private tokenExpired(token: string) {
     const expiry = (JSON.parse(atob(token.split('.')[1]))).exp;
     return (Math.floor((new Date).getTime() / 1000)) >= expiry;
   }
-  /**
-   * Checks if the user is currently logged in based on token validity.
-   */
+
   public isLoggedIn(): boolean {
     const token = this.localStorage.getItem(this.refreshTokenKey)
     if(token != undefined) {
@@ -202,23 +178,25 @@ export class AuthService implements HttpInterceptor {
     }
     return false;
   }
+
   private storeTokens(accessToken: string, refreshToken: string) {
     this.localStorage.setItem(this.accessTokenKey, accessToken);
     this.localStorage.setItem(this.refreshTokenKey, refreshToken);
   }
+
   public getAccessToken(): string | null {
     return this.localStorage.getItem(this.accessTokenKey);
   }
+
   public getRefreshToken(): string | null {
     return this.localStorage.getItem(this.refreshTokenKey);
   }
+
   private clearTokens() {
     this.localStorage.removeItem(this.accessTokenKey);
     this.localStorage.removeItem(this.refreshTokenKey);
   }
-  /**
-   * Logs in the user by sending credentials and storing the received tokens.
-   */
+
   login(identifier: string, secret: string) {
     return this.request({
       method: HttpMethod.POST,
@@ -244,9 +222,6 @@ export class AuthService implements HttpInterceptor {
     )
   }
 
-  /**
-   * Logs out the user by invalidating tokens.
-   */
   logout(result: () => void) {
     const refreshToken = this.getRefreshToken();
     if (refreshToken) {
@@ -269,43 +244,48 @@ export class AuthService implements HttpInterceptor {
       result();
     }
   }
-  /**
-   * Sends a configurable HTTP request with optional authentication.
-   */
+
   request<T>(config: RequestConfig) : Observable<T> {
     let urlParts : string[] = [config.path];
     let options = {};
+
     if(!config.skipAuth) {
       if(!this.isLoggedIn()) {
         return EMPTY;
       }
+
       options = {
         context: new HttpContext().set(TOKEN_CONTEXT, '<access_token>')
       }
     }
+
     if(config.headerResponse) {
       Object.assign(options, {observe: 'response'})
     }
+
     if(config.httpParams) {
       Object.assign(options, {params: config.httpParams})
     }
+
     if(config.method == undefined) {
       config.method = HttpMethod.POST;
     }
+
     let mergePaths = (paths: string[]) => new URL(paths.map(p => p.replace(/^\/+|\/+$/g, '')).join('/'), this.apiUrl);
     let url = mergePaths(urlParts).href;
+
     if(!url.endsWith("/")) {
       url += "/";
     }
-    if (config.formData == undefined && config.body == undefined) {
-      return this.http.request<T>(config.method, url, options);
-    } else {
-      if (config.body != undefined) {
-        Object.assign(options, {body: config.body})
-      } else if (config.formData != undefined) {
-        Object.assign(options, {body: config.formData})
-      }
+
+    if (config.body == undefined) {
       return this.http.request<T>(config.method, url, options);
     }
+
+    if (config.body != undefined) {
+      Object.assign(options, {body: config.body})
+    }
+
+    return this.http.request<T>(config.method, url, options);
   }
 }

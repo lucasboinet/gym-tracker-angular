@@ -1,149 +1,216 @@
-<main class="main">
-  <div class="gym-tracker">
-    <menu-bar (historyOpen)="showWorkoutHistory = true" />
-
-    <div class="content">
-      <!-- Start Screen -->
-      @if (!currentWorkout) {
-      <div class="start-screen">
-        <h2>Ready to train?</h2>
-        <p-button label="Start Workout" icon="pi pi-play" (onClick)="startWorkout()" size="large"
-          styleClass="start-workout-btn">
-        </p-button>
+<main class="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+  <!-- Header -->
+  <div class="bg-white shadow-sm border-b sticky top-0 z-50">
+    <div class="px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center space-x-2">
+        <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+          <i class="pi pi-bolt text-white text-sm"></i>
+        </div>
+        <h1 class="text-lg font-bold text-gray-900">Gym Tracker</h1>
       </div>
-      }
 
-      <!-- Active Workout -->
-      @if (currentWorkout) {
-      <div>
-        <p-card class="workout-info">
-          <h3>Today's Workout</h3>
-          <p>Started at {{ currentWorkout.startTime }}</p>
-        </p-card>
+      <p-button icon="pi pi-history" (onClick)="showWorkoutHistory = true"
+        styleClass="p-button-text p-button-rounded p-button-sm" [text]="true">
+      </p-button>
+    </div>
+  </div>
 
-        <!-- Exercises -->
-        @for (exercise of exercises; track exercise._id) {
-        <p-card class="exercise-card">
-          <ng-template pTemplate="header">
-            <div class="exercise-header">
-              <h4>{{ exercise.name }}</h4>
-              <p-button icon="pi pi-times" (onClick)="removeExercise(exercise._id!)"
-                styleClass="p-button-rounded p-button-danger p-button-text p-button-sm">
-              </p-button>
-            </div>
-          </ng-template>
+  <div class="px-4 pb-20">
+    <!-- Start Screen -->
+    @if (!currentWorkout) {
+    <div class="py-20 text-center">
+      <div class="mb-8">
+        <div class="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <i class="pi pi-play text-blue-600 text-2xl"></i>
+        </div>
+        <h2 class="text-2xl font-bold text-gray-900 mb-2">Ready to train?</h2>
+        <p class="text-gray-600">Start your workout and track your progress</p>
+      </div>
 
-          @for (set of exercise.sets; track $index) {
-          <set-input [exercise]="exercise" [set]="set" [index]="$index"
-            (removeSet)="removeSet($event.exerciseId, $event.index)"
-            (updateSet)="updateSet($event.exerciseId, $event.index, $event.type, $event.value)" />
-          }
+      <p-button label="Start Workout" icon="pi pi-play" (onClick)="startWorkout()" styleClass="w-full max-w-xs mx-auto"
+        size="large">
+      </p-button>
+    </div>
+    }
 
-          <ng-template pTemplate="footer">
-            <p-button label="Add Set" icon="pi pi-plus" (onClick)="addSet(exercise._id!)"
-              styleClass="p-button-outlined">
-            </p-button>
-          </ng-template>
-        </p-card>
-        }
+    <!-- Active Workout -->
+    @if (currentWorkout) {
+    <div class="py-4 space-y-4">
+      <!-- Workout Info Card -->
+      <div class="bg-white rounded-xl p-4 shadow-sm border">
+        <div class="flex items-center justify-between mb-2">
+          <h3 class="font-semibold text-gray-900">Today's Workout</h3>
+          <span
+            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+            <div class="w-2 h-2 bg-green-400 rounded-full mr-1.5 animate-pulse"></div>
+            Active
+          </span>
+        </div>
+        <p class="text-sm text-gray-600">Started at {{ currentWorkout.startTime }}</p>
+      </div>
 
-        <!-- Add Exercise Button -->
-        <p-button label="Add Exercise" icon="pi pi-plus" (onClick)="showAddExercise = true"
-          styleClass="add-exercise-btn p-button-lg">
-        </p-button>
-
-        <!-- Workout Actions -->
-        <div class="workout-actions">
-          <p-button label="Cancel Workout" icon="pi pi-times" (onClick)="confirmCancelWorkout()"
-            styleClass="p-button-danger">
+      <!-- Exercises -->
+      @for (exercise of exercises; track exercise._id) {
+      <div class="bg-white rounded-xl shadow-sm border overflow-hidden">
+        <!-- Exercise Header -->
+        <div class="px-4 py-3 bg-gray-50 border-b flex items-center justify-between">
+          <h4 class="font-semibold text-gray-900">{{ exercise.name }}</h4>
+          <p-button icon="pi pi-trash" (onClick)="removeExercise(exercise._id!)"
+            styleClass="p-button-text p-button-rounded p-button-sm p-button-danger" [text]="true">
           </p-button>
+        </div>
 
-          <p-button label="Finish Workout" icon="pi pi-check" (onClick)="finishWorkout()" styleClass="p-button-success">
+        <!-- Sets -->
+        <div class="p-4 space-y-3">
+          @for (set of exercise.sets; track $index) {
+          <div class="flex items-center space-x-3">
+            <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+              <span class="text-sm font-medium text-blue-600">{{ $index + 1 }}</span>
+            </div>
+
+            <div class="flex-1 grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-medium text-gray-500 mb-1">Weight (kg)</label>
+                <p-inputNumber [(ngModel)]="set.weight"
+                  (onInput)="updateSet(exercise._id!, $index, 'weight', +($event.value ?? 0))" [showButtons]="true"
+                  [min]="0" [step]="2.5" styleClass="w-full" inputStyleClass="text-center">
+                </p-inputNumber>
+              </div>
+
+              <div>
+                <label class="block text-xs font-medium text-gray-500 mb-1">Reps</label>
+                <p-inputNumber [(ngModel)]="set.reps"
+                  (onInput)="updateSet(exercise._id!, $index, 'reps', +($event.value ?? 0))" [showButtons]="true"
+                  [min]="0" [step]="1" styleClass="w-full" inputStyleClass="text-center">
+                </p-inputNumber>
+              </div>
+            </div>
+
+            <p-button icon="pi pi-minus" (onClick)="removeSet(exercise._id!, $index)"
+              styleClass="p-button-rounded p-button-text p-button-danger p-button-sm" [text]="true">
+            </p-button>
+          </div>
+          }
+        </div>
+
+        <!-- Add Set Button -->
+        <div class="px-4 pb-4">
+          <p-button label="Add Set" icon="pi pi-plus" (onClick)="addSet(exercise._id!)"
+            styleClass="w-full p-button-outlined">
           </p-button>
         </div>
       </div>
       }
+
+      <!-- Add Exercise Button -->
+      <p-button label="Add Exercise" icon="pi pi-plus" (onClick)="showAddExercise = true"
+        styleClass="w-full p-button-lg p-button-outlined">
+      </p-button>
     </div>
 
-    <!-- Add Exercise Dialog -->
-    <p-dialog header="Add Exercise" [(visible)]="showAddExercise" [modal]="true" [style]="{width: '450px'}"
-      [closable]="false">
+    <!-- Fixed Bottom Actions -->
+    <div class="fixed bottom-0 left-0 right-0 bg-white border-t p-4 space-y-3">
+      <div class="grid grid-cols-2 gap-3">
+        <p-button label="Cancel" icon="pi pi-times" (onClick)="confirmCancelWorkout()"
+          styleClass="p-button-danger p-button-outlined">
+        </p-button>
 
-      <div class="add-exercise-content">
-        <div class="p-field">
-          <label for="exercise-name">Exercise Name</label>
-          <input id="exercise-name" type="text" pInputText [(ngModel)]="newExerciseName"
-            placeholder="Enter exercise name" class="w-full">
+        <p-button label="Finish" icon="pi pi-check" (onClick)="finishWorkout()" styleClass="p-button-success">
+        </p-button>
+      </div>
+    </div>
+    }
+  </div>
+
+  <!-- Add Exercise Dialog -->
+  <p-dialog header="Add Exercise" [(visible)]="showAddExercise" [modal]="true"
+    [style]="{width: '90vw', maxWidth: '400px'}" [closable]="false">
+
+    <div class="space-y-4">
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Exercise Name</label>
+        <input type="text" pInputText [(ngModel)]="newExerciseName" placeholder="Enter exercise name" class="w-full">
+      </div>
+
+      <div>
+        <h4 class="text-sm font-medium text-gray-700 mb-3">Quick Add:</h4>
+        <div class="grid grid-cols-2 gap-2">
+          @for (exercise of commonExercises; track exercise) {
+          <p-button [label]="exercise" (onClick)="addExercise(exercise)"
+            styleClass="p-button-outlined p-button-sm text-xs">
+          </p-button>
+          }
         </div>
+      </div>
+    </div>
 
-        <div class="common-exercises">
-          <h4>Common Exercises:</h4>
-          <div class="exercise-buttons">
-            @for (exercise of commonExercises; track exercise) {
-            <p-button [label]="exercise" (onClick)="addExercise(exercise)" styleClass="p-button-outlined exercise-btn">
-            </p-button>
+    <ng-template pTemplate="footer">
+      <div class="flex space-x-2">
+        <p-button label="Cancel" icon="pi pi-times" (onClick)="onAddExerciseCancel()" styleClass="p-button-text flex-1">
+        </p-button>
+        <p-button label="Add Custom" icon="pi pi-check" (onClick)="addExercise(newExerciseName)"
+          [disabled]="!newExerciseName.trim()" styleClass="flex-1">
+        </p-button>
+      </div>
+    </ng-template>
+  </p-dialog>
+
+  <!-- Workout History Dialog -->
+  <p-dialog header="Workout History" [(visible)]="showWorkoutHistory" [modal]="true"
+    [style]="{width: '95vw', height: '90vh'}" [maximizable]="false">
+
+    <div class="h-full overflow-y-auto">
+      @if (workouts.length === 0) {
+      <div class="flex flex-col items-center justify-center py-12 text-center">
+        <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+          <i class="pi pi-history text-gray-400 text-xl"></i>
+        </div>
+        <p class="text-gray-500">No workouts completed yet!</p>
+        <p class="text-sm text-gray-400 mt-1">Your workout history will appear here</p>
+      </div>
+      }
+
+      <div class="space-y-4">
+        @for (workout of workouts; track workout._id) {
+        <div class="bg-white rounded-lg border p-4">
+          <!-- Workout Header -->
+          <div class="flex items-center justify-between mb-3">
+            <div>
+              <h4 class="font-semibold text-gray-900">{{ workout.createdAt | date:'MMM d, y' }}</h4>
+              <p class="text-sm text-gray-500">{{ workout.startTime }} - {{ workout.endTime }}</p>
+            </div>
+            <div class="text-right">
+              <div class="text-sm text-gray-500">{{ workout.exercises.length }} exercises</div>
+            </div>
+          </div>
+
+          <!-- Exercise Summary -->
+          <div class="space-y-3">
+            @for (exercise of workout.exercises; track exercise._id) {
+            <div class="bg-gray-50 rounded-lg p-3">
+              <h5 class="font-medium text-gray-900 mb-2">{{ exercise.name }}</h5>
+              <div class="flex flex-wrap gap-2">
+                @for (set of exercise.sets; track $index) {
+                <span
+                  class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-blue-100 text-blue-700">
+                  {{ set.weight }}kg × {{ set.reps }}
+                </span>
+                }
+              </div>
+            </div>
             }
           </div>
         </div>
-      </div>
-
-      <ng-template pTemplate="footer">
-        <p-button label="Cancel" icon="pi pi-times" (onClick)="onAddExerciseCancel()" styleClass="p-button-text">
-        </p-button>
-        <p-button label="Add Custom" icon="pi pi-check" (onClick)="addExercise(newExerciseName)"
-          [disabled]="!newExerciseName.trim()">
-        </p-button>
-      </ng-template>
-    </p-dialog>
-
-    <!-- Workout History Dialog -->
-    <p-dialog header="Workout History" [(visible)]="showWorkoutHistory" [modal]="true"
-      [style]="{width: '80vw', height: '80vh'}" [maximizable]="true">
-
-      <div class="history-content">
-        @if (workouts.length === 0) {
-        <div class="empty-history">
-          <i class="pi pi-info-circle"></i>
-          <p>No workouts completed yet!</p>
-        </div>
-        }
-
-        @for (workout of workouts; track workout._id) {
-        <p-card class="workout-history-card">
-          <ng-template pTemplate="header">
-            <div class="workout-header">
-              <h4>{{ workout.createdAt }}</h4>
-              <span>{{ workout.startTime }} - {{ workout.endTime }}</span>
-            </div>
-          </ng-template>
-
-          <div class="workout-summary">
-            <p><i class="pi pi-clock"></i> {{ workout.exercises.length }} exercises</p>
-          </div>
-
-          @for (exercise of workout.exercises; track exercise._id) {
-          <div class="history-exercise">
-            <h5>{{ exercise.name }}</h5>
-            <div class="exercise-sets">
-              @for (set of exercise.sets; track $index) {
-              <span class="set-info">
-                Set {{ $index + 1 }}: {{ set.weight }}kg × {{ set.reps }} reps
-              </span>
-              }
-            </div>
-          </div>
-          }
-        </p-card>
         }
       </div>
-    </p-dialog>
+    </div>
+  </p-dialog>
 
-    <!-- Toast Messages -->
-    <p-toast></p-toast>
+  <!-- Toast Messages -->
+  <p-toast position="top-center"></p-toast>
 
-    <!-- Confirmation Dialog -->
-    <p-confirmDialog></p-confirmDialog>
-  </div>
+  <!-- Confirmation Dialog -->
+  <p-confirmDialog></p-confirmDialog>
+
+  <router-outlet />
 </main>
-
-<router-outlet />

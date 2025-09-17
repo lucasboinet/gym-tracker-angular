@@ -1,15 +1,15 @@
-import { Component, signal, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterOutlet } from '@angular/router';
+import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { InputNumberModule } from 'primeng/inputnumber';
+import { InputTextModule } from 'primeng/inputtext';
 import { DialogModule } from 'primeng/dialog';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { MessageService, ConfirmationService } from 'primeng/api';
-import { MenuBar } from '../../components/menu/menu';
-import { SetInput } from '../../components/set-input/set-input';
 import { Workout } from '../../shared/types/Workout';
 import { ExerciseType } from '../../shared/types/Exercise';
 import { WorkoutService } from '../../services/workout.service';
@@ -18,18 +18,19 @@ import { WorkoutService } from '../../services/workout.service';
   selector: 'home-page',
   imports: [
     RouterOutlet, 
+    CommonModule,
     ButtonModule, 
     CardModule, 
-    InputNumberModule, 
+    InputNumberModule,
+    InputTextModule,
     DialogModule, 
     ToastModule, 
     ConfirmDialogModule, 
     FormsModule,
-    MenuBar,
-    SetInput,
   ],
   providers: [MessageService, ConfirmationService],
   templateUrl: './home.html',
+  styleUrls: ['./home.css']
 })
 export class HomePage implements OnInit {
   workouts: Workout[] = [];
@@ -41,15 +42,15 @@ export class HomePage implements OnInit {
   newExerciseName = '';
   
   commonExercises = [
-    'Bench Press', 'Squat', 'Deadlift', 'Shoulder Press', 'Pull-ups',
-    'Rows', 'Bicep Curls', 'Tricep Dips', 'Leg Press', 'Lat Pulldowns'
+    'Bench Press', 'Squat', 'Deadlift', 'Shoulder Press', 
+    'Pull-ups', 'Rows', 'Bicep Curls', 'Tricep Dips', 
+    'Leg Press', 'Lat Pulldowns', 'Chest Fly', 'Leg Curls'
   ];
 
   constructor(
     private gymService: WorkoutService,
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
-    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
@@ -59,27 +60,27 @@ export class HomePage implements OnInit {
 
   async loadWorkouts() {
     try {
-      this.gymService.getWorkouts().subscribe((data) => {
-        this.workouts = data;
-        this.cdr.detectChanges();
+      this.gymService.getWorkouts().subscribe({
+        next: (data) => {
+          this.workouts = data.sort((a, b) => 
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          );
+        }
       });
     } catch (error) {
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'Failed to load workouts'
-      });
+      this.showToast('error', 'Error', 'Failed to load workouts');
     }
   }
 
   async loadCurrentWorkout() {
     try {
-      this.gymService.getCurrentWorkout().subscribe((data) => {
-        if (data) {
-          this.currentWorkout = data;
-          this.exercises = data.exercises || [];
+      this.gymService.getCurrentWorkout().subscribe({
+        next: (data) => {
+          if (data) {
+            this.currentWorkout = data;
+            this.exercises = data.exercises || [];
+          }
         }
-        this.cdr.detectChanges();
       });
     } catch (error) {
       console.error('Error loading current workout:', error);
@@ -89,35 +90,31 @@ export class HomePage implements OnInit {
   async startWorkout() {
     const workout: Workout = {
       createdAt: new Date(),
-      startTime: new Date().toLocaleTimeString(),
+      startTime: new Date().toLocaleTimeString('en-US', { 
+        hour: '2-digit', 
+        minute: '2-digit',
+        hour12: false 
+      }),
       exercises: [],
     };
 
-      this.gymService.createWorkout(workout).subscribe({
-        next: (data) => {
-          this.currentWorkout = data;
-          this.exercises = [];
-          this.cdr.detectChanges();
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Workout Started',
-            detail: 'Your workout session has begun!'
-          });
-        },
-        error: () => {
-          this.messageService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'Failed to start workout'
-          });
-        }
-      });
-
+    this.gymService.createWorkout(workout).subscribe({
+      next: (data) => {
+        this.currentWorkout = data;
+        this.exercises = [];
+        this.showToast('success', 'Workout Started', 'Ready to crush your goals! 💪');
+      },
+      error: () => {
+        this.showToast('error', 'Error', 'Failed to start workout');
+      }
+    });
   }
 
   addExercise(exerciseName: string) {
+    if (!exerciseName?.trim()) return;
+
     const exercise: ExerciseType = {
-      name: exerciseName,
+      name: exerciseName.trim(),
       sets: [{ reps: 0, weight: 0 }]
     };
     
@@ -126,31 +123,41 @@ export class HomePage implements OnInit {
     this.newExerciseName = '';
     this.showAddExercise = false;
     
-    this.messageService.add({
-      severity: 'success',
-      summary: 'Exercise Added',
-      detail: `${exerciseName} added to workout`
-    });
+    this.showToast('success', 'Exercise Added', `${exerciseName} added to your workout`);
   }
 
   addSet(exerciseId: string) {
+    const exerciseIndex = this.exercises.findIndex(ex => ex._id === exerciseId);
+    if (exerciseIndex === -1) return;
+
+    const lastSet = this.exercises[exerciseIndex].sets.slice(-1)[0];
+    const newSet = { 
+      reps: lastSet?.reps || 0, 
+      weight: lastSet?.weight || 0 
+    };
+
     this.exercises = this.exercises.map(exercise => {
       if (exercise._id === exerciseId) {
         return {
           ...exercise,
-          sets: [...exercise.sets, { reps: 0, weight: 0 }]
+          sets: [...exercise.sets, newSet]
         };
       }
       return exercise;
     });
+    
     this.saveCurrentExercises();
+    this.showToast('info', 'Set Added', 'New set ready for action!');
   }
 
   updateSet(exerciseId: string, setIndex: number, field: 'reps' | 'weight', value: number) {
     this.exercises = this.exercises.map(exercise => {
       if (exercise._id === exerciseId) {
         const updatedSets = [...exercise.sets];
-        updatedSets[setIndex] = { ...updatedSets[setIndex], [field]: value };
+        updatedSets[setIndex] = { 
+          ...updatedSets[setIndex], 
+          [field]: Math.max(0, value) // Ensure non-negative values
+        };
         return { ...exercise, sets: updatedSets };
       }
       return exercise;
@@ -160,7 +167,7 @@ export class HomePage implements OnInit {
 
   removeSet(exerciseId: string, setIndex: number) {
     this.exercises = this.exercises.map(exercise => {
-      if (exercise._id === exerciseId) {
+      if (exercise._id === exerciseId && exercise.sets.length > 1) {
         const updatedSets = exercise.sets.filter((_, index) => index !== setIndex);
         return { ...exercise, sets: updatedSets };
       }
@@ -170,67 +177,83 @@ export class HomePage implements OnInit {
   }
 
   removeExercise(exerciseId: string) {
-    this.exercises = this.exercises.filter(exercise => exercise._id !== exerciseId);
-    this.saveCurrentExercises();
+    this.confirmationService.confirm({
+      message: 'Remove this exercise from your workout?',
+      header: 'Remove Exercise',
+      icon: 'pi pi-exclamation-triangle',
+      acceptButtonStyleClass: 'p-button-danger',
+      accept: () => {
+        this.exercises = this.exercises.filter(exercise => exercise._id !== exerciseId);
+        this.saveCurrentExercises();
+        this.showToast('info', 'Exercise Removed', 'Exercise removed from workout');
+      }
+    });
   }
 
   async saveCurrentExercises() {
     if (this.currentWorkout) {
       this.currentWorkout.exercises = this.exercises;
-      this.gymService.saveCurrentWorkout(this.currentWorkout).subscribe();
+      this.gymService.saveCurrentWorkout(this.currentWorkout).subscribe({ error: () => {} });
     }
   }
 
   async finishWorkout() {
     if (this.exercises.length === 0) {
-      this.messageService.add({
-        severity: 'warn',
-        summary: 'No Exercises',
-        detail: 'Add some exercises before finishing your workout!'
-      });
+      this.showToast('warn', 'No Exercises', 'Add some exercises before finishing!');
       return;
     }
 
+    // Check if any exercises have incomplete sets
+    const hasIncompleteExercises = this.exercises.some(exercise =>
+      exercise.sets.some(set => set.reps === 0 && set.weight === 0)
+    );
+
+    if (hasIncompleteExercises) {
+      this.confirmationService.confirm({
+        message: 'Some sets appear incomplete. Finish workout anyway?',
+        header: 'Incomplete Sets',
+        icon: 'pi pi-question-circle',
+        accept: () => this.completeWorkout()
+      });
+    } else {
+      this.completeWorkout();
+    }
+  }
+
+  private completeWorkout() {
     if (!this.currentWorkout) return;
 
     const completedWorkout: Workout = {
       ...this.currentWorkout,
       exercises: this.exercises,
-      endTime: new Date().toLocaleTimeString(),
+      endTime: new Date().toLocaleTimeString('en-US', { 
+        hour: '2-digit', 
+        minute: '2-digit',
+        hour12: false 
+      }),
     };
 
     this.gymService.saveWorkout(completedWorkout).subscribe({
       next: () => {
         this.currentWorkout = null;
         this.exercises = [];
-        
         this.loadWorkouts();
         
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Workout Complete!',
-          detail: 'Great job! Your workout has been saved.'
-        });
+        this.showToast('success', 'Workout Complete! 🎉', 'Amazing job! Keep it up!');
       },
-      error: (err) => {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'Failed to save workout'
-        });
+      error: () => {
+        this.showToast('error', 'Error', 'Failed to save workout');
       }
     });
   }
 
   confirmCancelWorkout() {
     this.confirmationService.confirm({
-      message: 'Are you sure you want to cancel this workout? All progress will be lost.',
+      message: 'Cancel this workout? All progress will be lost.',
       header: 'Cancel Workout',
       icon: 'pi pi-exclamation-triangle',
       acceptButtonStyleClass: 'p-button-danger',
-      accept: () => {
-        this.cancelWorkout();
-      }
+      accept: () => this.cancelWorkout()
     });
   }
 
@@ -241,20 +264,10 @@ export class HomePage implements OnInit {
       next: () => {
         this.currentWorkout = null;
         this.exercises = [];
-
-        this.messageService.add({
-          severity: 'info',
-          summary: 'Workout Cancelled',
-          detail: 'Your workout has been cancelled'
-        });
+        this.showToast('info', 'Workout Cancelled', 'No worries, try again when ready!');
       },
-      error: (err) => {
-        console.error('Failed to cancel workout', err);
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'Failed to cancel workout'
-        });
+      error: () => {
+        this.showToast('error', 'Error', 'Failed to cancel workout');
       }
     });
   }
@@ -262,5 +275,33 @@ export class HomePage implements OnInit {
   onAddExerciseCancel() {
     this.newExerciseName = '';
     this.showAddExercise = false;
+  }
+
+  private showToast(severity: string, summary: string, detail: string) {
+    this.messageService.add({
+      severity,
+      summary,
+      detail,
+      life: 3000
+    });
+  }
+
+  // Helper method for calculating total volume
+  getTotalVolume(exercise: ExerciseType): number {
+    return exercise.sets.reduce((total, set) => total + (set.weight * set.reps), 0);
+  }
+
+  // Helper method for getting workout stats
+  getWorkoutStats() {
+    if (!this.exercises.length) return { exercises: 0, sets: 0, volume: 0 };
+    
+    const totalSets = this.exercises.reduce((total, ex) => total + ex.sets.length, 0);
+    const totalVolume = this.exercises.reduce((total, ex) => total + this.getTotalVolume(ex), 0);
+    
+    return {
+      exercises: this.exercises.length,
+      sets: totalSets,
+      volume: totalVolume
+    };
   }
 }
