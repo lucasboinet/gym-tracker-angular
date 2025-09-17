@@ -1,0 +1,13 @@
+import UserModel from "./auth.model";
+
+export function getOneByEmail(email: string) {
+  return UserModel.findOne({ email });
+}
+
+export function updateRefreshToken(userId: string, refreshToken?: string) {
+  return UserModel.findByIdAndUpdate(userId, { refresh_token: refreshToken });
+}
+
+export function createUser(email: string, password: string) {
+  return new UserModel({ email, password }).save();
+}
