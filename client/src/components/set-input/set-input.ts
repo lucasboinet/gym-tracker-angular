@@ -3,8 +3,8 @@ import { Output, EventEmitter } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { ButtonModule } from "primeng/button";
 import { InputNumberModule } from "primeng/inputnumber";
-import { SetType } from "../../types/Set";
-import { ExerciseType } from "../../types/Exercise";
+import { SetType } from "../../shared/types/Set";
+import { ExerciseType } from "../../shared/types/Exercise";
 
 @Component({
   templateUrl: './set-input.html',

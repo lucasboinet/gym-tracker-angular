@@ -1,0 +1,43 @@
+<div class="flex items-center justify-center min-h-screen bg-gray-100">
+  <p-card header="Sign In" class="w-full max-w-md shadow-lg rounded-2xl">
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-5">
+
+      <!-- Email -->
+      <div class="flex flex-col gap-1">
+        <label for="email" class="text-sm font-medium text-gray-700">Email</label>
+        <input id="email" type="email" pInputText formControlName="email"
+          [class]="{'p-invalid': email?.invalid && (email?.touched || email?.dirty)}" class="w-full" />
+
+        @if (email?.hasError('required') && (email?.touched || email?.dirty)) {
+        <small class="text-red-500">Email is required</small>
+        }
+        @if (email?.hasError('email') && (email?.touched || email?.dirty)) {
+        <small class="text-red-500">Invalid email address</small>
+        }
+      </div>
+
+      <!-- Password -->
+      <div class="flex flex-col gap-1">
+        <label for="password" class="text-sm font-medium text-gray-700">Password</label>
+        <input id="password" type="password" pInputText formControlName="password"
+          [class]="{'p-invalid': password?.invalid && (password?.touched || password?.dirty)}" class="w-full" />
+
+        @if (password?.hasError('required') && (password?.touched || password?.dirty)) {
+        <small class="text-red-500">Password is required</small>
+        }
+        @if (password?.hasError('minlength') && (password?.touched || password?.dirty)) {
+        <small class="text-red-500">Password must be at least 8 characters</small>
+        }
+      </div>
+
+      <!-- Error message -->
+      @if (error) {
+      <p class="text-red-600 text-sm">{{ error }}</p>
+      }
+
+      <!-- Submit button -->
+      <p-button type="submit" label="{{ loading ? 'Logging in...' : 'Login' }}" [disabled]="loading"
+        styleClass="w-full"></p-button>
+    </form>
+  </p-card>
+</div>
