@@ -7,7 +7,8 @@ import { provideClientHydration, withEventReplay } from '@angular/platform-brows
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { providePrimeNG } from 'primeng/config';
 import Aura from '@primeuix/themes/aura';
-import { provideHttpClient, withFetch } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, provideHttpClient, withFetch, withInterceptorsFromDi } from '@angular/common/http';
+import { AuthService } from '../services/auth.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -16,6 +17,7 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes), 
     provideClientHydration(withEventReplay()),
     provideHttpClient(
+      withInterceptorsFromDi(),
       withFetch(),
     ),
     provideAnimationsAsync(),
@@ -23,6 +25,7 @@ export const appConfig: ApplicationConfig = {
         theme: {
             preset: Aura
         }
-    })
+    }),
+    { provide: HTTP_INTERCEPTORS, useClass: AuthService, multi: true }
   ]
 };
