@@ -5,7 +5,8 @@ import { ButtonModule } from "primeng/button";
 import { InputTextModule } from 'primeng/inputtext'
 import { CardModule } from "primeng/card";
 import { passwordMatchValidator } from "../../shared/validators/auth";
-import { RouterLink } from "@angular/router";
+import { Router, RouterLink } from "@angular/router";
+import { UserService } from "../../services/user.service";
 
 @Component({
   templateUrl: './sign-up.html',
@@ -27,6 +28,8 @@ export class SignUpPage {
   constructor(
     private fb: FormBuilder,
     private auth: AuthService,
+    private userService: UserService,
+    private router: Router
   ) {
     this.registerForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
@@ -48,7 +51,18 @@ export class SignUpPage {
 
     this.auth.register(email!, password!, confirmPassword!).subscribe({
       next: () => {
-        this.loading = false;
+        this.auth.login(email!, password!).subscribe({
+          next: () => {
+            this.userService.loadUser().subscribe({
+              next: () => this.router.navigate(['/']),
+              error: () => {}
+            });
+          },
+          error: (err) => {
+            this.error = err?.error?.message || 'An error occurred';
+            this.loading = false;
+          }
+        })
       },
       error: (err) => {
         this.error = err?.error?.message || 'An error occurred';
