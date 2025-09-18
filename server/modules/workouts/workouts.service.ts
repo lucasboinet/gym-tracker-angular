@@ -5,6 +5,10 @@ export function getAll() {
   return WorkoutModel.find();
 }
 
+export function getAllFromUser(userId: string) {
+  return WorkoutModel.find({ userId });
+}
+
 export function create(workout: Workout) {
   return new WorkoutModel(workout).save();
 }
@@ -12,7 +16,10 @@ export function create(workout: Workout) {
 export function update(workout: Workout) {
   return WorkoutModel.findByIdAndUpdate(
     workout._id,
-    workout,
+    { $set: {
+        ...workout
+      }
+    },
     { new: true, runValidators: true }
   );
 }
@@ -23,16 +30,4 @@ export function deleteById(id: Workout['_id']) {
 
 export function getActive() {
   return WorkoutModel.findOne({ endTime: { $exists: false } });
-}
-
-export function updateActive(workout: Workout) {
-  return WorkoutModel.findOneAndUpdate(
-    { _id: workout._id },
-    workout,
-    { new: true, runValidators: true }
-  );
-}
-
-export function deleteActive(workoutId: Workout['_id']) {
-  return WorkoutModel.deleteOne({ _id: workoutId });
 }

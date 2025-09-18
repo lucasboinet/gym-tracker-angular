@@ -1,16 +1,17 @@
 import { NextFunction, Request, Response } from "express";
 import * as workoutService from "./workouts.service";
+import { AuthenticatedRequest } from "../../shared/types/express";
 
-export async function getWorkouts(req: Request, res: Response, next: NextFunction) {
+export async function getWorkouts(req: AuthenticatedRequest, res: Response, next: NextFunction) {
   try {
-    const workouts = await workoutService.getAll();
+    const workouts = await workoutService.getAllFromUser(req.user!._id);
     res.json(workouts);
   } catch(error) {
     next(error);
   }
 }
 
-export async function saveWorkout(req: Request, res: Response, next: NextFunction) {
+export async function saveWorkout(req: AuthenticatedRequest, res: Response, next: NextFunction) {
   try {
     const workout = await workoutService.update(req.body);
     res.status(201).json(workout);
@@ -19,16 +20,20 @@ export async function saveWorkout(req: Request, res: Response, next: NextFunctio
   }
 }
 
-export async function createWorkout(req: Request, res: Response, next: NextFunction) {
+export async function createWorkout(req: AuthenticatedRequest, res: Response, next: NextFunction) {
   try {
-    const workout = await workoutService.create(req.body); 
+    const payload = {
+      ...req.body,
+      userId: req.user!._id
+    }
+    const workout = await workoutService.create(payload); 
     res.status(201).json(workout);
   } catch(error) {
     next(error);
   }
 }
 
-export async function deleteWorkout(req: Request, res: Response, next: NextFunction) {
+export async function deleteWorkout(req: AuthenticatedRequest, res: Response, next: NextFunction) {
   try {
     const workout = await workoutService.deleteById(req.params.id);
     res.json(workout);
@@ -37,7 +42,7 @@ export async function deleteWorkout(req: Request, res: Response, next: NextFunct
   }
 }
 
-export async function getCurrentWorkout(req: Request, res: Response, next: NextFunction) {
+export async function getCurrentWorkout(req: AuthenticatedRequest, res: Response, next: NextFunction) {
   try {
     const workout = await workoutService.getActive();
     res.json(workout);
@@ -46,18 +51,18 @@ export async function getCurrentWorkout(req: Request, res: Response, next: NextF
   }
 }
 
-export async function updateCurrentWorkout(req: Request, res: Response, next: NextFunction) {
+export async function updateCurrentWorkout(req: AuthenticatedRequest, res: Response, next: NextFunction) {
   try {
-    const workout = await workoutService.updateActive(req.body);
+    const workout = await workoutService.update(req.body);
     res.json(workout);
   } catch(error) {
     next(error);
   }
 }
 
-export async function clearCurrentWorkout(req: Request, res: Response, next: NextFunction) {
+export async function clearCurrentWorkout(req: AuthenticatedRequest, res: Response, next: NextFunction) {
   try {
-    const workout = await workoutService.deleteActive(req.body.workoutId);
+    const workout = await workoutService.deleteById(req.body.workoutId);
     res.json(workout);
   } catch(error) {
     next(error);

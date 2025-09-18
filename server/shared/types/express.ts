@@ -1,9 +1,9 @@
 import { Request, RequestHandler } from 'express';
-// import { IStoredUser } from '../../modules/users/users.model';
+import { User } from '../../modules/auth/auth.types';
 
 
-export interface CustomRequest extends Request {
-  // user?: IStoredUser
+export interface AuthenticatedRequest extends Request {
+  user?: User
 }
 
 export interface CustomRequestHandler extends RequestHandler {}

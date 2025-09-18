@@ -15,7 +15,7 @@ export async function getProfile(req: Request, res: Response, next: NextFunction
 
     const decodedToken = await jwt.verify(access_token, config.security.tokenSecret) as User;
 
-    const user = await userService.getOneByEmail(decodedToken.email).select('-password -refresh_token');
+    const user = await userService.getOneById(decodedToken._id).select('-password -refresh_token');
 
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
@@ -109,16 +109,23 @@ export async function refreshToken(req: Request, res: Response, next: NextFuncti
 
     const decodedToken = await jwt.verify(refresh_token, config.security.refreshTokenSecret) as User;
 
-    const user = await userService.getOneByEmail(decodedToken.email).select('-password');
+    const user = await userService.getOneById(decodedToken._id).select('-password');
 
     if (!user || user.refresh_token !== refresh_token) {
       return res.status(401).json({ message: 'Unauthorized' });
     }
 
-    const new_access_token = jwt.sign(decodedToken, config.security.tokenSecret, { expiresIn: '4 hours', algorithm: 'HS256' });
-    const new_refresh_token = jwt.sign(decodedToken, config.security.refreshTokenSecret, { expiresIn: '2 weeks', algorithm: 'HS256' });
+    const payloadUser = { 
+      email: user.email, 
+      createdAt: user.createdAt, 
+      updatedAt: user.updatedAt,
+      _id: user._id
+    }
 
-    await userService.updateRefreshToken(decodedToken._id, refresh_token);
+    const new_access_token = jwt.sign(payloadUser, config.security.tokenSecret, { expiresIn: '4 hours', algorithm: 'HS256' });
+    const new_refresh_token = jwt.sign(payloadUser, config.security.refreshTokenSecret, { expiresIn: '2 weeks', algorithm: 'HS256' });
+
+    await userService.updateRefreshToken(payloadUser._id, refresh_token);
 
     res.json({ 
       access_token: new_access_token, 

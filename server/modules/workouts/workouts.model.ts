@@ -17,6 +17,7 @@ const ExerciseSchema = new mongoose.Schema(
 
 const WorkoutSchema = new Schema(
   {
+    userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     startTime: { type: String, required: true },
     endTime: { type: String, required: false },
     exercises: { type: [ExerciseSchema], required: true },

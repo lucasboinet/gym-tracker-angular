@@ -11,6 +11,7 @@ export type Exercise = {
 
 export type Workout = {
   _id: string,
+  userId: string,
   createdAt: Date,
   startTime: string,
   endTime?: string,
