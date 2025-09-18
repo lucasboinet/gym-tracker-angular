@@ -23,7 +23,10 @@ export const appConfig: ApplicationConfig = {
     provideAnimationsAsync(),
     providePrimeNG({
         theme: {
-            preset: Aura
+            preset: Aura,
+            options: {
+              darkModelSelector: false,
+            }
         }
     }),
     { provide: HTTP_INTERCEPTORS, useClass: AuthService, multi: true }
