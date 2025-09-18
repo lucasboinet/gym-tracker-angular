@@ -1,19 +1,15 @@
-ARG NODE_VERSION=24.7.0-alpine
+ARG NODE_VERSION=24.7.0
 ARG NGINX_VERSION=alpine3.22
 
 FROM node:${NODE_VERSION} AS builder
 
 WORKDIR /app
 
-RUN apk add --no-cache libc6-compat python3 make g++
-
 COPY package.json package-lock.json ./
 
 RUN --mount=type=cache,target=/root/.npm npm ci
 
 COPY . .
-
-ENV LIGHTNINGCSS_NODE_FALLBACK=1
 
 RUN npm run build 
 
