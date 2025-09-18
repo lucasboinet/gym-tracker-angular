@@ -5,12 +5,12 @@ import { ButtonModule } from "primeng/button";
 import { InputTextModule } from 'primeng/inputtext'
 import { CardModule } from "primeng/card";
 import { UserService } from "../../services/user.service";
-import { Router } from "@angular/router";
+import { Router, RouterLink } from "@angular/router";
 
 @Component({
   templateUrl: './sign-in.html',
   selector: 'sign-in-page',
-  imports: [FormsModule, ButtonModule, InputTextModule, CardModule, ReactiveFormsModule],
+  imports: [FormsModule, ButtonModule, InputTextModule, CardModule, ReactiveFormsModule, RouterLink],
 })
 export class SignInPage {
   loading = false;

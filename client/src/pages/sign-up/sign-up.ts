@@ -5,11 +5,19 @@ import { ButtonModule } from "primeng/button";
 import { InputTextModule } from 'primeng/inputtext'
 import { CardModule } from "primeng/card";
 import { passwordMatchValidator } from "../../shared/validators/auth";
+import { RouterLink } from "@angular/router";
 
 @Component({
   templateUrl: './sign-up.html',
   selector: 'sign-up-page',
-  imports: [FormsModule, ButtonModule, InputTextModule, CardModule, ReactiveFormsModule],
+  imports: [
+    FormsModule, 
+    ButtonModule, 
+    InputTextModule, 
+    CardModule, 
+    ReactiveFormsModule,
+    RouterLink,
+  ],
 })
 export class SignUpPage {
   loading = false;
