@@ -7,6 +7,8 @@ WORKDIR /app
 
 COPY package.json package-lock.json ./
 
+RUN npm install lightningcss-linux-x64-musl
+
 RUN --mount=type=cache,target=/root/.npm npm ci
 
 COPY . .
