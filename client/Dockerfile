@@ -13,6 +13,8 @@ RUN --mount=type=cache,target=/root/.npm npm ci
 
 COPY . .
 
+ENV LIGHTNINGCSS_NODE_FALLBACK=1
+
 RUN npm run build 
 
 
