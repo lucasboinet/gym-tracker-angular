@@ -18,19 +18,7 @@
   <div class="px-4 pb-20">
     <!-- Start Screen -->
     @if (!currentWorkout) {
-    <div class="py-20 text-center">
-      <div class="mb-8">
-        <div class="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-          <i class="pi pi-play text-blue-600 text-2xl"></i>
-        </div>
-        <h2 class="text-2xl font-bold text-gray-900 mb-2">Ready to train?</h2>
-        <p class="text-gray-600">Start your workout and track your progress</p>
-      </div>
-
-      <p-button label="Start Workout" icon="pi pi-play" (onClick)="startWorkout()" styleClass="w-full max-w-xs mx-auto"
-        size="large">
-      </p-button>
-    </div>
+    <no-active-workout (startWorkout)="startWorkout()"></no-active-workout>
     }
 
     <!-- Active Workout -->
@@ -63,27 +51,25 @@
         <!-- Sets -->
         <div class="p-4 space-y-3">
           @for (set of exercise.sets; track $index) {
-          <div class="flex items-center space-x-3">
+          <div class="flex items-center justify-between gap-3">
             <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
               <span class="text-sm font-medium text-blue-600">{{ $index + 1 }}</span>
             </div>
 
-            <div class="flex-1 grid grid-cols-2 gap-3">
-              <div>
-                <label class="block text-xs font-medium text-gray-500 mb-1">Weight (kg)</label>
-                <p-inputNumber [(ngModel)]="set.weight"
-                  (onInput)="updateSet(exercise._id!, $index, 'weight', +($event.value ?? 0))" [showButtons]="true"
-                  [min]="0" [step]="2.5" styleClass="w-full" inputStyleClass="text-center">
-                </p-inputNumber>
-              </div>
+            <div class="flex flex-col flex-1">
+              <label class="block text-xs font-medium text-gray-500 mb-1">Weight (kg)</label>
+              <p-inputNumber [(ngModel)]="set.weight"
+                (onInput)="updateSet(exercise._id!, $index, 'weight', +($event.value ?? 0))" [showButtons]="true"
+                [min]="0" [step]="1" inputStyleClass="text-center w-full" styleClass="w-full">
+              </p-inputNumber>
+            </div>
 
-              <div>
-                <label class="block text-xs font-medium text-gray-500 mb-1">Reps</label>
-                <p-inputNumber [(ngModel)]="set.reps"
-                  (onInput)="updateSet(exercise._id!, $index, 'reps', +($event.value ?? 0))" [showButtons]="true"
-                  [min]="0" [step]="1" styleClass="w-full" inputStyleClass="text-center">
-                </p-inputNumber>
-              </div>
+            <div class="flex flex-col flex-1">
+              <label class="block text-xs font-medium text-gray-500 mb-1">Reps</label>
+              <p-inputNumber [(ngModel)]="set.reps"
+                (onInput)="updateSet(exercise._id!, $index, 'reps', +($event.value ?? 0))" [showButtons]="true"
+                [min]="0" [step]="1" inputStyleClass="text-center w-full" styleClass="w-full">
+              </p-inputNumber>
             </div>
 
             <p-button icon="pi pi-minus" (onClick)="removeSet(exercise._id!, $index)"
@@ -109,15 +95,13 @@
     </div>
 
     <!-- Fixed Bottom Actions -->
-    <div class="fixed bottom-0 left-0 right-0 bg-white border-t p-4 space-y-3">
-      <div class="grid grid-cols-2 gap-3">
-        <p-button label="Cancel" icon="pi pi-times" (onClick)="confirmCancelWorkout()"
-          styleClass="p-button-danger p-button-outlined">
-        </p-button>
+    <div class="fixed bottom-0 left-0 right-0 bg-white border-t p-4 flex justify-between">
+      <p-button label="Cancel" icon="pi pi-times" (onClick)="confirmCancelWorkout()"
+        styleClass="p-button-danger p-button-outlined">
+      </p-button>
 
-        <p-button label="Finish" icon="pi pi-check" (onClick)="finishWorkout()" styleClass="p-button-success">
-        </p-button>
-      </div>
+      <p-button label="Finish" icon="pi pi-check" (onClick)="finishWorkout()" styleClass="p-button-success">
+      </p-button>
     </div>
     }
   </div>

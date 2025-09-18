@@ -13,6 +13,7 @@ import { MessageService, ConfirmationService } from 'primeng/api';
 import { Workout } from '../../shared/types/Workout';
 import { ExerciseType } from '../../shared/types/Exercise';
 import { WorkoutService } from '../../services/workout.service';
+import { NoActiveWorkout } from '../../components/no-active-workout/no-active-workout';
 
 @Component({
   selector: 'home-page',
@@ -27,6 +28,7 @@ import { WorkoutService } from '../../services/workout.service';
     ToastModule, 
     ConfirmDialogModule, 
     FormsModule,
+    NoActiveWorkout,
   ],
   providers: [MessageService, ConfirmationService],
   templateUrl: './home.html',
