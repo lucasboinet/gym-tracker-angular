@@ -10,6 +10,8 @@ FROM node:${NODE_VERSION} AS builder
 # Set the working directory inside the container
 WORKDIR /app
 
+RUN apk add --no-cache libc6-compat python3 make g++
+
 # Copy package-related files first to leverage Docker's caching mechanism
 COPY package.json package-lock.json ./
 
