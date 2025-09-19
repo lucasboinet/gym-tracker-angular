@@ -1,9 +1,20 @@
-<p-menubar>
-  <ng-template #start>
-    <span>Gym Tracker</span>
-  </ng-template>
+<div class="bg-white shadow-sm border-b sticky top-0 z-50">
+  <div class="px-4 py-3 flex items-center justify-between">
+    <div class="flex items-center space-x-2">
+      <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+        <i class="pi pi-bolt text-white text-sm"></i>
+      </div>
+      <h1 class="text-lg font-bold text-gray-900">Gym Tracker</h1>
+    </div>
 
-  <ng-template #end>
-    <p-button icon="pi pi-history" (onClick)="onHistoryOpen()" styleClass="p-button-outlined" />
-  </ng-template>
-</p-menubar>
+    <div class="flex items-center justify-between gap-3">
+      <p-button icon="pi pi-file" routerLink="/sessions" styleClass="p-button-text p-button-rounded p-button-sm"
+        [text]="true">
+      </p-button>
+
+      <p-button icon="pi pi-history" (onClick)="onHistoryOpen()" styleClass="p-button-text p-button-rounded p-button-sm"
+        [text]="true">
+      </p-button>
+    </div>
+  </div>
+</div>

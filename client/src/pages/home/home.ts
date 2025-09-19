@@ -1,6 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
@@ -14,11 +13,11 @@ import { Workout } from '../../shared/types/Workout';
 import { ExerciseType } from '../../shared/types/Exercise';
 import { WorkoutService } from '../../services/workout.service';
 import { NoActiveWorkout } from '../../components/no-active-workout/no-active-workout';
+import { MenuBar } from '../../components/menu/menu';
 
 @Component({
   selector: 'home-page',
   imports: [
-    RouterOutlet, 
     CommonModule,
     ButtonModule, 
     CardModule, 
@@ -29,6 +28,7 @@ import { NoActiveWorkout } from '../../components/no-active-workout/no-active-wo
     ConfirmDialogModule, 
     FormsModule,
     NoActiveWorkout,
+    MenuBar,
   ],
   providers: [MessageService, ConfirmationService],
   templateUrl: './home.html',
@@ -44,15 +44,17 @@ export class HomePage implements OnInit {
   newExerciseName = '';
   
   commonExercises = [
-    'Bench Press', 'Squat', 'Deadlift', 'Shoulder Press', 
-    'Pull-ups', 'Rows', 'Bicep Curls', 'Tricep Dips', 
-    'Leg Press', 'Lat Pulldowns', 'Chest Fly', 'Leg Curls'
+    'Bench Press', 'Assisted Dumbells Press', 'Butterfly', 'Reverse Butterfly', 'Shoulder Press',
+    'Biceps Curls Machine', 'Bicep Curls', 'Seated Biceps Curls', 'Lateral Raise Rope', 'Lat Pulldowns',
+    'Leg Press', 'Leg Extension', 'Seated Leg Curl', 'Unilateral Triceps Rope', 'Triceps Rope', 'Triceps Rope Bar',
+    'Lat Bar Rope',
   ];
 
   constructor(
     private gymService: WorkoutService,
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit() {
@@ -67,6 +69,7 @@ export class HomePage implements OnInit {
           this.workouts = data.sort((a, b) => 
             new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
           );
+          this.cdr.markForCheck();
         }
       });
     } catch (error) {
@@ -124,8 +127,6 @@ export class HomePage implements OnInit {
     this.saveCurrentExercises();
     this.newExerciseName = '';
     this.showAddExercise = false;
-    
-    this.showToast('success', 'Exercise Added', `${exerciseName} added to your workout`);
   }
 
   addSet(exerciseId: string) {
@@ -146,7 +147,6 @@ export class HomePage implements OnInit {
     });
     
     this.saveCurrentExercises();
-    this.showToast('info', 'Set Added', 'New set ready for action!');
   }
 
   updateSet(exerciseId: string, setIndex: number, field: 'reps' | 'weight', value: number) {
@@ -184,7 +184,6 @@ export class HomePage implements OnInit {
       accept: () => {
         this.exercises = this.exercises.filter(exercise => exercise._id !== exerciseId);
         this.saveCurrentExercises();
-        this.showToast('info', 'Exercise Removed', 'Exercise removed from workout');
       }
     });
   }
