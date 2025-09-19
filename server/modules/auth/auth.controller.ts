@@ -123,13 +123,10 @@ export async function refreshToken(req: Request, res: Response, next: NextFuncti
     }
 
     const new_access_token = jwt.sign(payloadUser, config.security.tokenSecret, { expiresIn: '4 hours', algorithm: 'HS256' });
-    const new_refresh_token = jwt.sign(payloadUser, config.security.refreshTokenSecret, { expiresIn: '2 weeks', algorithm: 'HS256' });
-
-    await userService.updateRefreshToken(payloadUser._id, refresh_token);
 
     res.json({ 
       access_token: new_access_token, 
-      refresh_token: new_refresh_token 
+      refresh_token: refresh_token 
     });
 
   } catch (error) {
