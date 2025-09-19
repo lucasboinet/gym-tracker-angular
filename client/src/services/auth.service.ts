@@ -4,6 +4,7 @@ import { Subject, Observable, tap, catchError, finalize, EMPTY, throwError, swit
 import { environment } from "../environments/environment";
 import { access } from 'fs';
 import { LocalStorageService } from './storage.service';
+import { Router } from '@angular/router';
 
 /**
  * Defines a context token for storing the access token type.
@@ -48,6 +49,7 @@ export class AuthService implements HttpInterceptor {
   constructor(
     private http: HttpClient,
     private localStorage: LocalStorageService,
+    private router: Router,
   ) {}
 
 
@@ -96,9 +98,9 @@ export class AuthService implements HttpInterceptor {
           return EMPTY;
         })
       );
-    } else {
-      return throwError(() => new Error('Session expired, please log in again.'));
     }
+
+    return throwError(() => new Error('Session expired, please log in again.'));
   }
 
   refreshToken(): Observable<any> {
@@ -113,36 +115,41 @@ export class AuthService implements HttpInterceptor {
           }
         });
       });
-    } else {
-      if(!this.isLoggedIn()) {
+    } 
+
+    if(!this.isLoggedIn()) {
+      this.tokenRefreshedSource.next(false);
+      this.clearTokens();
+      return EMPTY;
+    } 
+
+    this.refreshTokenInProgress = true;
+    return this.tryRefreshToken().pipe(
+      tap(() => {
+        this.refreshTokenInProgress = false;
+        this.tokenRefreshedSource.next(true);
+      }),
+      catchError((_err) => {
         this.tokenRefreshedSource.next(false);
+        this.refreshTokenInProgress = false;
         this.clearTokens();
-        return EMPTY;
-      } else {
-        this.refreshTokenInProgress = true;
-        return this.tryRefreshToken().pipe(
-          tap(() => {
-            this.refreshTokenInProgress = false;
-            this.tokenRefreshedSource.next(true);
-          }),
-          catchError((_err) => {
-            this.tokenRefreshedSource.next(false);
-            this.refreshTokenInProgress = false;
-            this.clearTokens();
-            return throwError(() => new Error('Session expired, please log in again.'));
-          })
-        );
-      }
-    }
+        return throwError(() => new Error('Session expired, please log in again.'));
+      })
+    );
   }
 
   private handleResponseError(error: HttpErrorResponse, request?: HttpRequest<any>, next?: HttpHandler) {
     if(error.status === 401) {
+      if (error.url?.includes('/auth/token/refresh')) {
+        this.clearTokens()
+        this.router.navigate(['/sign-in'])
+      }
+
       return this.refreshToken().pipe(
         switchMap(() => {
           if(request !== undefined && next !== undefined) {
             const httpRequest = this.calculateRequestHeader(request);
-            return next.handle(httpRequest)
+            return next.handle(httpRequest);
           }
           return EMPTY;
         })
