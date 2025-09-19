@@ -1,14 +1,14 @@
 import mongoose, { Schema } from "mongoose";
 import { Workout } from "./workouts.types";
 
-const SetSchema = new mongoose.Schema(
+export const SetSchema = new mongoose.Schema(
   {
     weight: { type: Number, required: true },
     reps: { type: Number, required: true },
   },
 );
 
-const ExerciseSchema = new mongoose.Schema(
+export const ExerciseSchema = new mongoose.Schema(
   {
     name: { type: String, required: true },
     sets: { type: [SetSchema], required: true },
