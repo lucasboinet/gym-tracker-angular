@@ -31,7 +31,7 @@ export const appConfig: ApplicationConfig = {
             }
         }
     }),
-    provideServiceWorker('ngsw-worker.js', {
+    provideServiceWorker('service-worker.js', {
       enabled: !isDevMode(),
     }),
     provideAppInitializer(() => {

@@ -33,6 +33,11 @@ export class UpdateBannerComponent implements OnInit, OnDestroy {
   }
 
   dismissUpdate() {
+    this.isVisible = false;
     this.swUpdateService.dismissUpdate();
+  }
+
+  get visibilityClass() {
+    return this.isVisible ? 'visible' : ''
   }
 }
