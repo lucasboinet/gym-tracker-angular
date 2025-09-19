@@ -103,7 +103,6 @@ export class AuthService implements HttpInterceptor {
 
   refreshToken(): Observable<any> {
     if (this.refreshTokenInProgress) {
-      console.log("Refresh token in progress");
       return new Observable(observer => {
         this.tokenRefreshed$.subscribe((refreshed) => {
           if(refreshed) {
@@ -142,12 +141,12 @@ export class AuthService implements HttpInterceptor {
       return this.refreshToken().pipe(
         switchMap(() => {
           if(request !== undefined && next !== undefined) {
-            let httpRequest = this.calculateRequestHeader(request);
-            return next.handle(httpRequest);
+            const httpRequest = this.calculateRequestHeader(request);
+            return next.handle(httpRequest)
           }
           return EMPTY;
         })
-      );
+      )
     } else {
       let errorMessage = 'An unknown error occurred!';
       if (error.error instanceof ErrorEvent) {

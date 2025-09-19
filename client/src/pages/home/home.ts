@@ -133,10 +133,7 @@ export class HomePage implements OnInit {
     if (exerciseIndex === -1) return;
 
     const lastSet = this.exercises[exerciseIndex].sets.slice(-1)[0];
-    const newSet = { 
-      reps: lastSet?.reps || 0, 
-      weight: lastSet?.weight || 0 
-    };
+    const newSet = { ...lastSet };
 
     this.exercises = this.exercises.map(exercise => {
       if (exercise._id === exerciseId) {
