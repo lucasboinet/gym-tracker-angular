@@ -7,12 +7,14 @@
   color: white;
   z-index: 9999;
   opacity: 0;
-  transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateY(-100%);
+  transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 .update-banner.visible {
   opacity: 1;
+  transform: translateY(0);
 }
 
 .banner-content {
