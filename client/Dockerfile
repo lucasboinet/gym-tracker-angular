@@ -13,7 +13,7 @@ RUN --mount=type=cache,target=/root/.npm npm ci
 
 COPY . .
 
-RUN npm run build 
+RUN npm run build:prod
 
 
 FROM nginxinc/nginx-unprivileged:${NGINX_VERSION} AS runner
