@@ -16,14 +16,17 @@ COPY . .
 RUN npm run build:prod
 
 
-FROM nginxinc/nginx-unprivileged:${NGINX_VERSION} AS runner
+FROM node:20-alpine AS runtime
 
-USER nginx
+WORKDIR /app
 
-COPY nginx.conf /etc/nginx/nginx.conf
+COPY --from=build /app/dist /app/dist
+COPY --from=build /app/package*.json ./
 
-COPY --chown=nginx:nginx --from=builder /app/dist/*/browser /usr/share/nginx/html
+# Install only production dependencies
+RUN npm ci --omit=dev
 
+# Expose the SSR server port
 EXPOSE 4000
 
 CMD ["node", "dist/gym-tracker/server/server.mjs"]
