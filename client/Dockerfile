@@ -16,7 +16,7 @@ COPY . .
 RUN npm run build:prod
 
 
-FROM node:20-alpine AS runtime
+FROM node:${NODE_VERSION} AS runner
 
 WORKDIR /app
 
