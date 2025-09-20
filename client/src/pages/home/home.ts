@@ -30,7 +30,6 @@ import { MenuBar } from '../../components/menu/menu';
     NoActiveWorkout,
     MenuBar,
   ],
-  providers: [MessageService, ConfirmationService],
   templateUrl: './home.html',
   styleUrls: ['./home.css']
 })
@@ -256,7 +255,9 @@ export class HomePage implements OnInit {
   }
 
   cancelWorkout() {
+    console.log('Cancelling workout...');
     if (!this.currentWorkout) return;
+    console.log('Cancelling workout', this.currentWorkout._id);
 
     this.gymService.deleteWorkout(this.currentWorkout._id!).subscribe({
       next: () => {
