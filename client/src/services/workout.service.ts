@@ -1,13 +1,16 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { Workout } from '../shared/types/Workout';
 import { Observable } from 'rxjs';
 import { environment } from '../environments/environment';
 import { AuthService, HttpMethod } from './auth.service';
+import { ExerciseType } from '../shared/types/Exercise';
 
 @Injectable({
   providedIn: 'root'
 })
 export class WorkoutService {
+  workouts = signal<Workout[]>([]);
+
   constructor(
     private auth: AuthService,
   ) {}

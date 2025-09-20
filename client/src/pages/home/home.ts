@@ -13,7 +13,6 @@ import { Workout } from '../../shared/types/Workout';
 import { ExerciseType } from '../../shared/types/Exercise';
 import { WorkoutService } from '../../services/workout.service';
 import { NoActiveWorkout } from '../../components/no-active-workout/no-active-workout';
-import { MenuBar } from '../../components/menu/menu';
 
 @Component({
   selector: 'home-page',
@@ -28,18 +27,15 @@ import { MenuBar } from '../../components/menu/menu';
     ConfirmDialogModule, 
     FormsModule,
     NoActiveWorkout,
-    MenuBar,
   ],
   templateUrl: './home.html',
   styleUrls: ['./home.css']
 })
 export class HomePage implements OnInit {
-  workouts: Workout[] = [];
   currentWorkout: Workout | null = null;
   exercises: ExerciseType[] = [];
   
   showAddExercise = false;
-  showWorkoutHistory = false;
   newExerciseName = '';
   
   commonExercises = [
@@ -53,27 +49,10 @@ export class HomePage implements OnInit {
     private gymService: WorkoutService,
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
-    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit() {
-    this.loadWorkouts();
     this.loadCurrentWorkout();
-  }
-
-  async loadWorkouts() {
-    try {
-      this.gymService.getWorkouts().subscribe({
-        next: (data) => {
-          this.workouts = data.sort((a, b) => 
-            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-          );
-          this.cdr.markForCheck();
-        }
-      });
-    } catch (error) {
-      this.showToast('error', 'Error', 'Failed to load workouts');
-    }
   }
 
   async loadCurrentWorkout() {
@@ -234,7 +213,11 @@ export class HomePage implements OnInit {
       next: () => {
         this.currentWorkout = null;
         this.exercises = [];
-        this.loadWorkouts();
+        
+        const workoutIndex = this.gymService.workouts().findIndex(w => w._id === completedWorkout._id);
+        if (workoutIndex !== -1) {
+          this.gymService.workouts()[workoutIndex] = completedWorkout;
+        }
         
         this.showToast('success', 'Workout Complete! 🎉', 'Amazing job! Keep it up!');
       },

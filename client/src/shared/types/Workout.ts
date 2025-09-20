@@ -6,4 +6,6 @@ export type Workout = {
   startTime: string,
   endTime?: string,
   exercises: ExerciseType[],
+  updatedAt?: Date,
+  userId?: string
 }
