@@ -29,9 +29,13 @@ export class SwUpdateService {
   }
 
   async activateUpdate(): Promise<void> {
-    return this.swUpdate.activateUpdate().then(() => {
-      document.location.reload();
-    });
+    if (this.swUpdate.isEnabled) {
+      return this.swUpdate.activateUpdate()
+        .then(() => {
+          document.location.reload();
+        })
+        .catch(() => console.warn('No update available'));
+    }
   }
 
   dismissUpdate(): void {
