@@ -1,7 +1,5 @@
-// update-banner.component.ts
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Subscription } from 'rxjs';
 import { SwUpdateService } from '../../services/worker.service';
 
 @Component({
@@ -10,34 +8,14 @@ import { SwUpdateService } from '../../services/worker.service';
   templateUrl: './update-banner.html',
   styleUrls: ['./update-banner.css']
 })
-export class UpdateBannerComponent implements OnInit, OnDestroy {
-  isVisible = false;
-  private subscription = new Subscription();
+export class UpdateBannerComponent {
+  updateService = inject(SwUpdateService);
 
-  constructor(private swUpdateService: SwUpdateService) {}
-
-  ngOnInit() {
-    this.subscription.add(
-      this.swUpdateService.updateBannerVisible.subscribe(visible => {
-        this.isVisible = visible;
-      })
-    );
+  reload() {
+    this.updateService.activateUpdate();
   }
 
-  ngOnDestroy() {
-    this.subscription.unsubscribe();
-  }
-
-  updateApp() {
-    this.swUpdateService.activateUpdate();
-  }
-
-  dismissUpdate() {
-    this.isVisible = false;
-    this.swUpdateService.dismissUpdate();
-  }
-
-  get visibilityClass() {
-    return this.isVisible ? 'visible' : ''
+  dismiss() {
+    (this.updateService as any).updateAvailableSubject.next(false);
   }
 }
