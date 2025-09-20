@@ -56,18 +56,14 @@ export class HomePage implements OnInit {
   }
 
   async loadCurrentWorkout() {
-    try {
-      this.gymService.getCurrentWorkout().subscribe({
-        next: (data) => {
-          if (data) {
-            this.currentWorkout = data;
-            this.exercises = data.exercises || [];
-          }
+    this.gymService.getCurrentWorkout().subscribe({
+      next: (data) => {
+        if (data) {
+          this.currentWorkout = data;
+          this.exercises = data.exercises || [];
         }
-      });
-    } catch (error) {
-      console.error('Error loading current workout:', error);
-    }
+      }
+    });
   }
 
   async startWorkout() {
