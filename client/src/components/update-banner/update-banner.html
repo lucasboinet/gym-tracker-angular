@@ -1,7 +1,12 @@
-@if (updateService.updateAvailable$ | async) {
-<div class="update-banner">
-  <span>A new version of the app is available.</span>
-  <button (click)="reload()">Update</button>
-  <button (click)="dismiss()">Later</button>
+<!-- @if (updateService.updateAvailable$ | async) { -->
+<div class="bg-primary p-3 text-sm flex justify-between items-center gap-1">
+  <div class="flex items-center gap-2">
+    <i class="pi pi-sync" style="font-size: 15px"></i>
+    <span>A new version of the app is available.</span>
+  </div>
+  <div class="flex items-center gap-2">
+    <button class="bg-primary-900 py-1 px-2 rounded-sm cursor-pointer" (click)="reload()">Update</button>
+    <button class="bg-white text-primary py-1 px-2 rounded-sm cursor-pointer" (click)="dismiss()">Later</button>
+  </div>
 </div>
-}
+<!-- } -->
