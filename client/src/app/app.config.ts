@@ -32,8 +32,7 @@ export const appConfig: ApplicationConfig = {
         }
     }),
     provideServiceWorker('service-worker.js', {
-      // enabled: !isDevMode(),
-      enabled: true,
+      enabled: !isDevMode(),
       registrationStrategy: 'registerWhenStable:30000'
     }),
     provideAppInitializer(() => {

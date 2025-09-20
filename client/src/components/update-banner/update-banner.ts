@@ -16,6 +16,6 @@ export class UpdateBannerComponent {
   }
 
   dismiss() {
-    (this.updateService as any).updateAvailableSubject.next(false);
+    this.updateService.dismissUpdate();
   }
 }

@@ -6,20 +6,17 @@ const DATA_CACHE_NAME = 'data-cache-v1.0.0';
 const FILES_TO_CACHE = [
   '/',
   '/index.html',
-  '/manifest.json',
-  '/assets/icons/icon-72x72.png',
-  '/assets/icons/icon-96x96.png',
-  '/assets/icons/icon-128x128.png',
-  '/assets/icons/icon-144x144.png',
-  '/assets/icons/icon-152x152.png',
-  '/assets/icons/icon-192x192.png',
-  '/assets/icons/icon-384x384.png',
-  '/assets/icons/icon-512x512.png',
-  // Add your Angular build files here
-  '/main.js',
-  '/polyfills.js',
-  '/runtime.js',
-  '/styles.css'
+  '/sign-in/index.html',
+  '/sign-up/index.html',
+  '/manifest.webmanifest',
+  '/icons/icon-72x72.png',
+  '/icons/icon-96x96.png',
+  '/icons/icon-128x128.png',
+  '/icons/icon-144x144.png',
+  '/icons/icon-152x152.png',
+  '/icons/icon-192x192.png',
+  '/icons/icon-384x384.png',
+  '/icons/icon-512x512.png',
 ];
 
 // Install event - cache files
@@ -112,17 +109,3 @@ function notifyClientsAboutUpdate() {
     });
   });
 }
-
-// Check for updates periodically
-setInterval(() => {
-  fetch('/version.json')
-    .then(response => response.json())
-    .then(data => {
-      if (data.version !== CACHE_NAME) {
-        notifyClientsAboutUpdate();
-      }
-    })
-    .catch(error => {
-      console.log('[ServiceWorker] Version check failed:', error);
-    });
-}, 60000); // Check every minute
