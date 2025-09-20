@@ -1,126 +1,123 @@
-<main class="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
-  <!-- Header -->
-  <div class="px-4 pb-20">
-    <!-- Start Screen -->
-    @if (!currentWorkout) {
-    <no-active-workout (startWorkout)="startWorkout()"></no-active-workout>
-    }
+<div class="px-4 pb-20">
+  <!-- Start Screen -->
+  @if (!currentWorkout) {
+  <no-active-workout (startWorkout)="startWorkout()"></no-active-workout>
+  }
 
-    <!-- Active Workout -->
-    @if (currentWorkout) {
-    <div class="py-4 space-y-4">
-      <!-- Workout Info Card -->
-      <div class="bg-white rounded-xl p-4 shadow-sm border">
-        <div class="flex items-center justify-between mb-2">
-          <h3 class="font-semibold text-gray-900">Today's Workout</h3>
-          <span
-            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-            <div class="w-2 h-2 bg-green-400 rounded-full mr-1.5 animate-pulse"></div>
-            Active
-          </span>
-        </div>
-        <p class="text-sm text-gray-600">Started at {{ currentWorkout.startTime }}</p>
+  <!-- Active Workout -->
+  @if (currentWorkout) {
+  <div class="py-4 space-y-4">
+    <!-- Workout Info Card -->
+    <div class="bg-white rounded-xl p-4 shadow-sm border">
+      <div class="flex items-center justify-between mb-2">
+        <h3 class="font-semibold text-gray-900">Today's Workout</h3>
+        <span
+          class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+          <div class="w-2 h-2 bg-green-400 rounded-full mr-1.5 animate-pulse"></div>
+          Active
+        </span>
+      </div>
+      <p class="text-sm text-gray-600">Started at {{ currentWorkout.startTime }}</p>
+    </div>
+
+    <!-- Exercises -->
+    @for (exercise of exercises; track exercise._id) {
+    <div class="bg-white rounded-xl shadow-sm border overflow-hidden">
+      <!-- Exercise Header -->
+      <div class="px-4 py-3 bg-gray-50 border-b flex items-center justify-between">
+        <h4 class="font-semibold text-gray-900">{{ exercise.name }}</h4>
+        <p-button icon="pi pi-trash" (onClick)="removeExercise(exercise._id!)"
+          styleClass="p-button-text p-button-rounded p-button-sm p-button-danger" [text]="true">
+        </p-button>
       </div>
 
-      <!-- Exercises -->
-      @for (exercise of exercises; track exercise._id) {
-      <div class="bg-white rounded-xl shadow-sm border overflow-hidden">
-        <!-- Exercise Header -->
-        <div class="px-4 py-3 bg-gray-50 border-b flex items-center justify-between">
-          <h4 class="font-semibold text-gray-900">{{ exercise.name }}</h4>
-          <p-button icon="pi pi-trash" (onClick)="removeExercise(exercise._id!)"
-            styleClass="p-button-text p-button-rounded p-button-sm p-button-danger" [text]="true">
-          </p-button>
-        </div>
-
-        <!-- Sets -->
-        <div class="p-4 space-y-3">
-          @for (set of exercise.sets; track $index) {
-          <div class="flex items-center justify-between gap-3">
-            <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-              <span class="text-sm font-medium text-blue-600">{{ $index + 1 }}</span>
-            </div>
-
-            <div class="flex flex-col flex-1">
-              <label class="block text-xs font-medium text-gray-500 mb-1">Weight (kg)</label>
-              <p-inputNumber [(ngModel)]="set.weight"
-                (onInput)="updateSet(exercise._id!, $index, 'weight', +($event.value ?? 0))" [showButtons]="true"
-                [min]="0" [step]="1" inputStyleClass="text-center w-full" styleClass="w-full">
-              </p-inputNumber>
-            </div>
-
-            <div class="flex flex-col flex-1">
-              <label class="block text-xs font-medium text-gray-500 mb-1">Reps</label>
-              <p-inputNumber [(ngModel)]="set.reps"
-                (onInput)="updateSet(exercise._id!, $index, 'reps', +($event.value ?? 0))" [showButtons]="true"
-                [min]="0" [step]="1" inputStyleClass="text-center w-full" styleClass="w-full">
-              </p-inputNumber>
-            </div>
-
-            <p-button icon="pi pi-minus" (onClick)="removeSet(exercise._id!, $index)"
-              styleClass="p-button-rounded p-button-text p-button-danger p-button-sm" [text]="true">
-            </p-button>
+      <!-- Sets -->
+      <div class="p-4 space-y-3">
+        @for (set of exercise.sets; track $index) {
+        <div class="flex items-center justify-between gap-3">
+          <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+            <span class="text-sm font-medium text-blue-600">{{ $index + 1 }}</span>
           </div>
-          }
-        </div>
 
-        <!-- Add Set Button -->
-        <div class="px-4 pb-4">
-          <p-button label="Add Set" icon="pi pi-plus" (onClick)="addSet(exercise._id!)"
-            styleClass="w-full p-button-outlined">
+          <div class="flex flex-col flex-1">
+            <label class="block text-xs font-medium text-gray-500 mb-1">Weight (kg)</label>
+            <p-inputNumber [(ngModel)]="set.weight"
+              (onInput)="updateSet(exercise._id!, $index, 'weight', +($event.value ?? 0))" [showButtons]="true"
+              [min]="0" [step]="1" inputStyleClass="text-center w-full" styleClass="w-full">
+            </p-inputNumber>
+          </div>
+
+          <div class="flex flex-col flex-1">
+            <label class="block text-xs font-medium text-gray-500 mb-1">Reps</label>
+            <p-inputNumber [(ngModel)]="set.reps"
+              (onInput)="updateSet(exercise._id!, $index, 'reps', +($event.value ?? 0))" [showButtons]="true" [min]="0"
+              [step]="1" inputStyleClass="text-center w-full" styleClass="w-full">
+            </p-inputNumber>
+          </div>
+
+          <p-button icon="pi pi-minus" (onClick)="removeSet(exercise._id!, $index)"
+            styleClass="p-button-rounded p-button-text p-button-danger p-button-sm" [text]="true">
           </p-button>
         </div>
+        }
       </div>
-      }
 
-      <!-- Add Exercise Button -->
-      <p-button label="Add Exercise" icon="pi pi-plus" (onClick)="showAddExercise = true"
-        styleClass="w-full p-button-lg p-button-outlined">
-      </p-button>
-    </div>
-
-    <!-- Fixed Bottom Actions -->
-    <div class="fixed bottom-0 left-0 right-0 bg-white border-t p-4 flex justify-between">
-      <p-button label="Cancel" icon="pi pi-times" (onClick)="confirmCancelWorkout()"
-        styleClass="p-button-danger p-button-outlined">
-      </p-button>
-
-      <p-button label="Finish" icon="pi pi-check" (onClick)="finishWorkout()" styleClass="p-button-success">
-      </p-button>
+      <!-- Add Set Button -->
+      <div class="px-4 pb-4">
+        <p-button label="Add Set" icon="pi pi-plus" (onClick)="addSet(exercise._id!)"
+          styleClass="w-full p-button-outlined">
+        </p-button>
+      </div>
     </div>
     }
+
+    <!-- Add Exercise Button -->
+    <p-button label="Add Exercise" icon="pi pi-plus" (onClick)="showAddExercise = true"
+      styleClass="w-full p-button-lg p-button-outlined">
+    </p-button>
   </div>
 
-  <!-- Add Exercise Dialog -->
-  <p-dialog header="Add Exercise" [(visible)]="showAddExercise" [modal]="true"
-    [style]="{width: '90vw', maxWidth: '400px'}" [closable]="false">
+  <!-- Fixed Bottom Actions -->
+  <div class="fixed bottom-0 left-0 right-0 bg-white border-t p-4 flex justify-between">
+    <p-button label="Cancel" icon="pi pi-times" (onClick)="confirmCancelWorkout()"
+      styleClass="p-button-danger p-button-outlined">
+    </p-button>
 
-    <div class="space-y-4">
-      <div>
-        <label class="block text-sm font-medium text-gray-700 mb-2">Exercise Name</label>
-        <input type="text" pInputText [(ngModel)]="newExerciseName" placeholder="Enter exercise name" class="w-full">
-      </div>
+    <p-button label="Finish" icon="pi pi-check" (onClick)="finishWorkout()" styleClass="p-button-success">
+    </p-button>
+  </div>
+  }
+</div>
 
-      <div>
-        <h4 class="text-sm font-medium text-gray-700 mb-3">Quick Add:</h4>
-        <div class="grid grid-cols-2 gap-2">
-          @for (exercise of commonExercises; track exercise) {
-          <p-button [label]="exercise" (onClick)="addExercise(exercise)"
-            styleClass="p-button-outlined p-button-sm text-xs">
-          </p-button>
-          }
-        </div>
-      </div>
+<!-- Add Exercise Dialog -->
+<p-dialog header="Add Exercise" [(visible)]="showAddExercise" [modal]="true"
+  [style]="{width: '90vw', maxWidth: '400px'}" [closable]="false">
+
+  <div class="space-y-4">
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-2">Exercise Name</label>
+      <input type="text" pInputText [(ngModel)]="newExerciseName" placeholder="Enter exercise name" class="w-full">
     </div>
 
-    <ng-template pTemplate="footer">
-      <div class="flex space-x-2">
-        <p-button label="Cancel" icon="pi pi-times" (onClick)="onAddExerciseCancel()" styleClass="p-button-text flex-1">
+    <div>
+      <h4 class="text-sm font-medium text-gray-700 mb-3">Quick Add:</h4>
+      <div class="grid grid-cols-2 gap-2">
+        @for (exercise of commonExercises; track exercise) {
+        <p-button [label]="exercise" (onClick)="addExercise(exercise)"
+          styleClass="p-button-outlined p-button-sm text-xs">
         </p-button>
-        <p-button label="Add Custom" icon="pi pi-check" (onClick)="addExercise(newExerciseName)"
-          [disabled]="!newExerciseName.trim()" styleClass="flex-1">
-        </p-button>
+        }
       </div>
-    </ng-template>
-  </p-dialog>
-</main>
+    </div>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <div class="flex space-x-2">
+      <p-button label="Cancel" icon="pi pi-times" (onClick)="onAddExerciseCancel()" styleClass="p-button-text flex-1">
+      </p-button>
+      <p-button label="Add Custom" icon="pi pi-check" (onClick)="addExercise(newExerciseName)"
+        [disabled]="!newExerciseName.trim()" styleClass="flex-1">
+      </p-button>
+    </div>
+  </ng-template>
+</p-dialog>

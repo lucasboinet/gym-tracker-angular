@@ -7,6 +7,7 @@ import { UpdateBannerComponent } from "../components/update-banner/update-banner
 import { MenuBar } from "../components/menu/menu";
 import { WorkoutsHistory } from "../components/workouts-history-dialog/workouts-history-dialog";
 import { WorkoutService } from '../services/workout.service';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-root',
@@ -30,6 +31,7 @@ export class App implements OnInit {
     public workoutService: WorkoutService,
     private cdr: ChangeDetectorRef,
     private messageService: MessageService,
+    public authService: AuthService
   ) {}
 
   ngOnInit(): void {
