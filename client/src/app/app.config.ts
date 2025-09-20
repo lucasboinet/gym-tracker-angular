@@ -32,7 +32,9 @@ export const appConfig: ApplicationConfig = {
         }
     }),
     provideServiceWorker('service-worker.js', {
-      enabled: !isDevMode(),
+      // enabled: !isDevMode(),
+      enabled: true,
+      registrationStrategy: 'registerWhenStable:30000'
     }),
     provideAppInitializer(() => {
       const auth = inject(UserService);
