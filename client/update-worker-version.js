@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const swPath = path.join(__dirname, 'dist/gym-tracker/service-worker.js');
+const swPath = path.join(__dirname, 'dist/gym-tracker/browser/service-worker.js');
 const packageJson = require('./package.json');
 const version = `v${packageJson.version}-${Date.now()}`;
 
