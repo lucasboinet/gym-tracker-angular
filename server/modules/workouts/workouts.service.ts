@@ -28,6 +28,6 @@ export function deleteById(id: Workout['_id']) {
   return WorkoutModel.findByIdAndDelete(id);
 }
 
-export function getActive() {
-  return WorkoutModel.findOne({ endTime: { $exists: false } });
+export function getActive(userId: string) {
+  return WorkoutModel.findOne({ userId, endTime: { $exists: false } });
 }

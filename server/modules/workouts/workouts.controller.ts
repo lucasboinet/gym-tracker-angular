@@ -26,6 +26,13 @@ export async function createWorkout(req: AuthenticatedRequest, res: Response, ne
       ...req.body,
       userId: req.user!._id
     }
+
+    const activeWorkout = await workoutService.getActive(req.user!._id);
+
+    if (!!activeWorkout && !payload.endTime) {
+      return res.status(400).json({ message: 'An active workout already exists. Please end the current workout before starting a new one.' });
+    }
+
     const workout = await workoutService.create(payload); 
     res.status(201).json(workout);
   } catch(error) {
@@ -44,7 +51,7 @@ export async function deleteWorkout(req: AuthenticatedRequest, res: Response, ne
 
 export async function getCurrentWorkout(req: AuthenticatedRequest, res: Response, next: NextFunction) {
   try {
-    const workout = await workoutService.getActive();
+    const workout = await workoutService.getActive(req.user!._id);
     res.json(workout);
   } catch(error) {
     next(error);
