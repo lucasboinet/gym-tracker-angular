@@ -19,8 +19,11 @@ FROM node:${NODE_VERSION} AS runner
 
 WORKDIR /app
 
-COPY --from=build /app/dist /app/dist
-COPY --from=build /app/package*.json ./
+COPY --from=builder /app/dist /app/dist
+COPY --from=builder /app/package*.json ./
+
+# Install only production dependencies
+RUN npm ci --omit=dev
 
 # Expose the SSR server port
 EXPOSE 4000
