@@ -1,5 +1,5 @@
-<p-dialog header="Workout History" [(visible)]="open" [modal]="true" [style]="{width: '95vw', height: '90vh'}"
-  [maximizable]="false">
+<p-dialog header="Workout History" [(visible)]="open" (visibleChange)="handleVisibleChange($event)" [modal]="true"
+  [style]="{width: '95vw', height: '90vh'}" [maximizable]="false" [draggable]="false" [resizable]="false">
 
   <div class="h-full overflow-y-auto">
     @if (workouts.length === 0) {

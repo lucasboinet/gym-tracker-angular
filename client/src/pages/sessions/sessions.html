@@ -1,12 +1,64 @@
 <div>
-  <div class="flex items-center justify-between py-4 px-3">
-    <h1 class="text-black">Sessions</h1>
+  <div class="px-4 pb-20">
 
-    <p-button label="Create" icon="pi pi-history" styleClass="p-button p-button-sm"
-      (onClick)="openCreateDialog = true"></p-button>
+    <!-- My Sessions Section -->
+    <div class="py-4">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-lg font-semibold text-gray-900">My Sessions</h2>
+        @if (sessions.length > 0) {
+        <button
+          class="bg-blue-600 hover:bg-blue-700 cursor-pointer text-white py-2 px-3 rounded-md font-medium transition-colors text-sm flex items-center"
+          (click)="openCreateDialog = true">
+          <i class="pi pi-history mr-2"></i>
+          Create
+        </button>
+        }
+      </div>
+
+      <div class="space-y-4">
+
+        <!-- Session Card 1 -->
+        @for(session of sessions; track session._id) {
+        <session-card [session]="session"></session-card>
+        }
+
+      </div>
+
+      <!-- Empty State (hidden by default) -->
+      @if (sessions.length === 0) {
+      <div class="py-12 text-center">
+        <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <i class="pi pi-plus text-gray-400 text-xl"></i>
+        </div>
+        <h3 class="text-lg font-medium text-gray-900 mb-2">No workout sessions yet</h3>
+        <p class="text-gray-500 mb-6">Create your first workout template to get started</p>
+        <button
+          class="bg-blue-600 hover:bg-blue-700 text-white px-6 cursor-pointer py-3 rounded-lg font-medium transition-colors"
+          (click)="openCreateDialog = true">
+          <i class="pi pi-plus mr-2"></i>
+          Create your first session
+        </button>
+      </div>
+      }
+    </div>
   </div>
 
-  <div class="flex items-center justify-center h-full pt-6">
-    <span class="text-black text-xl font-bold">Coming soon</span>
-  </div>
+  <create-session-dialog [(open)]="openCreateDialog" (openChange)="openCreateDialog = $event"></create-session-dialog>
+
+  <!-- Context Menu -->
+  <!-- <div class="fixed bg-white rounded-lg shadow-lg border py-2 z-50 hidden min-w-40" id="context-menu">
+    <button class="w-full px-4 py-2 text-left hover:bg-gray-100 transition-colors text-gray-700 flex items-center">
+      <i class="pi pi-pencil mr-3 text-gray-400"></i>Edit Session
+    </button>
+    <button class="w-full px-4 py-2 text-left hover:bg-gray-100 transition-colors text-gray-700 flex items-center">
+      <i class="pi pi-copy mr-3 text-gray-400"></i>Duplicate
+    </button>
+    <button class="w-full px-4 py-2 text-left hover:bg-gray-100 transition-colors text-gray-700 flex items-center">
+      <i class="pi pi-share-alt mr-3 text-gray-400"></i>Share
+    </button>
+    <hr class="my-2 border-gray-200">
+    <button class="w-full px-4 py-2 text-left hover:bg-gray-100 transition-colors text-red-600 flex items-center">
+      <i class="pi pi-trash mr-3 text-red-400"></i>Delete
+    </button>
+  </div> -->
 </div>

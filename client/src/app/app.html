@@ -8,7 +8,8 @@
   @if (authService.isLoggedIn()) {
   <menu-bar (historyOpen)="showWorkoutHistory = true" />
 
-  <workouts-history-dialog [open]="showWorkoutHistory" [workouts]="workoutService.workouts()" />
+  <workouts-history-dialog [(open)]="showWorkoutHistory" [workouts]="workoutService.workouts()"
+    (openChange)="showWorkoutHistory = $event" />
   }
 
   <!-- Toast Messages -->
