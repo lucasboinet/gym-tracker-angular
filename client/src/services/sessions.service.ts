@@ -1,14 +1,22 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../environments/environment';
 import { Session } from '../shared/types/Session';
 import { AuthService, HttpMethod } from './auth.service';
+
+interface SessionPayload {
+  name: Session['name'];
+  exercises: Session['exercises'];
+  _id?: Session['_id'];
+}
 
 @Injectable({
   providedIn: 'root',
 })
 export class SessionService {
   private auth = inject(AuthService);
+
+  sessions = signal<Session[]>([]);
 
   getSessions(): Observable<Session[]> {
     return (
@@ -26,23 +34,23 @@ export class SessionService {
     });
   }
 
-  createSession(workout: Session): Observable<Session> {
+  createSession(session: SessionPayload): Observable<Session> {
     return (
       this.auth.request<Session>({
         method: HttpMethod.POST,
         path: `${environment.apiUrl}/sessions`,
-        body: workout,
-      }) || workout
+        body: session,
+      }) || session
     );
   }
 
-  updateSession(workout: Session): Observable<Session> {
+  updateSession(session: SessionPayload): Observable<Session> {
     return (
       this.auth.request<Session>({
         method: HttpMethod.PUT,
-        path: `${environment.apiUrl}/sessions/${workout._id}`,
-        body: workout,
-      }) || workout
+        path: `${environment.apiUrl}/sessions/${session._id}`,
+        body: session,
+      }) || session
     );
   }
 }
