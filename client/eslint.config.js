@@ -28,7 +28,12 @@ module.exports = tseslint.config(
           style: 'camelCase',
         },
       ],
-      'prettier/prettier': 'error', // Enforce Prettier formatting as lint errors
+      'prettier/prettier': [
+        'error',
+        {
+          "endOfLine": "auto"
+        }
+      ], // Enforce Prettier formatting as lint errors
       '@typescript-eslint/no-explicit-any': 'warn',
     },
   },

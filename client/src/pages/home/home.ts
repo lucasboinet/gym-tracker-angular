@@ -33,9 +33,6 @@ import { Workout } from '../../shared/types/Workout';
   templateUrl: './home.html',
 })
 export class HomePage implements OnInit {
-  currentWorkout: Workout | null = null;
-  exercises: ExerciseType[] = [];
-
   showAddExercise = false;
 
   gymService = inject(WorkoutService);
@@ -50,8 +47,8 @@ export class HomePage implements OnInit {
     this.gymService.getCurrentWorkout().subscribe({
       next: (data) => {
         if (data) {
-          this.currentWorkout = data;
-          this.exercises = data.exercises || [];
+          this.gymService.currentWorkout.set(data);
+          this.gymService.exercises.set(data.exercises || []);
         }
       },
     });
@@ -70,8 +67,8 @@ export class HomePage implements OnInit {
 
     this.gymService.createWorkout(workout).subscribe({
       next: (data) => {
-        this.currentWorkout = data;
-        this.exercises = [];
+        this.gymService.currentWorkout.set(data);
+        this.gymService.exercises.set([]);
         this.showToast('success', 'Workout Started', 'Ready to crush your goals! 💪');
       },
       error: () => {
@@ -88,54 +85,60 @@ export class HomePage implements OnInit {
       sets: [{ reps: 0, weight: 0 }],
     };
 
-    this.exercises = [...this.exercises, exercise];
+    this.gymService.exercises.set([...this.gymService.exercises(), exercise]);
     this.saveCurrentExercises();
     this.showAddExercise = false;
   }
 
   addSet(exerciseId: string) {
-    const exerciseIndex = this.exercises.findIndex((ex) => ex._id === exerciseId);
+    const exerciseIndex = this.gymService.exercises().findIndex((ex) => ex._id === exerciseId);
     if (exerciseIndex === -1) return;
 
-    const lastSet = this.exercises[exerciseIndex].sets.slice(-1)[0];
+    const lastSet = this.gymService.exercises()[exerciseIndex].sets.slice(-1)[0];
     const newSet = { ...lastSet };
 
-    this.exercises = this.exercises.map((exercise) => {
-      if (exercise._id === exerciseId) {
-        return {
-          ...exercise,
-          sets: [...exercise.sets, newSet],
-        };
-      }
-      return exercise;
-    });
+    this.gymService.exercises.set(
+      this.gymService.exercises().map((exercise) => {
+        if (exercise._id === exerciseId) {
+          return {
+            ...exercise,
+            sets: [...exercise.sets, newSet],
+          };
+        }
+        return exercise;
+      }),
+    );
 
     this.saveCurrentExercises();
   }
 
   updateSet(exerciseId: string, setIndex: number, field: 'reps' | 'weight', value: number) {
-    this.exercises = this.exercises.map((exercise) => {
-      if (exercise._id === exerciseId) {
-        const updatedSets = [...exercise.sets];
-        updatedSets[setIndex] = {
-          ...updatedSets[setIndex],
-          [field]: Math.max(0, value), // Ensure non-negative values
-        };
-        return { ...exercise, sets: updatedSets };
-      }
-      return exercise;
-    });
+    this.gymService.exercises.set(
+      this.gymService.exercises().map((exercise) => {
+        if (exercise._id === exerciseId) {
+          const updatedSets = [...exercise.sets];
+          updatedSets[setIndex] = {
+            ...updatedSets[setIndex],
+            [field]: Math.max(0, value), // Ensure non-negative values
+          };
+          return { ...exercise, sets: updatedSets };
+        }
+        return exercise;
+      }),
+    );
     this.saveCurrentExercises();
   }
 
   removeSet(exerciseId: string, setIndex: number) {
-    this.exercises = this.exercises.map((exercise) => {
-      if (exercise._id === exerciseId && exercise.sets.length > 1) {
-        const updatedSets = exercise.sets.filter((_, index) => index !== setIndex);
-        return { ...exercise, sets: updatedSets };
-      }
-      return exercise;
-    });
+    this.gymService.exercises.set(
+      this.gymService.exercises().map((exercise) => {
+        if (exercise._id === exerciseId && exercise.sets.length > 1) {
+          const updatedSets = exercise.sets.filter((_, index) => index !== setIndex);
+          return { ...exercise, sets: updatedSets };
+        }
+        return exercise;
+      }),
+    );
     this.saveCurrentExercises();
   }
 
@@ -146,31 +149,36 @@ export class HomePage implements OnInit {
       icon: 'pi pi-exclamation-triangle',
       acceptButtonStyleClass: 'p-button-danger',
       accept: () => {
-        this.exercises = this.exercises.filter((exercise) => exercise._id !== exerciseId);
+        this.gymService.exercises.set(
+          this.gymService.exercises().filter((exercise) => exercise._id !== exerciseId),
+        );
         this.saveCurrentExercises();
       },
     });
   }
 
   async saveCurrentExercises() {
-    if (this.currentWorkout) {
-      this.currentWorkout.exercises = this.exercises;
+    if (this.gymService.currentWorkout()) {
+      this.gymService.currentWorkout.set({
+        ...this.gymService.currentWorkout()!,
+        exercises: this.gymService.exercises(),
+      });
       this.gymService
-        .saveCurrentWorkout(this.currentWorkout)
+        .saveCurrentWorkout(this.gymService.currentWorkout()!)
         .subscribe({ error: (err) => console.error(err) });
     }
   }
 
   async finishWorkout() {
-    if (this.exercises.length === 0) {
+    if (this.gymService.exercises().length === 0) {
       this.showToast('warn', 'No Exercises', 'Add some exercises before finishing!');
       return;
     }
 
     // Check if any exercises have incomplete sets
-    const hasIncompleteExercises = this.exercises.some((exercise) =>
-      exercise.sets.some((set) => set.reps === 0 && set.weight === 0),
-    );
+    const hasIncompleteExercises = this.gymService
+      .exercises()
+      .some((exercise) => exercise.sets.some((set) => set.reps === 0 && set.weight === 0));
 
     if (hasIncompleteExercises) {
       this.confirmationService.confirm({
@@ -185,11 +193,11 @@ export class HomePage implements OnInit {
   }
 
   private completeWorkout() {
-    if (!this.currentWorkout) return;
+    if (!this.gymService.currentWorkout()) return;
 
     const completedWorkout: Workout = {
-      ...this.currentWorkout,
-      exercises: this.exercises,
+      ...this.gymService.currentWorkout()!,
+      exercises: this.gymService.exercises(),
       endTime: new Date().toLocaleTimeString('en-US', {
         hour: '2-digit',
         minute: '2-digit',
@@ -199,15 +207,14 @@ export class HomePage implements OnInit {
 
     this.gymService.saveWorkout(completedWorkout).subscribe({
       next: () => {
-        this.currentWorkout = null;
-        this.exercises = [];
+        this.gymService.currentWorkout.set(null);
+        this.gymService.exercises.set([]);
 
-        const workoutIndex = this.gymService
-          .workouts()
-          .findIndex((w) => w._id === completedWorkout._id);
-        if (workoutIndex !== -1) {
-          this.gymService.workouts()[workoutIndex] = completedWorkout;
-        }
+        this.gymService.getWorkouts().subscribe({
+          next: (workouts) => {
+            this.gymService.workouts.set(workouts);
+          },
+        });
 
         this.showToast('success', 'Workout Complete! 🎉', 'Amazing job! Keep it up!');
       },
@@ -228,12 +235,12 @@ export class HomePage implements OnInit {
   }
 
   cancelWorkout() {
-    if (!this.currentWorkout) return;
+    if (!this.gymService.currentWorkout()) return;
 
-    this.gymService.deleteWorkout(this.currentWorkout._id!).subscribe({
+    this.gymService.deleteWorkout(this.gymService.currentWorkout()!._id!).subscribe({
       next: () => {
-        this.currentWorkout = null;
-        this.exercises = [];
+        this.gymService.currentWorkout.set(null);
+        this.gymService.exercises.set([]);
         this.showToast('info', 'Workout Cancelled', 'No worries, try again when ready!');
       },
       error: () => {
@@ -262,13 +269,15 @@ export class HomePage implements OnInit {
 
   // Helper method for getting workout stats
   getWorkoutStats() {
-    if (!this.exercises.length) return { exercises: 0, sets: 0, volume: 0 };
+    if (!this.gymService.exercises().length) return { exercises: 0, sets: 0, volume: 0 };
 
-    const totalSets = this.exercises.reduce((total, ex) => total + ex.sets.length, 0);
-    const totalVolume = this.exercises.reduce((total, ex) => total + this.getTotalVolume(ex), 0);
+    const totalSets = this.gymService.exercises().reduce((total, ex) => total + ex.sets.length, 0);
+    const totalVolume = this.gymService
+      .exercises()
+      .reduce((total, ex) => total + this.getTotalVolume(ex), 0);
 
     return {
-      exercises: this.exercises.length,
+      exercises: this.gymService.exercises().length,
       sets: totalSets,
       volume: totalVolume,
     };

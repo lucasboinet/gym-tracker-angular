@@ -3,7 +3,6 @@ import { ButtonModule } from 'primeng/button';
 import { CreateSessionDialog } from '../../components/create-session-dialog/create-session-dialog';
 import { SessionCard } from '../../components/session-card/session-card';
 import { SessionService } from '../../services/sessions.service';
-import { Session } from '../../shared/types/Session';
 
 @Component({
   selector: 'sessions-page',
@@ -13,7 +12,6 @@ import { Session } from '../../shared/types/Session';
 })
 export class SessionsPage implements OnInit {
   openCreateDialog = false;
-  sessions: Session[] = [];
 
   sessionService = inject(SessionService);
 
@@ -24,7 +22,7 @@ export class SessionsPage implements OnInit {
   loadSessions() {
     this.sessionService.getSessions().subscribe({
       next: (sessions) => {
-        this.sessions = sessions;
+        this.sessionService.sessions.set(sessions);
       },
     });
   }

@@ -1,11 +1,11 @@
 <div class="px-4 pb-20">
   <!-- Start Screen -->
-  @if (!currentWorkout) {
+  @if (!this.gymService.currentWorkout()) {
     <no-active-workout (startWorkout)="startWorkout()"></no-active-workout>
   }
 
   <!-- Active Workout -->
-  @if (currentWorkout) {
+  @if (this.gymService.currentWorkout()) {
     <div class="py-4 space-y-4">
       <!-- Workout Info Card -->
       <div class="bg-white rounded-xl p-4 shadow-sm border">
@@ -18,11 +18,13 @@
             Active
           </span>
         </div>
-        <p class="text-sm text-gray-600">Started at {{ currentWorkout.startTime }}</p>
+        <p class="text-sm text-gray-600">
+          Started at {{ this.gymService.currentWorkout()!.startTime }}
+        </p>
       </div>
 
       <!-- Exercises -->
-      @for (exercise of exercises; track exercise._id) {
+      @for (exercise of this.gymService.exercises(); track exercise._id) {
         <div class="bg-white rounded-xl shadow-sm border overflow-hidden">
           <!-- Exercise Header -->
           <div class="px-4 py-3 bg-gray-50 border-b flex items-center justify-between">

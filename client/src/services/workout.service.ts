@@ -1,6 +1,7 @@
 import { inject, Injectable, signal } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../environments/environment';
+import { ExerciseType } from '../shared/types/Exercise';
 import { Workout } from '../shared/types/Workout';
 import { AuthService, HttpMethod } from './auth.service';
 
@@ -11,6 +12,8 @@ export class WorkoutService {
   private auth = inject(AuthService);
 
   workouts = signal<Workout[]>([]);
+  currentWorkout = signal<Workout | null>(null);
+  exercises = signal<ExerciseType[]>([]);
 
   getWorkouts(): Observable<Workout[]> {
     return (
@@ -38,7 +41,7 @@ export class WorkoutService {
     );
   }
 
-  createWorkout(workout: Workout): Observable<Workout> {
+  createWorkout(workout: Partial<Workout>): Observable<Workout> {
     return (
       this.auth.request<Workout>({
         method: HttpMethod.POST,

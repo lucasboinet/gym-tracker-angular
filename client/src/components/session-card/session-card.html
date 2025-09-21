@@ -7,11 +7,12 @@
         </div>
         <div>
           <h3 class="font-semibold text-gray-900">{{ session().name }}</h3>
-          <p class="text-sm text-gray-500">Created 2 days ago</p>
+          <p class="text-sm text-gray-500">Created {{ durationFromCreatedAt() }}</p>
         </div>
       </div>
       <button
         class="w-8 h-8 flex items-center justify-center hover:bg-gray-100 rounded-lg transition-colors"
+        (click)="cm.toggle($event)"
       >
         <i class="pi pi-ellipsis-v text-gray-400"></i>
       </button>
@@ -22,10 +23,6 @@
         <i class="pi pi-list mr-1"></i>
         {{ session().exercises.length }} exercises
       </span>
-      <!-- <span class="flex items-center">
-        <i class="pi pi-clock mr-1"></i>
-        ~45 min
-      </span> -->
     </div>
 
     <div class="flex flex-wrap gap-2 mb-4">
@@ -46,15 +43,13 @@
     <div class="flex items-center space-x-3">
       <button
         class="flex-1 bg-blue-600 hover:bg-blue-700 cursor-pointer text-white py-2.5 px-4 rounded-lg font-medium transition-colors"
+        (click)="onStartSession()"
       >
         <i class="pi pi-play mr-2"></i>
         Start Session
       </button>
-      <button
-        class="w-10 h-10 flex items-center justify-center border border-gray-200 hover:bg-gray-50 rounded-lg transition-colors"
-      >
-        <i class="pi pi-eye text-gray-500"></i>
-      </button>
     </div>
   </div>
 </div>
+
+<p-contextmenu #cm [model]="contextMenuItems" [pressDelay]="0" />

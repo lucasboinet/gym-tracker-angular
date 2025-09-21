@@ -4,7 +4,7 @@
     <div class="py-4">
       <div class="flex items-center justify-between mb-4">
         <h2 class="text-lg font-semibold text-gray-900">My Sessions</h2>
-        @if (sessions.length > 0) {
+        @if (this.sessionService.sessions().length > 0) {
           <button
             class="bg-blue-600 hover:bg-blue-700 cursor-pointer text-white py-2 px-3 rounded-md font-medium transition-colors text-sm flex items-center"
             (click)="openCreateDialog = true"
@@ -17,13 +17,13 @@
 
       <div class="flex flex-col gap-4">
         <!-- Session Card 1 -->
-        @for (session of sessions; track session._id) {
+        @for (session of this.sessionService.sessions(); track session._id) {
           <session-card [session]="session"></session-card>
         }
       </div>
 
       <!-- Empty State (hidden by default) -->
-      @if (sessions.length === 0) {
+      @if (this.sessionService.sessions().length === 0) {
         <div class="py-12 text-center">
           <div
             class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4"
