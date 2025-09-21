@@ -1,4 +1,4 @@
-export type SetType = {
+export interface SetType {
   weight: number;
   reps: number;
 }

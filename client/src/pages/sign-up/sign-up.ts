@@ -1,21 +1,27 @@
-import { Component } from "@angular/core";
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from "@angular/forms";
-import { AuthService } from "../../services/auth.service";
-import { ButtonModule } from "primeng/button";
-import { InputTextModule } from 'primeng/inputtext'
-import { CardModule } from "primeng/card";
-import { passwordMatchValidator } from "../../shared/validators/auth";
-import { Router, RouterLink } from "@angular/router";
-import { UserService } from "../../services/user.service";
+import { Component, inject } from '@angular/core';
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
+import { Router, RouterLink } from '@angular/router';
+import { ButtonModule } from 'primeng/button';
+import { CardModule } from 'primeng/card';
+import { InputTextModule } from 'primeng/inputtext';
+import { AuthService } from '../../services/auth.service';
+import { UserService } from '../../services/user.service';
+import { passwordMatchValidator } from '../../shared/validators/auth';
 
 @Component({
   templateUrl: './sign-up.html',
   selector: 'sign-up-page',
   imports: [
-    FormsModule, 
-    ButtonModule, 
-    InputTextModule, 
-    CardModule, 
+    FormsModule,
+    ButtonModule,
+    InputTextModule,
+    CardModule,
     ReactiveFormsModule,
     RouterLink,
   ],
@@ -25,17 +31,20 @@ export class SignUpPage {
   registerForm: FormGroup;
   error = '';
 
-  constructor(
-    private fb: FormBuilder,
-    private auth: AuthService,
-    private userService: UserService,
-    private router: Router
-  ) {
-    this.registerForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(8)]],
-      confirmPassword: ['', [Validators.required]],
-    }, { validator: passwordMatchValidator });
+  fb = inject(FormBuilder);
+  auth = inject(AuthService);
+  userService = inject(UserService);
+  router = inject(Router);
+
+  constructor() {
+    this.registerForm = this.fb.group(
+      {
+        email: ['', [Validators.required, Validators.email]],
+        password: ['', [Validators.required, Validators.minLength(8)]],
+        confirmPassword: ['', [Validators.required]],
+      },
+      { validator: passwordMatchValidator },
+    );
   }
 
   onSubmit() {
@@ -55,20 +64,20 @@ export class SignUpPage {
           next: () => {
             this.userService.loadUser().subscribe({
               next: () => this.router.navigate(['/']),
-              error: () => {}
+              error: () => console.error('Failed to load user after registration'),
             });
           },
           error: (err) => {
             this.error = err?.error?.message || 'An error occurred';
             this.loading = false;
-          }
-        })
+          },
+        });
       },
       error: (err) => {
         this.error = err?.error?.message || 'An error occurred';
         this.loading = false;
-      }
-    })
+      },
+    });
   }
 
   get email() {

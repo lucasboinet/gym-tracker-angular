@@ -1,6 +1,6 @@
-import {SetType} from "./Set";
+import { SetType } from './Set';
 
-export type ExerciseType = {
+export interface ExerciseType {
   sets: SetType[];
   name: string;
   _id?: string;

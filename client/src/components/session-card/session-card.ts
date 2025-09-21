@@ -1,5 +1,5 @@
-import { Component, input, Input } from "@angular/core";
-import { Session } from "../../shared/types/Session";
+import { Component, input } from '@angular/core';
+import { Session } from '../../shared/types/Session';
 
 @Component({
   templateUrl: './session-card.html',

@@ -1,28 +1,41 @@
-import { Component } from "@angular/core";
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from "@angular/forms";
-import { AuthService } from "../../services/auth.service";
-import { ButtonModule } from "primeng/button";
-import { InputTextModule } from 'primeng/inputtext'
-import { CardModule } from "primeng/card";
-import { UserService } from "../../services/user.service";
-import { Router, RouterLink } from "@angular/router";
+import { Component, inject } from '@angular/core';
+import {
+  FormBuilder,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
+import { Router, RouterLink } from '@angular/router';
+import { ButtonModule } from 'primeng/button';
+import { CardModule } from 'primeng/card';
+import { InputTextModule } from 'primeng/inputtext';
+import { AuthService } from '../../services/auth.service';
+import { UserService } from '../../services/user.service';
 
 @Component({
   templateUrl: './sign-in.html',
   selector: 'sign-in-page',
-  imports: [FormsModule, ButtonModule, InputTextModule, CardModule, ReactiveFormsModule, RouterLink],
+  imports: [
+    FormsModule,
+    ButtonModule,
+    InputTextModule,
+    CardModule,
+    ReactiveFormsModule,
+    RouterLink,
+  ],
 })
 export class SignInPage {
   loading = false;
   loginForm: FormGroup;
   error = '';
 
-  constructor(
-    private fb: FormBuilder,
-    private auth: AuthService,
-    private userService: UserService,
-    private router: Router
-  ) {
+  fb = inject(FormBuilder);
+  auth = inject(AuthService);
+  userService = inject(UserService);
+  router = inject(Router);
+
+  constructor() {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(8)]],
@@ -46,14 +59,14 @@ export class SignInPage {
           next: () => this.router.navigate(['/']),
           error: () => {
             this.auth.logout(() => this.router.navigate(['/sign-in']));
-          }
+          },
         });
       },
       error: (err) => {
         this.error = err?.error?.message || 'An error occurred';
         this.loading = false;
-      }
-    })
+      },
+    });
   }
 
   get email() {

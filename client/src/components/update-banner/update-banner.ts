@@ -5,7 +5,7 @@ import { SwUpdateService } from '../../services/worker.service';
 @Component({
   selector: 'app-update-banner',
   imports: [CommonModule],
-  templateUrl: './update-banner.html'
+  templateUrl: './update-banner.html',
 })
 export class UpdateBannerComponent {
   updateService = inject(SwUpdateService);

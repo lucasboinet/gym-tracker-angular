@@ -1,11 +1,11 @@
-import {ExerciseType} from "./Exercise";
+import { ExerciseType } from './Exercise';
 
-export type Workout = {
-  _id?: string,
-  createdAt: Date,
-  startTime: string,
-  endTime?: string,
-  exercises: ExerciseType[],
-  updatedAt?: Date,
-  userId?: string
+export interface Workout {
+  _id?: string;
+  createdAt: Date;
+  startTime: string;
+  endTime?: string;
+  exercises: ExerciseType[];
+  updatedAt?: Date;
+  userId?: string;
 }

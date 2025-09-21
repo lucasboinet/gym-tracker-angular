@@ -1,27 +1,21 @@
-import { Component, OnInit } from "@angular/core";
-import { ButtonModule } from "primeng/button";
-import { SessionService } from "../../services/sessions.service";
-import { Session } from "../../shared/types/Session";
-import { SessionCard } from "../../components/session-card/session-card";
-import { CreateSessionDialog } from "../../components/create-session-dialog/create-session-dialog";
+import { Component, inject, OnInit } from '@angular/core';
+import { ButtonModule } from 'primeng/button';
+import { CreateSessionDialog } from '../../components/create-session-dialog/create-session-dialog';
+import { SessionCard } from '../../components/session-card/session-card';
+import { SessionService } from '../../services/sessions.service';
+import { Session } from '../../shared/types/Session';
 
 @Component({
   selector: 'sessions-page',
-  imports: [
-    ButtonModule,
-    SessionCard,
-    CreateSessionDialog
-],
+  imports: [ButtonModule, SessionCard, CreateSessionDialog],
   providers: [],
   templateUrl: './sessions.html',
 })
 export class SessionsPage implements OnInit {
-  openCreateDialog: boolean = false;
+  openCreateDialog = false;
   sessions: Session[] = [];
 
-  constructor(
-    private sessionService: SessionService,
-  ) {}
+  sessionService = inject(SessionService);
 
   ngOnInit(): void {
     this.loadSessions();
@@ -31,7 +25,7 @@ export class SessionsPage implements OnInit {
     this.sessionService.getSessions().subscribe({
       next: (sessions) => {
         this.sessions = sessions;
-      }
-    })
+      },
+    });
   }
 }

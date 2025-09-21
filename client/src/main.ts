@@ -12,6 +12,6 @@ bootstrapApplication(App, appConfig)
         const splash = document.getElementById('splash-screen');
         splash?.remove();
       }
-    })
+    });
   })
   .catch((err) => console.error(err));

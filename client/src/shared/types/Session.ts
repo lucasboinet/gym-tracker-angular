@@ -1,6 +1,6 @@
-import { ExerciseType } from "./Exercise";
+import { ExerciseType } from './Exercise';
 
-export type Session = {
+export interface Session {
   _id?: string;
   userId: string;
   name: string;

@@ -1,9 +1,9 @@
-import { Component, OnInit } from "@angular/core";
-import { ButtonModule } from "primeng/button";
-import { MenubarModule } from "primeng/menubar";
-import { Output, EventEmitter } from "@angular/core";
-import { MenuItem } from "primeng/api";
-import { RouterLink } from "@angular/router";
+import { Component, OnInit } from '@angular/core';
+import { ButtonModule } from 'primeng/button';
+import { MenubarModule } from 'primeng/menubar';
+import { Output, EventEmitter } from '@angular/core';
+import { MenuItem } from 'primeng/api';
+import { RouterLink } from '@angular/router';
 
 @Component({
   templateUrl: './menu.html',
@@ -16,9 +16,7 @@ export class MenuBar implements OnInit {
   items: MenuItem[] = [];
 
   ngOnInit(): void {
-    this.items = [
-      { label: 'Sessions', routerLink: '/sessions', icon: 'pi pi-file' },
-    ]
+    this.items = [{ label: 'Sessions', routerLink: '/sessions', icon: 'pi pi-file' }];
   }
 
   onHistoryOpen() {

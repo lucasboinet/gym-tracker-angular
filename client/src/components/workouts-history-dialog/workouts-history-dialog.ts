@@ -1,12 +1,12 @@
-import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { DialogModule } from 'primeng/dialog';
 import { Workout } from '../../shared/types/Workout';
 
 @Component({
   selector: 'workouts-history-dialog',
   imports: [CommonModule, DialogModule],
-  templateUrl: './workouts-history-dialog.html'
+  templateUrl: './workouts-history-dialog.html',
 })
 export class WorkoutsHistory {
   @Input() workouts: Workout[] = [];
@@ -14,6 +14,6 @@ export class WorkoutsHistory {
   @Output() openChange = new EventEmitter<boolean>();
 
   handleVisibleChange(value: boolean) {
-    this.openChange.emit(value)
-  } 
+    this.openChange.emit(value);
+  }
 }

@@ -12,22 +12,19 @@ function mockLocalStorage(): Storage {
   };
 }
 
-export const LOCAL_STORAGE_TOKEN = new InjectionToken<Storage>(
-  'LOCAL_STORAGE_TOKEN',
-  {
-    factory: () => {
-      const platformId = inject(PLATFORM_ID);
-      const isBrowser = isPlatformBrowser(platformId);
-      const document = inject(DOCUMENT);
+export const LOCAL_STORAGE_TOKEN = new InjectionToken<Storage>('LOCAL_STORAGE_TOKEN', {
+  factory: () => {
+    const platformId = inject(PLATFORM_ID);
+    const isBrowser = isPlatformBrowser(platformId);
+    const document = inject(DOCUMENT);
 
-      if (isBrowser) {
-        return document.defaultView?.localStorage ?? mockLocalStorage();
-      } else {
-        return mockLocalStorage();
-      }
-    },
-  }
-);
+    if (isBrowser) {
+      return document.defaultView?.localStorage ?? mockLocalStorage();
+    } else {
+      return mockLocalStorage();
+    }
+  },
+});
 
 @Injectable({
   providedIn: 'root',

@@ -1,0 +1,60 @@
+<p-dialog
+  header="Add Exercise"
+  [(visible)]="open"
+  [modal]="true"
+  (visibleChange)="OnOpenChange($event)"
+  [style]="{ width: '90vw', maxWidth: '400px' }"
+  [closable]="false"
+  [draggable]="true"
+  [resizable]="false"
+>
+  <div class="space-y-4">
+    <div>
+      <label for="exercise-name" class="block text-sm font-medium text-gray-700 mb-2"
+        >Exercise Name</label
+      >
+      <input
+        id="exercise-name"
+        type="text"
+        pInputText
+        [(ngModel)]="newExerciseName"
+        placeholder="Enter exercise name"
+        class="w-full p-3 border rounded-md border-blue-500 placeholder:opacity-50"
+      />
+    </div>
+
+    <div>
+      <h4 class="text-sm font-medium text-gray-700 mb-3">Quick Add:</h4>
+      <div class="grid grid-cols-2 gap-2">
+        @for (exercise of commonExercises; track exercise) {
+          <p-button
+            [label]="exercise"
+            (onClick)="onExerciseAdded(exercise)"
+            styleClass="p-button-outlined p-button-sm text-xs"
+          >
+          </p-button>
+        }
+      </div>
+    </div>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <div class="flex space-x-2">
+      <p-button
+        label="Cancel"
+        icon="pi pi-times"
+        (onClick)="onAddExerciseCancel()"
+        styleClass="p-button-text flex-1"
+      >
+      </p-button>
+      <p-button
+        label="Add Custom"
+        icon="pi pi-check"
+        (onClick)="onExerciseAdded(newExerciseName)"
+        [disabled]="!newExerciseName.trim()"
+        styleClass="flex-1"
+      >
+      </p-button>
+    </div>
+  </ng-template>
+</p-dialog>
