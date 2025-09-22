@@ -1,5 +1,5 @@
 <p-dialog
-  header="Create session"
+  [header]="title"
   class="flex"
   [(visible)]="open"
   (visibleChange)="onOpenChange($event)"
@@ -9,6 +9,7 @@
   [maximizable]="false"
   [draggable]="false"
   [resizable]="false"
+  (onShow)="handleOnShow()"
 >
   <div class="flex flex-col h-full overflow-hidden">
     <div class="py-4 shrink-0">
@@ -26,8 +27,19 @@
 
     <div class="flex-1 overflow-y-auto space-y-4">
       @for (exercise of exercises; track $index) {
-        <div class="bg-white rounded-md p-4 shadow-sm border text-black">
-          {{ exercise.name }}
+        <div
+          class="bg-white rounded-md p-4 shadow-sm border text-black flex items-center justify-between"
+        >
+          <div class="flex items-center space-x-3">
+            <div class="bg-blue-600 h-2 w-2 rounded-full relative">
+              <span class="absolute bg-blue-600 inset-0 rounded-full animate-ping"></span>
+            </div>
+            <span>{{ exercise.name }}</span>
+          </div>
+
+          <button class="text-blue-500 cursor-pointer" (click)="removeExercise($index)">
+            <i class="pi pi-trash text-xs"></i>
+          </button>
         </div>
       }
     </div>
@@ -50,9 +62,9 @@
       </button>
       <button
         class="flex-1 cursor-pointer px-4 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
-        (click)="createSession()"
+        (click)="handleExecuteAction()"
       >
-        Create & Add Exercises
+        {{ buttonLabel }}
       </button>
     </div>
   </div>

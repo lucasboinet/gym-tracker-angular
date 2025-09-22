@@ -1,12 +1,12 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
-import { CreateSessionDialog } from '../../components/create-session-dialog/create-session-dialog';
 import { SessionCard } from '../../components/session-card/session-card';
+import { SessionDialog } from '../../components/session-dialog/session-dialog';
 import { SessionService } from '../../services/sessions.service';
 
 @Component({
   selector: 'sessions-page',
-  imports: [ButtonModule, SessionCard, CreateSessionDialog],
+  imports: [ButtonModule, SessionCard, SessionDialog],
   providers: [],
   templateUrl: './sessions.html',
 })

@@ -53,3 +53,12 @@
 </div>
 
 <p-contextmenu #cm [model]="contextMenuItems" [pressDelay]="0" />
+
+<session-dialog
+  [(open)]="showEditDialog"
+  (openChange)="showEditDialog = $event"
+  [session]="session()"
+  title="Edit session"
+  buttonLabel="Update"
+  action="edit"
+></session-dialog>

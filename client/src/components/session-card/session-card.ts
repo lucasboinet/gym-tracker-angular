@@ -7,17 +7,19 @@ import { WorkoutService } from '../../services/workout.service';
 import { durationFromDate } from '../../shared/dates';
 import { Session } from '../../shared/types/Session';
 import { Workout } from '../../shared/types/Workout';
+import { SessionDialog } from '../session-dialog/session-dialog';
 
 @Component({
   templateUrl: './session-card.html',
   selector: 'session-card',
-  imports: [ContextMenuModule],
+  imports: [ContextMenuModule, SessionDialog],
   providers: [ContextMenuService],
 })
 export class SessionCard implements OnInit {
   session = input.required<Session>();
   durationFromCreatedAt = computed(() => durationFromDate(this.session().createdAt));
   contextMenuItems: MenuItem[] = [];
+  showEditDialog = false;
 
   private workoutService = inject(WorkoutService);
   private sessionService = inject(SessionService);
@@ -30,7 +32,7 @@ export class SessionCard implements OnInit {
         label: 'Edit',
         icon: 'pi pi-pencil',
         command: () => {
-          console.log('Edit session');
+          this.showEditDialog = true;
         },
       },
       {
