@@ -9,6 +9,37 @@ export function getAllFromUser(userId: string) {
   return WorkoutModel.find({ userId });
 }
 
+export function getStats(userId: string, limit: number) {
+  return WorkoutModel.aggregate([
+    { $match: { userId: userId } },
+    { $limit: limit },
+    { $unwind: "$exercises" },
+    { $unwind: "$exercises.sets" },
+    {
+      $project: {
+        exerciseName: "$exercises.name",
+        date: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
+        weight: "$exercises.sets.weight",
+      },
+    },
+    {
+      $group: {
+        _id: "$exerciseName",
+        weights: {
+          $push: { k: "$date", v: "$weight" },
+        },
+      },
+    },
+    {
+      $project: {
+        _id: 0,
+        exerciseName: "$_id",
+        weights: { $arrayToObject: "$weights" },
+      },
+    },
+  ]);
+}
+
 export function create(workout: Workout) {
   return new WorkoutModel(workout).save();
 }
@@ -16,15 +47,16 @@ export function create(workout: Workout) {
 export function update(workout: Workout) {
   return WorkoutModel.findByIdAndUpdate(
     workout._id,
-    { $set: {
-        ...workout
-      }
+    {
+      $set: {
+        ...workout,
+      },
     },
     { new: true, runValidators: true }
   );
 }
 
-export function deleteById(id: Workout['_id']) {
+export function deleteById(id: Workout["_id"]) {
   return WorkoutModel.findByIdAndDelete(id);
 }
 
