@@ -6,10 +6,13 @@
 
 <main class="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
   @if (authService.isLoggedIn()) {
-  <menu-bar (historyOpen)="showWorkoutHistory = true" />
+    <menu-bar (historyOpen)="showWorkoutHistory = true" />
 
-  <workouts-history-dialog [(open)]="showWorkoutHistory" [workouts]="workoutService.workouts()"
-    (openChange)="showWorkoutHistory = $event" />
+    <workouts-history-dialog
+      [(open)]="showWorkoutHistory"
+      [workouts]="workoutService.workouts()"
+      (openChange)="showWorkoutHistory = $event"
+    />
   }
 
   <!-- Toast Messages -->

@@ -9,3 +9,8 @@ export interface Workout {
   updatedAt?: Date;
   userId?: string;
 }
+
+export interface WorkoutStat {
+  exerciseName: ExerciseType['name'];
+  weights: Map<string, number>[];
+}

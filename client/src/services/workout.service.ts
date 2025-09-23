@@ -2,7 +2,7 @@ import { inject, Injectable, signal } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../environments/environment';
 import { ExerciseType } from '../shared/types/Exercise';
-import { Workout } from '../shared/types/Workout';
+import { Workout, WorkoutStat } from '../shared/types/Workout';
 import { AuthService, HttpMethod } from './auth.service';
 
 @Injectable({
@@ -20,6 +20,15 @@ export class WorkoutService {
       this.auth.request<Workout[]>({
         method: HttpMethod.GET,
         path: `${environment.apiUrl}/workouts`,
+      }) || []
+    );
+  }
+
+  getWorkoutStats({ limit = 10 }: { limit?: number } = {}): Observable<WorkoutStat[]> {
+    return (
+      this.auth.request<WorkoutStat[]>({
+        method: HttpMethod.GET,
+        path: `${environment.apiUrl}/workouts/stats?limit=${limit}`,
       }) || []
     );
   }

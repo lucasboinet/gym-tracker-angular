@@ -1,9 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { RouterLink } from '@angular/router';
+import { MenuItem } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { MenubarModule } from 'primeng/menubar';
-import { Output, EventEmitter } from '@angular/core';
-import { MenuItem } from 'primeng/api';
-import { RouterLink } from '@angular/router';
 
 @Component({
   templateUrl: './menu.html',
