@@ -25,89 +25,13 @@
 
       <!-- Exercises -->
       @for (exercise of this.gymService.exercises(); track exercise._id) {
-        <div class="bg-white rounded-xl shadow-sm border overflow-hidden">
-          <!-- Exercise Header -->
-          <div class="px-4 py-3 bg-gray-50 border-b flex items-center justify-between">
-            <h4 class="font-semibold text-gray-900">{{ exercise.name }}</h4>
-            <p-button
-              icon="pi pi-trash"
-              (onClick)="removeExercise(exercise._id!)"
-              styleClass="p-button-text p-button-rounded p-button-sm p-button-danger"
-              [text]="true"
-            >
-            </p-button>
-          </div>
-
-          <!-- Sets -->
-          <div class="p-4 space-y-3">
-            @for (set of exercise.sets; track $index) {
-              <div class="flex items-center justify-between gap-3">
-                <div
-                  class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0"
-                >
-                  <span class="text-sm font-medium text-blue-600">{{ $index + 1 }}</span>
-                </div>
-
-                <div class="flex flex-col flex-1">
-                  <label
-                    for="{{ exercise._id }}-weigth-{{ $index }}"
-                    class="block text-xs font-medium text-gray-500 mb-1"
-                    >Weight (kg)</label
-                  >
-                  <p-inputNumber
-                    id="{{ exercise._id }}-weigth-{{ $index }}"
-                    [(ngModel)]="set.weight"
-                    (onInput)="updateSet(exercise._id!, $index, 'weight', +($event.value ?? 0))"
-                    [showButtons]="true"
-                    [min]="0"
-                    [step]="1"
-                    inputStyleClass="text-center w-full"
-                    styleClass="w-full"
-                  >
-                  </p-inputNumber>
-                </div>
-
-                <div class="flex flex-col flex-1">
-                  <label
-                    for="{{ exercise._id }}-reps-{{ $index }}"
-                    class="block text-xs font-medium text-gray-500 mb-1"
-                    >Reps</label
-                  >
-                  <p-inputNumber
-                    id="{{ exercise._id }}-reps-{{ $index }}"
-                    [(ngModel)]="set.reps"
-                    (onInput)="updateSet(exercise._id!, $index, 'reps', +($event.value ?? 0))"
-                    [showButtons]="true"
-                    [min]="0"
-                    [step]="1"
-                    inputStyleClass="text-center w-full"
-                    styleClass="w-full"
-                  >
-                  </p-inputNumber>
-                </div>
-
-                <p-button
-                  icon="pi pi-minus"
-                  (onClick)="removeSet(exercise._id!, $index)"
-                  styleClass="p-button-rounded p-button-text p-button-danger p-button-sm"
-                  [text]="true"
-                >
-                </p-button>
-              </div>
-            }
-          </div>
-
-          <!-- Add Set Button -->
-          <div class="px-4 pb-4">
-            <p-button
-              label="Add Set"
-              icon="pi pi-plus"
-              (onClick)="addSet(exercise._id!)"
-              styleClass="w-full p-button-outlined"
-            >
-            </p-button>
-          </div>
-        </div>
+        <exercise-card
+          [exercise]="exercise"
+          (addSet)="addSet($event)"
+          (removeExercise)="removeExercise($event)"
+          (removeSet)="removeSet($event.id, $event.index)"
+          (updateSet)="updateSet($event.id, $event.index, $event.type, $event.value)"
+        />
       }
 
       <!-- Add Exercise Button -->

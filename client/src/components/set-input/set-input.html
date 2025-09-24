@@ -1,15 +1,61 @@
-<div class="set-row">
-  <span class="set-number">{{ index + 1 }}</span>
+<div class="flex items-center justify-between gap-3">
+  <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+    <span class="text-sm font-medium text-blue-600">{{ index() + 1 }}</span>
+  </div>
 
-  <p-inputNumber [(ngModel)]="set.weight" (onInput)="onUpdateSet(exercise._id!, index, 'weight', +($event.value ?? 0))"
-    placeholder="Weight" [showButtons]="true" suffix=" kg" [min]="0" [step]="2.5">
-  </p-inputNumber>
+  <div class="flex flex-col flex-1">
+    <label
+      for="{{ exercise()._id }}-weigth-{{ index() }}"
+      class="block text-xs font-medium text-gray-500 mb-1"
+      >Weight (kg)</label
+    >
+    <p-inputNumber
+      id="{{ exercise()._id }}-weigth-{{ index() }}"
+      [(ngModel)]="set().weight"
+      (onInput)="onUpdateSet(exercise()._id!, index(), 'weight', +($event.value ?? 0))"
+      [showButtons]="true"
+      [min]="0"
+      [step]="1"
+      inputStyleClass="text-center w-full"
+      styleClass="w-full"
+    >
+    </p-inputNumber>
+    @if (previousMatchingSet()) {
+      <span class="text-black opacity-70 text-xs mt-1"
+        >Previous weight : {{ previousMatchingSet()?.weight }}kg</span
+      >
+    }
+  </div>
 
-  <p-inputNumber [(ngModel)]="set.reps" (onInput)="onUpdateSet(exercise._id!, index, 'reps', +($event.value ?? 0))"
-    placeholder="Reps" [showButtons]="true" [min]="0" [step]="1">
-  </p-inputNumber>
+  <div class="flex flex-col flex-1">
+    <label
+      for="{{ exercise()._id }}-reps-{{ index() }}"
+      class="block text-xs font-medium text-gray-500 mb-1"
+      >Reps</label
+    >
+    <p-inputNumber
+      id="{{ exercise()._id }}-reps-{{ index() }}"
+      [(ngModel)]="set().reps"
+      (onInput)="onUpdateSet(exercise()._id!, index(), 'reps', +($event.value ?? 0))"
+      [showButtons]="true"
+      [min]="0"
+      [step]="1"
+      inputStyleClass="text-center w-full"
+      styleClass="w-full"
+    >
+    </p-inputNumber>
+    @if (previousMatchingSet()) {
+      <span class="text-black opacity-70 text-xs mt-1"
+        >Previous reps : {{ previousMatchingSet()?.reps }} reps</span
+      >
+    }
+  </div>
 
-  <p-button icon="pi pi-minus" (onClick)="onRemoveSet(exercise._id!, index)"
-    styleClass="p-button-rounded p-button-danger p-button-text p-button-sm">
+  <p-button
+    icon="pi pi-minus"
+    (onClick)="onRemoveSet(exercise()._id!, index())"
+    styleClass="p-button-rounded p-button-text p-button-danger p-button-sm"
+    [text]="true"
+  >
   </p-button>
 </div>

@@ -10,6 +10,7 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextModule } from 'primeng/inputtext';
 import { ToastModule } from 'primeng/toast';
 import { AddExerciseDialog } from '../../components/add-exercise-dialog/add-exercise-dialog';
+import { ExerciseCard } from '../../components/exercise-card/exercise-card';
 import { NoActiveWorkout } from '../../components/no-active-workout/no-active-workout';
 import { WorkoutService } from '../../services/workout.service';
 import { ExerciseType } from '../../shared/types/Exercise';
@@ -29,6 +30,7 @@ import { Workout } from '../../shared/types/Workout';
     FormsModule,
     NoActiveWorkout,
     AddExerciseDialog,
+    ExerciseCard,
   ],
   templateUrl: './home.html',
 })
