@@ -2,11 +2,11 @@ import WorkoutModel from "./workouts.model";
 import { Workout } from "./workouts.types";
 
 export function getAll() {
-  return WorkoutModel.find();
+  return WorkoutModel.find().sort({ createdAt: -1 });
 }
 
 export function getAllFromUser(userId: string) {
-  return WorkoutModel.find({ userId });
+  return WorkoutModel.find({ userId }).sort({ createdAt: -1 });
 }
 
 export function getStats(userId: string, limit: number) {
