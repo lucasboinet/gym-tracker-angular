@@ -25,12 +25,17 @@
           <!-- Workout Header -->
           <div class="flex items-center justify-between mb-3">
             <div>
-              <h4 class="font-semibold text-gray-900">
-                {{ workout.createdAt | date: 'MMM d, y' }}
-              </h4>
+              <div class="flex items-center gap-2">
+                <h4 class="font-semibold text-gray-900">
+                  {{ workout.createdAt | date: 'MMM d, y' }}
+                </h4>
+                <button class="text-blue-500 cursor-pointer" (click)="removeWorkout(workout._id!)">
+                  <i class="pi pi-trash text-[10px]"></i>
+                </button>
+              </div>
               <p class="text-sm text-gray-500">{{ workout.startTime }} - {{ workout.endTime }}</p>
             </div>
-            <div class="text-right">
+            <div>
               <div class="text-sm text-gray-500">{{ workout.exercises.length }} exercises</div>
             </div>
           </div>
