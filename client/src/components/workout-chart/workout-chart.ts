@@ -26,15 +26,23 @@ export class WorkoutChart implements OnInit {
       const documentStyle = getComputedStyle(document.documentElement);
 
       this.data = {
-        labels: Object.keys(this.stat().weights),
+        labels: this.stat().history.map((h) => h.date),
         datasets: [
           {
             label: 'kg',
-            data: Object.values(this.stat().weights),
+            data: this.stat().history.map((h) => h.weight),
             fill: false,
             borderColor: documentStyle.getPropertyValue('--p-blue-500'),
             tension: 0.5,
             cubicInterpolationMode: 'monotone',
+          },
+          {
+            label: 'reps',
+            data: this.stat().history.map((h) => h.reps),
+            fill: false,
+            doted: true,
+            borderColor: documentStyle.getPropertyValue('--p-orange-200'),
+            tension: 1,
           },
         ],
       };

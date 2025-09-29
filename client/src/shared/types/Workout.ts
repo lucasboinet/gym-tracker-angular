@@ -10,7 +10,13 @@ export interface Workout {
   userId?: string;
 }
 
+export interface WorkoutStatHistory {
+  date: string;
+  weight: number;
+  reps: number;
+}
+
 export interface WorkoutStat {
   exerciseName: ExerciseType['name'];
-  weights: Map<string, number>[];
+  history: WorkoutStatHistory[];
 }
