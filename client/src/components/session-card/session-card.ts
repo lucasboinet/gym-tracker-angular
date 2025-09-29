@@ -57,7 +57,6 @@ export class SessionCard implements OnInit {
 
     this.workoutService.createWorkout(workout).subscribe({
       next: (data) => {
-        console.log(data);
         this.workoutService.currentWorkout.set(data);
         this.workoutService.exercises.set(data.exercises);
         this.router.navigate(['/']);

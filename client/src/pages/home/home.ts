@@ -121,7 +121,7 @@ export class HomePage implements OnInit {
           const updatedSets = [...exercise.sets];
           updatedSets[setIndex] = {
             ...updatedSets[setIndex],
-            [field]: Math.max(0, value), // Ensure non-negative values
+            [field]: Math.max(0, value),
           };
           return { ...exercise, sets: updatedSets };
         }
@@ -135,7 +135,7 @@ export class HomePage implements OnInit {
     this.gymService.exercises.set(
       this.gymService.exercises().map((exercise) => {
         if (exercise._id === exerciseId && exercise.sets.length > 1) {
-          const updatedSets = exercise.sets.filter((_, index) => index !== setIndex);
+          const updatedSets = [...exercise.sets.filter((_, index) => index !== setIndex)];
           return { ...exercise, sets: updatedSets };
         }
         return exercise;
@@ -165,9 +165,13 @@ export class HomePage implements OnInit {
         ...this.gymService.currentWorkout()!,
         exercises: this.gymService.exercises(),
       });
-      this.gymService
-        .saveCurrentWorkout(this.gymService.currentWorkout()!)
-        .subscribe({ error: (err) => console.error(err) });
+      this.gymService.saveCurrentWorkout(this.gymService.currentWorkout()!).subscribe({
+        next: (data) => {
+          this.gymService.currentWorkout.set(data);
+          this.gymService.exercises.set(data.exercises);
+        },
+        error: (err) => console.error(err),
+      });
     }
   }
 
