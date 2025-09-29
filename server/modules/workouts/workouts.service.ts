@@ -12,21 +12,49 @@ export function getAllFromUser(userId: string) {
 export function getStats(userId: string, limit: number) {
   return WorkoutModel.aggregate([
     { $match: { userId: userId } },
+    { $sort: { createdAt: -1 } },
     { $limit: limit },
     { $unwind: "$exercises" },
     { $unwind: "$exercises.sets" },
     {
-      $project: {
-        exerciseName: "$exercises.name",
+      $addFields: {
         date: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
-        weight: "$exercises.sets.weight",
       },
     },
     {
       $group: {
-        _id: "$exerciseName",
-        weights: {
-          $push: { k: "$date", v: "$weight" },
+        _id: {
+          exercise: "$exercises.name",
+          date: "$date",
+        },
+        sets: {
+          $push: {
+            weight: "$exercises.sets.weight",
+            reps: "$exercises.sets.reps",
+          },
+        },
+      },
+    },
+    {
+      $project: {
+        exercise: "$_id.exercise",
+        date: "$_id.date",
+        heaviestSet: {
+          $first: {
+            $sortArray: { input: "$sets", sortBy: { weight: -1 } },
+          },
+        },
+      },
+    },
+    {
+      $group: {
+        _id: "$exercise",
+        history: {
+          $push: {
+            date: "$date",
+            weight: "$heaviestSet.weight",
+            reps: "$heaviestSet.reps",
+          },
         },
       },
     },
@@ -34,7 +62,9 @@ export function getStats(userId: string, limit: number) {
       $project: {
         _id: 0,
         exerciseName: "$_id",
-        weights: { $arrayToObject: "$weights" },
+        history: {
+          $sortArray: { input: "$history", sortBy: { createdAt: 1 } }, // oldest → newest
+        },
       },
     },
   ]);
