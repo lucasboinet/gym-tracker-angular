@@ -23,6 +23,7 @@ export class DecimalNumberInput {
   displayInput = signal(false);
 
   @ViewChild('inputsNumber') inputNumberRef!: ElementRef<HTMLElement>;
+  @ViewChild('inputElement') inputRef!: ElementRef<HTMLElement>;
 
   modelParts = computed(() =>
     this.model()
@@ -56,9 +57,16 @@ export class DecimalNumberInput {
 
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent) {
-    if (this.inputNumberRef && !this.inputNumberRef.nativeElement.contains(event.target as Node)) {
-      this.handleOutsideClick();
+    const target = event.target as Node;
+
+    if (
+      this.inputNumberRef?.nativeElement.contains(target) ||
+      this.inputRef?.nativeElement.contains(target)
+    ) {
+      return;
     }
+
+    this.handleOutsideClick();
   }
 
   handleOutsideClick() {

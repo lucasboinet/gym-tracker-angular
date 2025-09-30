@@ -1,33 +1,37 @@
 <div>
   <input
+    #inputElement
     type="number"
     [value]="model()"
     readonly
     (click)="handleOnClick()"
     class="text-center w-full text-black border rounded p-2 border-blue-100 bg-white"
   />
-  @if (displayInput()) {
-    <div #inputsNumber class="flex items-center w-full fixed left-0 right-0 bottom-0 z-[99]">
+  <div
+    #inputsNumber
+    class="flex items-center w-full fixed left-0 right-0 bottom-0 z-[99] transition-transform duration-300 ease-out"
+    [class.translate-y-full]="!displayInput()"
+    [class.translate-y-0]="displayInput()"
+  >
+    <number-picker
+      [min]="min()"
+      [max]="max()"
+      [initialValue]="modelParts()[0]"
+      (valueChange)="onNumberPickerChange($event, 'main')"
+      class="w-full"
+    ></number-picker>
+    @if (decimal() === true) {
+      <span
+        class="absolute top-1/2 left-1/2 transform -translate-1/2 text-black font-semibold text-3xl"
+        >,</span
+      >
       <number-picker
-        [min]="min()"
-        [max]="max()"
-        [initialValue]="modelParts()[0]"
-        (valueChange)="onNumberPickerChange($event, 'main')"
+        [min]="0"
+        [max]="9"
+        [initialValue]="modelParts()[1]"
+        (valueChange)="onNumberPickerChange($event, 'decimal')"
         class="w-full"
       ></number-picker>
-      @if (decimal() === true) {
-        <span
-          class="absolute top-1/2 left-1/2 transform -translate-1/2 text-black font-semibold text-3xl"
-          >,</span
-        >
-        <number-picker
-          [min]="0"
-          [max]="9"
-          [initialValue]="modelParts()[1]"
-          (valueChange)="onNumberPickerChange($event, 'decimal')"
-          class="w-full"
-        ></number-picker>
-      }
-    </div>
-  }
+    }
+  </div>
 </div>
