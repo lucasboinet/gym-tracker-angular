@@ -1,0 +1,66 @@
+<div class="flex items-center justify-center min-h-screen bg-gray-100 p-4">
+  <div class="bg-white rounded-2xl shadow-xl overflow-hidden" style="width: 280px">
+    <div class="p-4 border-b border-gray-200">
+      <h2 class="text-center font-semibold text-gray-800">Sélectionner un nombre</h2>
+    </div>
+
+    <div class="relative w-full h-64 bg-[#f2f2f7] overflow-hidden">
+      <!-- Selection indicator -->
+      <div
+        class="absolute inset-x-0 top-1/2 -translate-y-1/2 h-10 bg-white/80 border-t border-b border-gray-300/50 pointer-events-none z-10"
+      ></div>
+
+      <!-- Fade overlays -->
+      <div
+        class="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-[#f2f2f7] to-transparent pointer-events-none z-20"
+      ></div>
+      <div
+        class="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-[#f2f2f7] to-transparent pointer-events-none z-20"
+      ></div>
+
+      <!-- Scrollable container -->
+      <div
+        #scrollContainer
+        class="h-full overflow-y-auto hide-scrollbar cursor-grab active:cursor-grabbing"
+        (scroll)="onScroll()"
+        (touchend)="onScrollEnd()"
+        (mousedown)="onMouseDown($event)"
+        (mousemove)="onMouseMove($event)"
+        (mouseup)="onMouseUp()"
+        (mouseleave)="onMouseUp()"
+        (touchstart)="onTouchStart($event)"
+        (touchmove)="onTouchMove($event)"
+        (touchend)="onTouchEnd()"
+        style="overscroll-behavior: contain"
+      >
+        <!-- Top padding -->
+        <div [style.height.px]="paddingHeight"></div>
+
+        <!-- Numbers -->
+        <div
+          *ngFor="let num of numbers; let i = index"
+          class="h-10 flex items-center justify-center transition-all duration-150 cursor-pointer select-none"
+          [class.text-black]="num === selectedValue"
+          [class.text-gray-400]="num !== selectedValue"
+          [class.font-normal]="num === selectedValue"
+          [class.font-light]="num !== selectedValue"
+          [style.font-size]="getFontSize(i)"
+          [style.opacity]="getOpacity(i)"
+          (click)="onNumberClick(num)"
+        >
+          {{ num }}{{ suffix() }}
+        </div>
+
+        <!-- Bottom padding -->
+        <div [style.height.px]="paddingHeight"></div>
+      </div>
+    </div>
+
+    <div class="p-4 border-t border-gray-200">
+      <p class="text-center text-gray-600">
+        Valeur sélectionnée:
+        <span class="font-semibold text-gray-900">{{ selectedValue }}{{ suffix() }}</span>
+      </p>
+    </div>
+  </div>
+</div>
