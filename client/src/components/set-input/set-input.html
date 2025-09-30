@@ -9,20 +9,13 @@
       class="block text-xs font-medium text-gray-500 mb-1"
       >Weight (kg)</label
     >
-    <p-inputNumber
+    <decimal-number-input
       id="{{ exercise()._id }}-weigth-{{ index() }}"
-      [(ngModel)]="set().weight"
-      (onInput)="onUpdateSet(exercise()._id!, index(), 'weight', +($event.value ?? 0))"
-      [showButtons]="false"
-      mode="decimal"
-      [minFractionDigits]="0"
-      [maxFractionDigits]="2"
+      [(model)]="set().weight"
       [min]="0"
-      [step]="1"
-      inputStyleClass="text-center w-full"
-      styleClass="w-full"
-    >
-    </p-inputNumber>
+      [max]="300"
+      (modelChange)="onUpdateSet(exercise()._id!, index(), 'weight', $event)"
+    />
     @if (previousMatchingSet()) {
       <span class="text-black opacity-70 text-xs mt-1"
         >Previous weight : {{ previousMatchingSet()?.weight }}kg</span
@@ -36,17 +29,14 @@
       class="block text-xs font-medium text-gray-500 mb-1"
       >Reps</label
     >
-    <p-inputNumber
+    <decimal-number-input
       id="{{ exercise()._id }}-reps-{{ index() }}"
-      [(ngModel)]="set().reps"
-      (onInput)="onUpdateSet(exercise()._id!, index(), 'reps', +($event.value ?? 0))"
-      [showButtons]="false"
+      [decimal]="false"
       [min]="0"
-      [step]="1"
-      inputStyleClass="text-center w-full"
-      styleClass="w-full"
-    >
-    </p-inputNumber>
+      [max]="50"
+      [(model)]="set().reps"
+      (modelChange)="onUpdateSet(exercise()._id!, index(), 'reps', $event)"
+    />
     @if (previousMatchingSet()) {
       <span class="text-black opacity-70 text-xs mt-1"
         >Previous reps : {{ previousMatchingSet()?.reps }} reps</span

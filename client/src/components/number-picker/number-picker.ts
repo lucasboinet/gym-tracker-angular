@@ -18,11 +18,11 @@ import {
   templateUrl: './number-picker.html',
   styleUrls: ['./number-picker.css'],
 })
-export class IosNumberPickerComponent implements OnInit, AfterViewInit {
+export class NumberPicker implements OnInit, AfterViewInit {
   min = input<number>(1);
   max = input<number>(400);
   initialValue = input<number>(2);
-  suffix = input<string>('+');
+  suffix = input<string>('');
 
   @ViewChild('scrollContainer') scrollContainerRef!: ElementRef<HTMLElement>;
   @Output() valueChange = new EventEmitter<number>();
@@ -229,34 +229,5 @@ export class IosNumberPickerComponent implements OnInit, AfterViewInit {
         behavior: smooth ? 'smooth' : 'auto',
       });
     }
-  }
-
-  getFontSize(index: number): string {
-    const container = this.scrollContainerRef?.nativeElement;
-    if (!container) return '20px';
-
-    const scrollTop = container.scrollTop;
-    const currentIndex = scrollTop / this.itemHeight;
-    const distance = Math.abs(index - currentIndex);
-
-    if (distance < 0.5) return '20px';
-    if (distance < 1.5) return '18px';
-    if (distance < 2.5) return '16px';
-    return '14px';
-  }
-
-  getOpacity(index: number): number {
-    const container = this.scrollContainerRef?.nativeElement;
-    if (!container) return 1;
-
-    const scrollTop = container.scrollTop;
-    const currentIndex = scrollTop / this.itemHeight;
-    const distance = Math.abs(index - currentIndex);
-
-    if (distance < 0.5) return 1;
-    if (distance < 1.5) return 0.6;
-    if (distance < 2.5) return 0.4;
-    if (distance < 3.5) return 0.25;
-    return 0.15;
   }
 }

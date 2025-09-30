@@ -1,0 +1,33 @@
+<div>
+  <input
+    type="number"
+    [value]="model()"
+    readonly
+    (click)="handleOnClick()"
+    class="text-center w-full text-black border rounded p-2 border-blue-100 bg-white"
+  />
+  @if (displayInput) {
+    <div #inputsNumber class="flex items-center w-full fixed left-0 right-0 bottom-0 z-[99]">
+      <number-picker
+        [min]="min()"
+        [max]="max()"
+        [initialValue]="model()"
+        (valueChange)="onNumberPickerChange($event, 'main')"
+        class="w-full"
+      ></number-picker>
+      @if (decimal() === true) {
+        <span
+          class="absolute top-1/2 left-1/2 transform -translate-1/2 text-black font-semibold text-3xl"
+          >,</span
+        >
+        <number-picker
+          [min]="0"
+          [max]="9"
+          [initialValue]="model()"
+          (valueChange)="onNumberPickerChange($event, 'decimal')"
+          class="w-full"
+        ></number-picker>
+      }
+    </div>
+  }
+</div>

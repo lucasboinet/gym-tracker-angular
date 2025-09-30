@@ -5,11 +5,12 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { WorkoutService } from '../../services/workout.service';
 import { ExerciseType } from '../../shared/types/Exercise';
 import { IRemoveSet, IUpdateSet, SetType } from '../../shared/types/Set';
+import { DecimalNumberInput } from '../decimal-number-input/decimal-number-input';
 
 @Component({
   templateUrl: './set-input.html',
   selector: 'set-input',
-  imports: [FormsModule, ButtonModule, InputNumberModule],
+  imports: [FormsModule, ButtonModule, InputNumberModule, DecimalNumberInput],
 })
 export class SetInput {
   @Output() updateSet = new EventEmitter<IUpdateSet>();
