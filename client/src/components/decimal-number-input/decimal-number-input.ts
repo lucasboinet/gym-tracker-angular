@@ -1,4 +1,13 @@
-import { Component, ElementRef, HostListener, input, model, ViewChild } from '@angular/core';
+import {
+  Component,
+  computed,
+  ElementRef,
+  HostListener,
+  input,
+  model,
+  signal,
+  ViewChild,
+} from '@angular/core';
 import { NumberPicker } from '../number-picker/number-picker';
 
 @Component({
@@ -11,9 +20,16 @@ export class DecimalNumberInput {
   decimal = input(true);
   min = input.required<number>();
   max = input.required<number>();
-  displayInput = false;
+  displayInput = signal(false);
 
   @ViewChild('inputsNumber') inputNumberRef!: ElementRef<HTMLElement>;
+
+  modelParts = computed(() =>
+    this.model()
+      .toString()
+      .split('.')
+      .map((n) => parseInt(n)),
+  );
 
   onNumberPickerChange(data: number, side: 'main' | 'decimal') {
     const numberToString = this.model().toString();
@@ -35,7 +51,7 @@ export class DecimalNumberInput {
   }
 
   handleOnClick() {
-    this.displayInput = true;
+    this.displayInput.set(true);
   }
 
   @HostListener('document:click', ['$event'])
@@ -46,7 +62,6 @@ export class DecimalNumberInput {
   }
 
   handleOutsideClick() {
-    console.log('Clicked outside the component!');
-    this.displayInput = false;
+    this.displayInput.set(false);
   }
 }

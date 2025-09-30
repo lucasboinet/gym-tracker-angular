@@ -1,14 +1,13 @@
 import { CommonModule } from '@angular/common';
 import {
   AfterViewInit,
-  ChangeDetectorRef,
   Component,
   ElementRef,
   EventEmitter,
-  inject,
   input,
   OnInit,
   Output,
+  signal,
   ViewChild,
 } from '@angular/core';
 
@@ -27,9 +26,8 @@ export class NumberPicker implements OnInit, AfterViewInit {
   @ViewChild('scrollContainer') scrollContainerRef!: ElementRef<HTMLElement>;
   @Output() valueChange = new EventEmitter<number>();
 
-  private cd = inject(ChangeDetectorRef);
-
   numbers: number[] = [];
+  visibleNumbers: { value: number; index: number }[] = [];
   selectedValue = 2;
   paddingHeight = 112;
   itemHeight = 40;
@@ -43,15 +41,59 @@ export class NumberPicker implements OnInit, AfterViewInit {
   animationFrame: any;
   scrollTimeout: NodeJS.Timeout | undefined = undefined;
 
+  visibleItemCount = 15;
+  bufferSize = 5;
+  startIndex = 0;
+  endIndex = 0;
+  totalHeight = 0;
+  topPadding = signal(0);
+  bottomPadding = signal(0);
+
   ngOnInit() {
     this.numbers = Array.from({ length: this.max() - this.min() + 1 }, (_, i) => this.min() + i);
     this.selectedValue = this.initialValue();
+    this.totalHeight = this.numbers.length * this.itemHeight;
+    this.updateVisibleItems(0);
   }
 
   ngAfterViewInit() {
-    setTimeout(() => {
-      this.scrollToValue(this.initialValue(), false);
-    }, 100);
+    const index = this.numbers.indexOf(this.initialValue());
+    if (index !== -1 && this.scrollContainerRef) {
+      const targetScroll = index * this.itemHeight;
+
+      this.updateVisibleItems(targetScroll);
+
+      this.scrollContainerRef.nativeElement.scrollTop = targetScroll;
+
+      setTimeout(() => {
+        this.updateVisibleItems(targetScroll);
+        this.scrollContainerRef.nativeElement.scrollTop = targetScroll;
+      }, 0);
+    }
+  }
+
+  updateVisibleItems(scrollTop: number) {
+    const centerIndex = Math.round(scrollTop / this.itemHeight);
+
+    this.startIndex = Math.max(
+      0,
+      centerIndex - Math.floor(this.visibleItemCount / 2) - this.bufferSize,
+    );
+    this.endIndex = Math.min(
+      this.numbers.length,
+      centerIndex + Math.ceil(this.visibleItemCount / 2) + this.bufferSize,
+    );
+
+    this.visibleNumbers = [];
+    for (let i = this.startIndex; i < this.endIndex; i++) {
+      this.visibleNumbers.push({
+        value: this.numbers[i],
+        index: i,
+      });
+    }
+
+    this.topPadding.set(this.startIndex * this.itemHeight);
+    this.bottomPadding.set((this.numbers.length - this.endIndex) * this.itemHeight);
   }
 
   onScroll() {
@@ -63,6 +105,10 @@ export class NumberPicker implements OnInit, AfterViewInit {
 
     const container = this.scrollContainerRef.nativeElement;
     const scrollTop = container.scrollTop;
+
+    // Update visible items based on scroll position
+    this.updateVisibleItems(scrollTop);
+
     const index = Math.round(scrollTop / this.itemHeight);
     const newValue = this.numbers[index];
 
@@ -84,7 +130,6 @@ export class NumberPicker implements OnInit, AfterViewInit {
     const scrollTop = container.scrollTop;
     const index = Math.round(scrollTop / this.itemHeight);
 
-    // Snap to nearest item
     const targetScroll = index * this.itemHeight;
     container.scrollTo({
       top: targetScroll,
@@ -137,7 +182,6 @@ export class NumberPicker implements OnInit, AfterViewInit {
     if (this.startY !== 0) {
       this.startY = 0;
 
-      // Apply momentum if velocity is significant
       if (Math.abs(this.velocityY) > 0.3) {
         this.applyMomentum();
       } else {
@@ -152,8 +196,8 @@ export class NumberPicker implements OnInit, AfterViewInit {
 
   applyMomentum() {
     const container = this.scrollContainerRef.nativeElement;
-    let velocity = this.velocityY * 15; // Amplify the velocity
-    const deceleration = 0.95; // Friction factor
+    let velocity = this.velocityY * 15;
+    const deceleration = 0.95;
 
     const animate = () => {
       if (Math.abs(velocity) < 0.5) {
@@ -207,7 +251,6 @@ export class NumberPicker implements OnInit, AfterViewInit {
     if (this.startY !== 0) {
       this.startY = 0;
 
-      // Apply momentum if velocity is significant
       if (Math.abs(this.velocityY) > 0.3) {
         this.applyMomentum();
       } else {
@@ -224,10 +267,18 @@ export class NumberPicker implements OnInit, AfterViewInit {
     const index = this.numbers.indexOf(value);
     if (index !== -1) {
       const container = this.scrollContainerRef.nativeElement;
+      const targetScroll = index * this.itemHeight;
+
+      this.updateVisibleItems(targetScroll);
+
       container.scrollTo({
-        top: index * this.itemHeight,
+        top: targetScroll,
         behavior: smooth ? 'smooth' : 'auto',
       });
     }
+  }
+
+  getItemPosition(index: number): number {
+    return index * this.itemHeight;
   }
 }

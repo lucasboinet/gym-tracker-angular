@@ -6,12 +6,12 @@
     (click)="handleOnClick()"
     class="text-center w-full text-black border rounded p-2 border-blue-100 bg-white"
   />
-  @if (displayInput) {
+  @if (displayInput()) {
     <div #inputsNumber class="flex items-center w-full fixed left-0 right-0 bottom-0 z-[99]">
       <number-picker
         [min]="min()"
         [max]="max()"
-        [initialValue]="model()"
+        [initialValue]="modelParts()[0]"
         (valueChange)="onNumberPickerChange($event, 'main')"
         class="w-full"
       ></number-picker>
@@ -23,7 +23,7 @@
         <number-picker
           [min]="0"
           [max]="9"
-          [initialValue]="model()"
+          [initialValue]="modelParts()[1]"
           (valueChange)="onNumberPickerChange($event, 'decimal')"
           class="w-full"
         ></number-picker>

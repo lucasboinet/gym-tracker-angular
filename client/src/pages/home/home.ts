@@ -36,6 +36,7 @@ import { Workout } from '../../shared/types/Workout';
 })
 export class HomePage implements OnInit {
   showAddExercise = false;
+  updateCurrentWorkoutTimeout: NodeJS.Timeout | undefined;
 
   gymService = inject(WorkoutService);
   messageService = inject(MessageService);
@@ -160,11 +161,18 @@ export class HomePage implements OnInit {
   }
 
   async saveCurrentExercises() {
-    if (this.gymService.currentWorkout()) {
-      this.gymService.currentWorkout.set({
-        ...this.gymService.currentWorkout()!,
-        exercises: this.gymService.exercises(),
-      });
+    if (!this.gymService.currentWorkout()) return;
+
+    if (this.updateCurrentWorkoutTimeout) {
+      clearTimeout(this.updateCurrentWorkoutTimeout);
+    }
+
+    this.gymService.currentWorkout.set({
+      ...this.gymService.currentWorkout()!,
+      exercises: this.gymService.exercises(),
+    });
+
+    this.updateCurrentWorkoutTimeout = setTimeout(() => {
       this.gymService.saveCurrentWorkout(this.gymService.currentWorkout()!).subscribe({
         next: (data) => {
           this.gymService.currentWorkout.set(data);
@@ -172,7 +180,7 @@ export class HomePage implements OnInit {
         },
         error: (err) => console.error(err),
       });
-    }
+    }, 500);
   }
 
   async finishWorkout() {

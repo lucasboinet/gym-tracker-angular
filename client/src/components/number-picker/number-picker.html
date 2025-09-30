@@ -19,7 +19,6 @@
         #scrollContainer
         class="h-full overflow-y-auto hide-scrollbar cursor-grab active:cursor-grabbing"
         (scroll)="onScroll()"
-        (touchend)="onScrollEnd()"
         (mousedown)="onMouseDown($event)"
         (mousemove)="onMouseMove($event)"
         (mouseup)="onMouseUp()"
@@ -30,20 +29,29 @@
         style="overscroll-behavior: contain"
       >
         <!-- Top padding -->
-        <div [style.height.px]="paddingHeight"></div>
+        <div [style.height.px]="paddingHeight">
+          <span class="text-black">{{ this.initialValue() }}</span>
+        </div>
 
-        <!-- Numbers -->
-        @for (num of numbers; track $index) {
+        <!-- Virtual scroll spacer top -->
+        <div [style.height.px]="topPadding()"></div>
+
+        <!-- Only visible numbers (virtual scroll) -->
+        @for (item of visibleNumbers; track item.index) {
           <div
             class="h-10 flex items-center justify-center text-gray-500 transition-all duration-150 cursor-pointer select-none"
-            [class.text-gray-500]="num !== selectedValue"
-            [class.font-bold]="num === selectedValue"
-            [class.text-black]="num === selectedValue"
-            (click)="onNumberClick(num)"
+            [class.text-gray-500]="item.value !== selectedValue"
+            [class.font-bold]="item.value === selectedValue"
+            [class.text-black]="item.value === selectedValue"
+            [style.transform]="'translateZ(0)'"
+            (click)="onNumberClick(item.value)"
           >
-            {{ num }} {{ suffix() }}
+            {{ item.value }} {{ suffix() }}
           </div>
         }
+
+        <!-- Virtual scroll spacer bottom -->
+        <div [style.height.px]="bottomPadding()"></div>
 
         <!-- Bottom padding -->
         <div [style.height.px]="paddingHeight"></div>
