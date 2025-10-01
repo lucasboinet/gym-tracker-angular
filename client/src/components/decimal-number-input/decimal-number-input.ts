@@ -53,6 +53,42 @@ export class DecimalNumberInput {
 
   handleOnClick() {
     this.displayInput.set(true);
+
+    requestAnimationFrame(() => {
+      this.scrollInputToCenter();
+    });
+  }
+
+  scrollInputToCenter() {
+    if (!this.inputRef?.nativeElement || !this.inputNumberRef?.nativeElement) {
+      return;
+    }
+
+    const inputElement = this.inputRef.nativeElement;
+    const pickerElement = this.inputNumberRef.nativeElement;
+    const pickerHeight = pickerElement.offsetHeight;
+
+    const inputRect = inputElement.getBoundingClientRect();
+    const viewportHeight = window.innerHeight;
+
+    const visibleAreaHeight = viewportHeight - pickerHeight;
+    const targetPosition = visibleAreaHeight / 2;
+
+    const scrollAmount = inputRect.top - targetPosition;
+
+    const currentScroll = window.scrollY;
+    const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+    const neededScroll = currentScroll + scrollAmount;
+
+    if (neededScroll > maxScroll) {
+      const additionalSpace = neededScroll - maxScroll; // Add 50px buffer
+      document.body.style.paddingBottom = `${additionalSpace}px`;
+    }
+
+    window.scrollBy({
+      top: scrollAmount,
+      behavior: 'smooth',
+    });
   }
 
   @HostListener('document:click', ['$event'])
@@ -70,6 +106,7 @@ export class DecimalNumberInput {
   }
 
   handleOutsideClick() {
+    document.body.style.paddingBottom = '0px';
     this.displayInput.set(false);
   }
 }
