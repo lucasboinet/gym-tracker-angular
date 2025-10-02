@@ -4,6 +4,7 @@ import { ButtonModule } from 'primeng/button';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { ExerciseType } from '../../shared/types/Exercise';
 import { IRemoveSet, IUpdateSet } from '../../shared/types/Set';
+import { Workout } from '../../shared/types/Workout';
 import { SetInput } from '../set-input/set-input';
 
 @Component({
@@ -18,6 +19,7 @@ export class ExerciseCard {
   @Output() removeSet = new EventEmitter<IRemoveSet>();
 
   exercise = input.required<ExerciseType>();
+  workoutId = input.required<Workout['_id']>();
 
   onUpdateSet(id: string, index: number, type: IUpdateSet['type'], value: number) {
     this.updateSet.emit({ id, index, type, value });

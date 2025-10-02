@@ -5,6 +5,7 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { WorkoutService } from '../../services/workout.service';
 import { ExerciseType } from '../../shared/types/Exercise';
 import { IRemoveSet, IUpdateSet, SetType } from '../../shared/types/Set';
+import { Workout } from '../../shared/types/Workout';
 import { DecimalNumberInput } from '../decimal-number-input/decimal-number-input';
 
 @Component({
@@ -18,6 +19,7 @@ export class SetInput {
 
   set = input.required<SetType>();
   exercise = input.required<ExerciseType>();
+  workoutId = input.required<Workout['_id']>();
   index = input.required<number>();
 
   workoutService = inject(WorkoutService);
@@ -25,8 +27,9 @@ export class SetInput {
   previousMatchingSet = computed<SetType | undefined>(() => {
     const workout = this.workoutService
       .workouts()
-      .find((w) =>
-        w.exercises.find((e) => e._id !== this.exercise()._id && e.name === this.exercise().name),
+      .find(
+        (w) =>
+          w._id !== this.workoutId() && w.exercises.find((e) => e.name === this.exercise().name),
       );
 
     if (!workout) return;

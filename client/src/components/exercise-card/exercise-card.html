@@ -17,6 +17,7 @@
       <set-input
         [set]="set"
         [exercise]="exercise()"
+        [workoutId]="workoutId()"
         [index]="$index"
         (removeSet)="onRemoveSet($event.id, $event.index)"
         (updateSet)="onUpdateSet($event.id, $event.index, $event.type, $event.value)"
