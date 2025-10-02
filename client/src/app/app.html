@@ -1,7 +1,9 @@
 <app-update-banner />
 
 <div id="splash-screen" class="absolute inset-0 flex justify-center items-center bg-white z-[100]">
-  <div class="spinner border-4 border-l-4"></div>
+  <div
+    class="spinner border-4 border-l-4 w-12 h-12 rounded-full border-black/10 border-l-blue-500"
+  ></div>
 </div>
 
 <main class="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
@@ -15,10 +17,8 @@
     />
   }
 
-  <!-- Toast Messages -->
   <p-toast position="top-center"></p-toast>
 
-  <!-- Confirmation Dialog -->
   <p-confirmDialog></p-confirmDialog>
 
   <router-outlet />

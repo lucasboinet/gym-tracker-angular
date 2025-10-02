@@ -1,7 +1,44 @@
 <div class="p-4 space-y-6">
   <h2 class="text-lg font-semibold text-gray-900">Last workouts stats</h2>
+
+  <div class="flex items-center gap-2">
+    <p-select
+      [options]="stats()"
+      [(ngModel)]="selectedStat"
+      optionLabel="exerciseName"
+      [filter]="true"
+      filterBy="exerciseName"
+      [showClear]="true"
+      placeholder="Select an exercise"
+      (ngModelChange)="handleSelectedStatsChange($event)"
+    >
+      <ng-template #selectedItem let-selectedOption>
+        <div>{{ selectedOption.exerciseName }}</div>
+      </ng-template>
+      <ng-template let-stat #item>
+        <div>{{ stat.exerciseName }}</div>
+      </ng-template>
+    </p-select>
+
+    <p-select
+      [options]="sessionService.sessions()"
+      [(ngModel)]="selectedSession"
+      optionLabel="name"
+      [showClear]="true"
+      placeholder="Select a session"
+      (ngModelChange)="handleSelectSessionChange($event)"
+    >
+      <ng-template #selectedItem let-selectedOption>
+        <div>{{ selectedOption.name }}</div>
+      </ng-template>
+      <ng-template let-session #item>
+        <div>{{ session.name }}</div>
+      </ng-template>
+    </p-select>
+  </div>
+
   <div class="flex flex-col gap-6">
-    @for (stat of stats(); track $index) {
+    @for (stat of filteredStats(); track $index) {
       <workout-chart [stat]="stat" />
     }
   </div>
