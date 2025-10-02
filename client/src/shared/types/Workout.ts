@@ -2,6 +2,7 @@ import { ExerciseType } from './Exercise';
 
 export interface Workout {
   _id?: string;
+  sessionId?: string;
   createdAt: Date;
   startTime: string;
   endTime?: string;

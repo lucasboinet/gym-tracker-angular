@@ -81,7 +81,7 @@ export class DecimalNumberInput {
     const neededScroll = currentScroll + scrollAmount;
 
     if (neededScroll > maxScroll) {
-      const additionalSpace = neededScroll - maxScroll; // Add 50px buffer
+      const additionalSpace = 5 * 40;
       document.body.style.paddingBottom = `${additionalSpace}px`;
     }
 

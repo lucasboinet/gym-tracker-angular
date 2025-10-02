@@ -46,6 +46,16 @@ export class SessionCard implements OnInit {
   }
 
   onStartSession() {
+    if (this.workoutService.currentWorkout()) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: "Can't start session",
+        detail: 'You already have an active workout running.',
+        life: 3000,
+      });
+      return;
+    }
+
     const workout: Partial<Workout> = {
       startTime: new Date().toLocaleTimeString('en-US', {
         hour: '2-digit',
@@ -53,6 +63,7 @@ export class SessionCard implements OnInit {
         hour12: false,
       }),
       exercises: this.session().exercises,
+      sessionId: this.session()._id,
     };
 
     this.workoutService.createWorkout(workout).subscribe({
