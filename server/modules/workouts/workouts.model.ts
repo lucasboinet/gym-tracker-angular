@@ -6,18 +6,22 @@ export const SetSchema = new mongoose.Schema(
     weight: { type: Number, required: true },
     reps: { type: Number, required: true },
   },
+  { _id: false }
 );
 
-export const ExerciseSchema = new mongoose.Schema(
-  {
-    name: { type: String, required: true },
-    sets: { type: [SetSchema], required: true },
-  },
-);
+export const ExerciseSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  sets: { type: [SetSchema], required: true },
+});
 
 const WorkoutSchema = new Schema(
   {
-    userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+    userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    sessionId: {
+      type: Schema.Types.ObjectId,
+      ref: "Session",
+      default: undefined,
+    },
     startTime: { type: String, required: true },
     endTime: { type: String, required: false },
     exercises: { type: [ExerciseSchema], required: true },
