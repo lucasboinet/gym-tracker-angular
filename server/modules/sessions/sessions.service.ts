@@ -6,17 +6,17 @@ export function getAllFromUser(userId: string) {
 }
 
 export function create(session: Session) {
-  return new SessionModel(session).save()
+  return new SessionModel(session).save();
 }
 
 export function updateOneById(sessionId: string, data: Partial<Session>) {
   return SessionModel.findOneAndUpdate(
-    { _id: sessionId }, 
-    { $set: { ...data } }, 
+    { _id: sessionId },
+    { $set: { ...data } },
     { new: true, runValidators: true }
-  )
+  );
 }
 
 export function deleteOneById(sessionId: string) {
-  return SessionModel.deleteOne({ _id: sessionId })
+  return SessionModel.deleteOne({ _id: sessionId });
 }

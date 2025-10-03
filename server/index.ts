@@ -1,14 +1,14 @@
-import cookieParser from 'cookie-parser';
-import express, { Application } from "express";
-import cors from "cors";
-import http from "http";
 import compression from "compression";
-import dotenv from 'dotenv';
+import cookieParser from "cookie-parser";
+import cors from "cors";
+import dotenv from "dotenv";
+import express, { Application } from "express";
+import http from "http";
 
 // import { connectRedis } from './services/redis';
-import database from "./services/database";
-import router from "./router";
 import config from "./config";
+import router from "./router";
+import database from "./services/database";
 
 dotenv.config();
 
@@ -41,6 +41,4 @@ database.connect();
 // connectRedis();
 
 const PORT = process.env.PORT || 3000;
-server.listen(PORT, () =>
-  console.debug(`[server] Running on port ${PORT}`)
-);
+server.listen(PORT, () => console.debug(`[server] Running on port ${PORT}`));
