@@ -5,7 +5,20 @@ export function getAll() {
   return WorkoutModel.find().sort({ createdAt: -1 });
 }
 
-export function getAllFromUser(userId: string) {
+export function getAllFromUser(userId: string, date?: Date) {
+  if (date) {
+    const startOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
+    const endOfMonth = new Date(date.getFullYear(), date.getMonth() + 1, 1);
+
+    return WorkoutModel.find({
+      userId,
+      createdAt: {
+        $gte: startOfMonth,
+        $lt: endOfMonth,
+      },
+    }).sort({ createdAt: -1 });
+  }
+
   return WorkoutModel.find({ userId }).sort({ createdAt: -1 });
 }
 

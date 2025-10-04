@@ -8,7 +8,11 @@ export async function getWorkouts(
   next: NextFunction
 ) {
   try {
-    const workouts = await workoutService.getAllFromUser(req.user!._id);
+    const date = req.query.date
+      ? new Date(req.query.date as string)
+      : undefined;
+
+    const workouts = await workoutService.getAllFromUser(req.user!._id, date);
     res.json(workouts);
   } catch (error) {
     next(error);
