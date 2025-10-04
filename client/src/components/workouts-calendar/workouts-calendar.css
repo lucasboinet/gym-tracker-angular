@@ -1,0 +1,38 @@
+/* Mobile-first responsive adjustments */
+@media (max-width: 640px) {
+  .grid-cols-7 > div {
+    min-height: 4rem;
+    font-size: 0.875rem;
+  }
+}
+
+/* Smooth transitions for interactions */
+[class*="hover:"] {
+  transition: all 0.2s ease-in-out;
+}
+
+/* Ensure proper touch targets for mobile */
+button {
+  min-width: 44px;
+  min-height: 44px;
+}
+
+/* Custom scrollbar for potential overflow */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}

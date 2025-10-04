@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { AuthGuard } from '../guards/auth.guard';
+import { HistoryPage } from '../pages/history/history';
 import { HomePage } from '../pages/home/home';
 import { SessionsPage } from '../pages/sessions/sessions';
 import { SignInPage } from '../pages/sign-in/sign-in';
@@ -17,6 +18,12 @@ export const routes: Routes = [
     title: 'Sessions',
     path: 'sessions',
     component: SessionsPage,
+    canActivate: [AuthGuard],
+  },
+  {
+    title: 'History',
+    path: 'history',
+    component: HistoryPage,
     canActivate: [AuthGuard],
   },
   {
