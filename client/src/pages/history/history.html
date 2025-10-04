@@ -1,5 +1,9 @@
 <div>
-  <workouts-calendar [events]="workoutService.workouts()" (daySelected)="onDaySelected($event)" />
+  <workouts-calendar
+    [events]="workouts()"
+    (daySelected)="onDaySelected($event)"
+    (dateChanged)="onDateChanged($event)"
+  />
 
   <workouts-history-dialog
     [(open)]="showWorkoutHistory"

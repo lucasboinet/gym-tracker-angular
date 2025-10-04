@@ -22,6 +22,7 @@ import { Workout } from '../../shared/types/Workout';
 export class WorkoutsCalendarComponent implements OnInit, OnChanges {
   @Input() events: Workout[] = [];
   @Output() daySelected = new EventEmitter<Workout[]>();
+  @Output() dateChanged = new EventEmitter<Date>();
 
   currentDate = signal<Date>(new Date());
   weeks: (Date | null)[][] = [];
@@ -29,17 +30,17 @@ export class WorkoutsCalendarComponent implements OnInit, OnChanges {
 
   canGoNextMonth = computed(() => this.currentDate().getMonth() < new Date().getMonth());
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.generateCalendar();
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
+  ngOnChanges(changes: SimpleChanges) {
     if (changes['events']) {
       this.generateCalendar();
     }
   }
 
-  generateCalendar(): void {
+  generateCalendar() {
     const year = this.currentDate().getFullYear();
     const month = this.currentDate().getMonth();
 
@@ -66,26 +67,29 @@ export class WorkoutsCalendarComponent implements OnInit, OnChanges {
     }
   }
 
-  prevMonth(): void {
+  prevMonth() {
     this.currentDate.set(
       new Date(this.currentDate().getFullYear(), this.currentDate().getMonth() - 1, 1),
     );
+    this.dateChanged.emit(this.currentDate());
     this.generateCalendar();
   }
 
-  nextMonth(): void {
+  nextMonth() {
     this.currentDate.set(
       new Date(this.currentDate().getFullYear(), this.currentDate().getMonth() + 1, 1),
     );
+    this.dateChanged.emit(this.currentDate());
     this.generateCalendar();
   }
 
-  goToToday(): void {
+  goToToday() {
     this.currentDate.set(new Date());
+    this.dateChanged.emit(this.currentDate());
     this.generateCalendar();
   }
 
-  get currentMonthYear(): string {
+  get currentMonthYear() {
     return this.currentDate().toLocaleDateString('en-US', {
       month: 'long',
       year: 'numeric',
@@ -100,7 +104,7 @@ export class WorkoutsCalendarComponent implements OnInit, OnChanges {
     return this.events.filter((event) => formatDateToISO(new Date(event.createdAt)) === dateStr);
   }
 
-  onDayClick(date: Date | null): void {
+  onDayClick(date: Date | null) {
     if (!date) return;
 
     const events = this.getEventsForDate(date);

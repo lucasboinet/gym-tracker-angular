@@ -15,11 +15,11 @@ export class WorkoutService {
   currentWorkout = signal<Workout | null>(null);
   exercises = signal<ExerciseType[]>([]);
 
-  getWorkouts(): Observable<Workout[]> {
+  getWorkouts(date?: Date): Observable<Workout[]> {
     return (
       this.auth.request<Workout[]>({
         method: HttpMethod.GET,
-        path: `${environment.apiUrl}/workouts`,
+        path: `${environment.apiUrl}/workouts${date ? `?date=${date}` : ''}`,
       }) || []
     );
   }

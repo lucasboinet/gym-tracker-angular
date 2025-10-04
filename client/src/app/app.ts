@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
@@ -15,11 +15,39 @@ import { WorkoutService } from '../services/workout.service';
   templateUrl: './app.html',
   styleUrl: './app.css',
 })
-export class App {
+export class App implements OnInit {
   workouts = [];
 
   workoutService = inject(WorkoutService);
   authService = inject(AuthService);
   messageService = inject(MessageService);
   cdr = inject(ChangeDetectorRef);
+
+  ngOnInit(): void {
+    this.loadWorkouts();
+  }
+
+  async loadWorkouts() {
+    try {
+      this.workoutService.getWorkouts().subscribe({
+        next: (data) => {
+          this.workoutService.workouts.set(
+            data.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()),
+          );
+          this.cdr.markForCheck();
+        },
+      });
+    } catch {
+      this.showToast('error', 'Error', 'Failed to load workouts');
+    }
+  }
+
+  private showToast(severity: string, summary: string, detail: string) {
+    this.messageService.add({
+      severity,
+      summary,
+      detail,
+      life: 3000,
+    });
+  }
 }

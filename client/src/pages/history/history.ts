@@ -11,25 +11,31 @@ import { Workout } from '../../shared/types/Workout';
   templateUrl: './history.html',
 })
 export class HistoryPage implements OnInit {
+  workouts = signal<Workout[]>([]);
   showWorkoutHistory = false;
   selectedDayWorkouts = signal<Workout[]>([]);
 
   workoutService = inject(WorkoutService);
 
-  ngOnInit(): void {
-    this.loadWorkouts();
+  ngOnInit() {
+    this.loadWorkouts(new Date());
   }
 
-  loadWorkouts() {
-    this.workoutService.getWorkouts().subscribe({
+  loadWorkouts(date?: Date) {
+    console.log(date);
+    this.workoutService.getWorkouts(date).subscribe({
       next: (workouts) => {
-        this.workoutService.workouts.set(workouts);
+        this.workouts.set(workouts);
       },
     });
   }
 
-  onDaySelected(workouts: Workout[]): void {
+  onDaySelected(workouts: Workout[]) {
     this.selectedDayWorkouts.set(workouts);
     this.showWorkoutHistory = true;
+  }
+
+  onDateChanged(date: Date) {
+    this.loadWorkouts(date);
   }
 }
