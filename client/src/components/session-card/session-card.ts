@@ -4,6 +4,7 @@ import { ContextMenuService, MenuItem, MessageService } from 'primeng/api';
 import { ContextMenuModule } from 'primeng/contextmenu';
 import { SessionService } from '../../services/sessions.service';
 import { WorkoutService } from '../../services/workout.service';
+import { getContrastColor } from '../../shared/colors';
 import { durationFromDate } from '../../shared/dates';
 import { Session } from '../../shared/types/Session';
 import { Workout } from '../../shared/types/Workout';
@@ -20,6 +21,8 @@ export class SessionCard implements OnInit {
   durationFromCreatedAt = computed(() => durationFromDate(this.session().createdAt));
   contextMenuItems: MenuItem[] = [];
   showEditDialog = false;
+
+  contrastColor = computed(() => getContrastColor(this.session().color, 60));
 
   private workoutService = inject(WorkoutService);
   private sessionService = inject(SessionService);

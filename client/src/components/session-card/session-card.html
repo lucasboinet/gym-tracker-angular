@@ -2,8 +2,11 @@
   <div class="p-4">
     <div class="flex items-start justify-between mb-3">
       <div class="flex items-center space-x-3">
-        <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
-          <i class="pi pi-bolt text-purple-600"></i>
+        <div
+          class="w-12 h-12 rounded-xl flex items-center justify-center"
+          [style.background]="session().color"
+        >
+          <i class="pi pi-bolt" [style.color]="contrastColor()"></i>
         </div>
         <div>
           <h3 class="font-semibold text-gray-900">{{ session().name }}</h3>

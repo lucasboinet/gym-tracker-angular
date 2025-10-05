@@ -3,6 +3,7 @@ import {
   Component,
   computed,
   EventEmitter,
+  inject,
   Input,
   OnChanges,
   OnInit,
@@ -10,6 +11,7 @@ import {
   signal,
   SimpleChanges,
 } from '@angular/core';
+import { SessionService } from '../../services/sessions.service';
 import { formatDateToISO, isToday } from '../../shared/dates';
 import { Workout } from '../../shared/types/Workout';
 
@@ -28,7 +30,13 @@ export class WorkoutsCalendarComponent implements OnInit, OnChanges {
   weeks: (Date | null)[][] = [];
   weekdayLabels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
-  canGoNextMonth = computed(() => this.currentDate().getMonth() < new Date().getMonth());
+  sessionService = inject(SessionService);
+
+  canGoNextMonth = computed(
+    () =>
+      this.currentDate().getMonth() < new Date().getMonth() ||
+      this.currentDate().getFullYear() < new Date().getFullYear(),
+  );
 
   ngOnInit() {
     this.generateCalendar();
@@ -116,5 +124,15 @@ export class WorkoutsCalendarComponent implements OnInit, OnChanges {
 
   isDateToday(date: Date | null) {
     return isToday(date);
+  }
+
+  getColorForEvent(event: Workout) {
+    const matchingSession = this.sessionService
+      .sessions()
+      .find((session) => session._id === event.sessionId);
+
+    if (!matchingSession) return '#3b82f6';
+
+    return matchingSession.color;
   }
 }

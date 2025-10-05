@@ -2,6 +2,7 @@ import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MessageService } from 'primeng/api';
 import { Button } from 'primeng/button';
+import { ColorPicker } from 'primeng/colorpicker';
 import { DialogModule } from 'primeng/dialog';
 import { SessionService } from '../../services/sessions.service';
 import { Session } from '../../shared/types/Session';
@@ -10,7 +11,7 @@ import { AddExerciseDialog } from '../add-exercise-dialog/add-exercise-dialog';
 @Component({
   templateUrl: './session-dialog.html',
   selector: 'session-dialog',
-  imports: [DialogModule, Button, AddExerciseDialog, FormsModule],
+  imports: [DialogModule, Button, AddExerciseDialog, FormsModule, ColorPicker],
 })
 export class SessionDialog {
   @Input({ required: false }) title = 'Create Session';
@@ -26,12 +27,14 @@ export class SessionDialog {
   showAddExercise = false;
 
   name: Session['name'] = '';
+  color: Session['color'] = '#f3e8ff';
   exercises: Session['exercises'] = [];
 
   handleOnShow() {
     if (this.action === 'edit' && this.session) {
       this.name = this.session.name;
       this.exercises = this.session.exercises;
+      this.color = this.session.color;
     }
   }
 
@@ -47,6 +50,7 @@ export class SessionDialog {
   cancelSessionCreation() {
     this.name = '';
     this.exercises = [];
+    this.color = '#f3e8ff';
     this.onOpenChange(false);
   }
 
@@ -92,6 +96,7 @@ export class SessionDialog {
         _id: this.session!._id,
         name: this.name,
         exercises: this.exercises,
+        color: this.color,
       })
       .subscribe({
         next: (data) => {
@@ -136,6 +141,7 @@ export class SessionDialog {
       .createSession({
         name: this.name,
         exercises: this.exercises,
+        color: this.color,
       })
       .subscribe({
         next: (data) => {

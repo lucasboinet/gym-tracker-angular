@@ -1,6 +1,7 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { WorkoutsCalendarComponent } from '../../components/workouts-calendar/workouts-calendar';
 import { WorkoutsHistory } from '../../components/workouts-history-dialog/workouts-history-dialog';
+import { SessionService } from '../../services/sessions.service';
 import { WorkoutService } from '../../services/workout.service';
 import { Workout } from '../../shared/types/Workout';
 
@@ -16,17 +17,22 @@ export class HistoryPage implements OnInit {
   selectedDayWorkouts = signal<Workout[]>([]);
 
   workoutService = inject(WorkoutService);
+  sessionService = inject(SessionService);
 
   ngOnInit() {
     this.loadWorkouts(new Date());
+    this.loadSessions();
+  }
+
+  loadSessions() {
+    this.sessionService.getSessions().subscribe({
+      next: (data) => this.sessionService.sessions.set(data),
+    });
   }
 
   loadWorkouts(date?: Date) {
-    console.log(date);
     this.workoutService.getWorkouts(date).subscribe({
-      next: (workouts) => {
-        this.workouts.set(workouts);
-      },
+      next: (workouts) => this.workouts.set(workouts),
     });
   }
 

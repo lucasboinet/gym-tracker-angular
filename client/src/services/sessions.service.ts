@@ -7,6 +7,7 @@ import { AuthService, HttpMethod } from './auth.service';
 interface SessionPayload {
   name: Session['name'];
   exercises: Session['exercises'];
+  color: Session['color'];
   _id?: Session['_id'];
 }
 

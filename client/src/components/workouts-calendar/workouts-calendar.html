@@ -49,38 +49,39 @@
   <div class="grid grid-cols-7 gap-1">
     @for (week of weeks; track $index) {
       <ng-container>
-        <div
-          *ngFor="let date of week"
-          [class.opacity-0]="!date"
-          [class.pointer-events-none]="!date"
-          class="relative min-h-24 border border-gray-200 rounded-lg p-2 transition-all hover:shadow-md hover:border-gray-300 cursor-pointer"
-          [class.border-blue-500]="isDateToday(date)"
-          [class.bg-blue-50]="isDateToday(date)"
-          [class.bg-white]="!isDateToday(date)"
-          (click)="onDayClick(date)"
-          [attr.aria-label]="date ? date.toDateString() : ''"
-        >
+        @for (date of week; track $index) {
           <div
-            *ngIf="date"
-            class="text-sm font-medium mb-1"
-            [class.text-blue-600]="isDateToday(date)"
-            [class.text-gray-700]="!isDateToday(date)"
+            [class.opacity-0]="!date"
+            [class.pointer-events-none]="!date"
+            class="relative min-h-24 border border-gray-200 rounded-lg p-2 transition-all hover:shadow-md hover:border-gray-300 cursor-pointer"
+            [class.border-blue-500]="isDateToday(date)"
+            [class.bg-blue-50]="isDateToday(date)"
+            [class.bg-white]="!isDateToday(date)"
+            (click)="onDayClick(date)"
+            [attr.aria-label]="date ? date.toDateString() : ''"
           >
-            {{ date.getDate() }}
-          </div>
+            @if (date) {
+              <div
+                class="text-sm font-medium mb-1"
+                [class.text-blue-600]="isDateToday(date)"
+                [class.text-gray-700]="!isDateToday(date)"
+              >
+                {{ date.getDate() }}
+              </div>
+            }
 
-          @if (date) {
-            <div class="flex flex-wrap gap-1 mt-auto">
-              @for (event of getEventsForDate(date); track event._id) {
-                <div
-                  class="w-2 h-2 rounded-full"
-                  [style.background-color]="'#3b82f6'"
-                  [title]="event._id"
-                ></div>
-              }
-            </div>
-          }
-        </div>
+            @if (date) {
+              <div class="flex flex-wrap gap-1 mt-auto">
+                @for (event of getEventsForDate(date); track event._id) {
+                  <div
+                    class="w-2 h-2 rounded-full"
+                    [style.background-color]="getColorForEvent(event)"
+                  ></div>
+                }
+              </div>
+            }
+          </div>
+        }
       </ng-container>
     }
   </div>
