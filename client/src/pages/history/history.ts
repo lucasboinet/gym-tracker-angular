@@ -38,4 +38,9 @@ export class HistoryPage implements OnInit {
   onDateChanged(date: Date) {
     this.loadWorkouts(date);
   }
+
+  handleWorkoutDelete(workoutId: string) {
+    this.workouts.set(this.workouts().filter((w) => w._id !== workoutId));
+    this.selectedDayWorkouts.set(this.selectedDayWorkouts().filter((w) => w._id !== workoutId));
+  }
 }

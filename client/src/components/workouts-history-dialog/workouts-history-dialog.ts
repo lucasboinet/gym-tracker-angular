@@ -15,6 +15,7 @@ export class WorkoutsHistory {
   @Input() workouts: Workout[] = [];
   @Input() open = false;
   @Output() openChange = new EventEmitter<boolean>();
+  @Output() workoutDelete = new EventEmitter<string>();
 
   private workoutService = inject(WorkoutService);
   private messageService = inject(MessageService);
@@ -29,6 +30,8 @@ export class WorkoutsHistory {
         this.workoutService.workouts.set(
           this.workoutService.workouts().filter((w) => w._id !== workoutId),
         );
+
+        this.workoutDelete.emit(workoutId);
 
         this.messageService.add({
           severity: 'success',

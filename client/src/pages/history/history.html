@@ -9,5 +9,6 @@
     [(open)]="showWorkoutHistory"
     [workouts]="selectedDayWorkouts()"
     (openChange)="showWorkoutHistory = $event"
+    (workoutDelete)="handleWorkoutDelete($event)"
   />
 </div>
