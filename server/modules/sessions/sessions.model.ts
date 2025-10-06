@@ -6,6 +6,7 @@ const SessionSchema = new Schema(
   {
     userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
     name: { type: String, required: true },
+    color: { type: String, required: true, default: "#f3e8ff" },
     exercises: { type: [ExerciseSchema], required: true },
   },
   { timestamps: true }
