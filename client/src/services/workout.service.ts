@@ -2,7 +2,7 @@ import { inject, Injectable, signal } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../environments/environment';
 import { ExerciseType } from '../shared/types/Exercise';
-import { Workout, WorkoutStat } from '../shared/types/Workout';
+import { Workout, WorkoutInsights, WorkoutStat } from '../shared/types/Workout';
 import { AuthService, HttpMethod } from './auth.service';
 
 @Injectable({
@@ -40,9 +40,9 @@ export class WorkoutService {
     });
   }
 
-  saveWorkout(workout: Workout): Observable<Workout> {
+  saveWorkout(workout: Workout): Observable<{ workout: Workout; insights: WorkoutInsights }> {
     return (
-      this.auth.request<Workout>({
+      this.auth.request<{ workout: Workout; insights: WorkoutInsights }>({
         method: HttpMethod.PUT,
         path: `${environment.apiUrl}/workouts`,
         body: workout,

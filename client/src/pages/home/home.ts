@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
@@ -10,11 +10,12 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { InputTextModule } from 'primeng/inputtext';
 import { ToastModule } from 'primeng/toast';
 import { AddExerciseDialog } from '../../components/add-exercise-dialog/add-exercise-dialog';
+import { CompleteWorkoutDialog } from '../../components/complete-workout-dialog/complete-workout-dialog';
 import { ExerciseCard } from '../../components/exercise-card/exercise-card';
 import { NoActiveWorkout } from '../../components/no-active-workout/no-active-workout';
 import { WorkoutService } from '../../services/workout.service';
 import { ExerciseType } from '../../shared/types/Exercise';
-import { Workout } from '../../shared/types/Workout';
+import { Workout, WorkoutInsights } from '../../shared/types/Workout';
 
 @Component({
   selector: 'home-page',
@@ -31,16 +32,21 @@ import { Workout } from '../../shared/types/Workout';
     NoActiveWorkout,
     AddExerciseDialog,
     ExerciseCard,
+    CompleteWorkoutDialog,
   ],
   templateUrl: './home.html',
 })
 export class HomePage implements OnInit {
   showAddExercise = false;
+  showCompleteWorkout = false;
   updateCurrentWorkoutTimeout: NodeJS.Timeout | undefined;
 
   gymService = inject(WorkoutService);
   messageService = inject(MessageService);
   confirmationService = inject(ConfirmationService);
+
+  completedWorkout = signal<Workout | undefined>(undefined);
+  completedWorkoutInsights = signal<WorkoutInsights | undefined>(undefined);
 
   ngOnInit() {
     this.loadCurrentWorkout();
@@ -189,7 +195,6 @@ export class HomePage implements OnInit {
       return;
     }
 
-    // Check if any exercises have incomplete sets
     const hasIncompleteExercises = this.gymService
       .exercises()
       .some((exercise) => exercise.sets.some((set) => set.reps === 0 && set.weight === 0));
@@ -220,9 +225,12 @@ export class HomePage implements OnInit {
     };
 
     this.gymService.saveWorkout(completedWorkout).subscribe({
-      next: () => {
+      next: (data) => {
         this.gymService.currentWorkout.set(null);
         this.gymService.exercises.set([]);
+
+        this.completedWorkout.set(data.workout);
+        this.completedWorkoutInsights.set(data.insights);
 
         this.gymService.getWorkouts().subscribe({
           next: (workouts) => {
@@ -230,7 +238,7 @@ export class HomePage implements OnInit {
           },
         });
 
-        this.showToast('success', 'Workout Complete! 🎉', 'Amazing job! Keep it up!');
+        this.showCompleteWorkout = true;
       },
       error: () => {
         this.showToast('error', 'Error', 'Failed to save workout');
@@ -276,24 +284,11 @@ export class HomePage implements OnInit {
     });
   }
 
-  // Helper method for calculating total volume
-  getTotalVolume(exercise: ExerciseType): number {
-    return exercise.sets.reduce((total, set) => total + set.weight * set.reps, 0);
-  }
-
-  // Helper method for getting workout stats
-  getWorkoutStats() {
-    if (!this.gymService.exercises().length) return { exercises: 0, sets: 0, volume: 0 };
-
-    const totalSets = this.gymService.exercises().reduce((total, ex) => total + ex.sets.length, 0);
-    const totalVolume = this.gymService
-      .exercises()
-      .reduce((total, ex) => total + this.getTotalVolume(ex), 0);
-
-    return {
-      exercises: this.gymService.exercises().length,
-      sets: totalSets,
-      volume: totalVolume,
-    };
+  handleCompleteWorkoutClose(value: boolean) {
+    this.showCompleteWorkout = value;
+    if (value === false) {
+      this.completedWorkout.set(undefined);
+      this.completedWorkoutInsights.set(undefined);
+    }
   }
 }

@@ -66,8 +66,16 @@
   }
 </div>
 
-<!-- Add Exercise Dialog -->
 <add-exercise-dialog
   [(open)]="showAddExercise"
   (exerciseAdded)="addExercise($event)"
 ></add-exercise-dialog>
+
+@if (completedWorkout()) {
+  <complete-workout-dialog
+    [(open)]="showCompleteWorkout"
+    (openChange)="handleCompleteWorkoutClose($event)"
+    [insights]="completedWorkoutInsights()!"
+    [workout]="completedWorkout()!"
+  />
+}

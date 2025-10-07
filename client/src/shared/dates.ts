@@ -7,15 +7,18 @@ export function durationFromDate(date: Date): string {
   return dayjs(date).fromNow();
 }
 
+export function getRangeDuration(
+  start: Date,
+  end: Date,
+  unit: dayjs.QUnitType | dayjs.OpUnitType = 'minutes',
+): number {
+  return dayjs(end).diff(start, unit);
+}
+
 export function isToday(date: Date | null): boolean {
   const today = new Date();
 
-  if (!date) return false;
-  return (
-    date.getDate() === today.getDate() &&
-    date.getMonth() === today.getMonth() &&
-    date.getFullYear() === today.getFullYear()
-  );
+  return dayjs(date).isSame(today, 'day');
 }
 
 export function formatDateToISO(date: Date): string {

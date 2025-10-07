@@ -21,3 +21,10 @@ export interface WorkoutStat {
   exerciseName: ExerciseType['name'];
   history: WorkoutStatHistory[];
 }
+
+export interface WorkoutInsights {
+  highlights: string[];
+  improvements: string[];
+  regressions: string[];
+  suggestions: string[];
+}

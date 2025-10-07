@@ -1,0 +1,309 @@
+<p-dialog
+  [(visible)]="open"
+  [modal]="true"
+  (visibleChange)="OnOpenChange($event)"
+  styleClass="!border-0 !bg-transparent"
+  [style]="{ width: '95vw', maxWidth: '600px' }"
+  [closable]="false"
+  [draggable]="true"
+  [resizable]="false"
+>
+  <ng-template #headless>
+    <div
+      class="w-full max-w-2xl overflow-hidden rounded-2xl border border-blue-500/20 bg-gradient-to-br from-slate-800 to-slate-900 shadow-2xl"
+    >
+      <!-- Header with Success Icon -->
+      <div
+        class="relative overflow-hidden bg-gradient-to-r from-blue-600 to-blue-500 p-8 text-center"
+      >
+        <div class="absolute inset-0 bg-black/10"></div>
+        <div class="relative">
+          <div
+            class="mb-4 inline-flex h-20 w-20 items-center justify-center rounded-full bg-white/20 backdrop-blur-sm"
+          >
+            <svg class="h-10 w-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M5 13l4 4L19 7"
+              ></path>
+            </svg>
+          </div>
+          <h2 class="mb-2 text-3xl font-bold text-white">Workout Complete!</h2>
+          <p class="text-blue-100">Great job on finishing your workout</p>
+        </div>
+        <button
+          class="absolute top-4 right-4 rounded-full p-2 text-white transition-colors hover:bg-white/20 cursor-pointer"
+          (click)="OnOpenChange(false)"
+        >
+          <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            ></path>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Stats Summary -->
+      <div class="grid grid-cols-3 gap-4 bg-slate-800/50 p-6">
+        <div class="text-center">
+          <div class="text-2xl font-bold text-blue-400">{{ workoutDuration() }} min</div>
+          <div class="mt-1 text-xs text-slate-400">Duration</div>
+        </div>
+        <div class="border-x border-slate-700 text-center">
+          <div class="text-2xl font-bold text-blue-400">{{ workout().exercises.length }}</div>
+          <div class="mt-1 text-xs text-slate-400">Exercises</div>
+        </div>
+        <div class="text-center">
+          <div class="text-2xl font-bold text-blue-400">TBD</div>
+          <div class="mt-1 text-xs text-slate-400">Calories Burned</div>
+        </div>
+      </div>
+
+      <!-- Insights Section -->
+      <div class="max-h-96 space-y-4 overflow-y-auto p-6">
+        <!-- Highlights -->
+        <div class="space-y-3">
+          <div class="flex items-center gap-2">
+            <svg class="h-5 w-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+              <path
+                d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
+              ></path>
+            </svg>
+            <h3 class="text-lg font-semibold text-white">Highlights</h3>
+          </div>
+          <div class="space-y-2">
+            @for (highlight of insights().highlights; track $index) {
+              <div class="rounded-xl border border-yellow-500/30 bg-yellow-500/10 p-4">
+                <div class="flex items-start gap-3">
+                  <svg
+                    class="mt-0.5 h-5 w-5 flex-shrink-0 text-yellow-400"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                      clip-rule="evenodd"
+                    ></path>
+                  </svg>
+                  <p class="text-white">
+                    {{ highlight }}
+                  </p>
+                </div>
+              </div>
+            }
+          </div>
+          @if (!insights() || insights().highlights.length === 0) {
+            <div class="bg-slate-800/50 border border-slate-700/50 rounded-xl p-6 text-center">
+              <svg
+                class="w-12 h-12 text-slate-600 mx-auto mb-3"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
+                ></path>
+              </svg>
+              <p class="text-slate-400 text-sm">No highlights yet. Keep pushing for new records!</p>
+            </div>
+          }
+        </div>
+
+        <!-- Improvements -->
+        <div class="space-y-3">
+          <div class="flex items-center gap-2">
+            <svg
+              class="h-5 w-5 text-green-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+              ></path>
+            </svg>
+            <h3 class="text-lg font-semibold text-white">Improvements</h3>
+          </div>
+          <div class="space-y-2">
+            @for (improvement of insights().improvements; track $index) {
+              <div class="rounded-xl border border-green-500/30 bg-green-500/10 p-4">
+                <div class="flex items-start gap-3">
+                  <svg
+                    class="mt-0.5 h-5 w-5 flex-shrink-0 text-green-400"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                      clip-rule="evenodd"
+                    ></path>
+                  </svg>
+                  <p class="text-white">
+                    {{ improvement }}
+                  </p>
+                </div>
+              </div>
+            }
+          </div>
+
+          @if (!insights() || insights().improvements.length === 0) {
+            <div class="bg-slate-800/50 border border-slate-700/50 rounded-xl p-6 text-center">
+              <svg
+                class="w-12 h-12 text-slate-600 mx-auto mb-3"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+                ></path>
+              </svg>
+              <p class="text-slate-400 text-sm">
+                No improvements tracked this session. Keep going!
+              </p>
+            </div>
+          }
+        </div>
+
+        <div class="space-y-3">
+          <div class="flex items-center gap-2">
+            <svg class="h-5 w-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"
+              ></path>
+            </svg>
+            <h3 class="text-lg font-semibold text-white">Areas to Watch</h3>
+          </div>
+
+          <div class="space-y-2">
+            @for (regression of insights().regressions; track $index) {
+              <div class="rounded-xl border border-red-500/30 bg-red-500/10 p-4">
+                <div class="flex items-start gap-3">
+                  <svg
+                    class="mt-0.5 h-5 w-5 flex-shrink-0 text-red-400"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                      clip-rule="evenodd"
+                    ></path>
+                  </svg>
+                  <p class="text-white">
+                    {{ regression }}
+                  </p>
+                </div>
+              </div>
+            }
+          </div>
+
+          @if (!insights() || insights().regressions.length === 0) {
+            <div class="bg-slate-800/50 border border-slate-700/50 rounded-xl p-6 text-center">
+              <svg
+                class="w-12 h-12 text-slate-600 mx-auto mb-3"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                ></path>
+              </svg>
+              <p class="text-slate-400 text-sm">No regressions detected. Keep it up!</p>
+            </div>
+          }
+        </div>
+
+        <div class="space-y-3">
+          <div class="flex items-center gap-2">
+            <svg
+              class="h-5 w-5 text-blue-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
+              ></path>
+            </svg>
+            <h3 class="text-lg font-semibold text-white">Suggestions</h3>
+          </div>
+
+          <div class="space-y-2">
+            @for (suggestion of insights().suggestions; track $index) {
+              <div class="rounded-xl border border-blue-500/30 bg-blue-500/10 p-4">
+                <div class="flex items-start gap-3">
+                  <svg
+                    class="mt-0.5 h-5 w-5 flex-shrink-0 text-blue-400"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                      clip-rule="evenodd"
+                    ></path>
+                  </svg>
+                  <p class="text-white">
+                    {{ suggestion }}
+                  </p>
+                </div>
+              </div>
+            }
+          </div>
+
+          @if (!insights() || insights().suggestions.length === 0) {
+            <div class="bg-slate-800/50 border border-slate-700/50 rounded-xl p-6 text-center">
+              <svg
+                class="w-12 h-12 text-slate-600 mx-auto mb-3"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M5 13l4 4L19 7"
+                ></path>
+              </svg>
+              <p class="text-slate-400 text-sm">No suggestions at this time. You're on track!</p>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Footer Actions -->
+      <div class="flex gap-3 border-t border-slate-700/50 bg-slate-800/30 p-6">
+        <button
+          class="flex-1 transform rounded-xl bg-blue-500 px-6 py-3 font-semibold text-white shadow-lg transition-all hover:bg-blue-600 cursor-progress"
+          (click)="OnOpenChange(false)"
+        >
+          Close
+        </button>
+      </div>
+    </div>
+  </ng-template>
+</p-dialog>
