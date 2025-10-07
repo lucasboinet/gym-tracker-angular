@@ -1,6 +1,10 @@
 import WorkoutModel from "./workouts.model";
 import { Workout } from "./workouts.types";
 
+export async function getLastWorkoutFromDate(date: Date) {
+  return WorkoutModel.findOne({ createdAt: { $lt: date } }).sort({ createdAt: -1 })
+}
+
 export function getAll() {
   return WorkoutModel.find().sort({ createdAt: -1 });
 }

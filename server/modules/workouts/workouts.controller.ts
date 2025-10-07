@@ -1,6 +1,8 @@
 import { NextFunction, Response } from "express";
 import { AuthenticatedRequest } from "../../shared/types/express";
 import * as workoutService from "./workouts.service";
+import { compareWorkouts, computeWorkoutStats, getWorkoutInsights } from "./workouts.functions";
+import { Workout } from "./workouts.types";
 
 export async function getWorkouts(
   req: AuthenticatedRequest,
@@ -41,7 +43,19 @@ export async function saveWorkout(
 ) {
   try {
     const workout = await workoutService.update(req.body);
-    res.status(201).json(workout);
+    const lastWorkout = await workoutService.getLastWorkoutFromDate(workout!.createdAt);
+    let insights = undefined;
+
+    if (lastWorkout) {
+      const compute = computeWorkoutStats(workout as Workout)
+      const lastCompute = computeWorkoutStats(lastWorkout as Workout);
+
+      const compare = compareWorkouts(compute, lastCompute);
+
+      insights = getWorkoutInsights(compare)
+    }
+    
+    res.status(201).json({ workout, insights });
   } catch (error) {
     next(error);
   }

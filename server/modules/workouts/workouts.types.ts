@@ -1,6 +1,6 @@
 export type Set = {
-  weight: string;
-  reps: string;
+  weight: number;
+  reps: number;
 };
 
 export type Exercise = {
@@ -17,4 +17,10 @@ export type Workout = {
   startTime: string;
   endTime?: string;
   exercises: Exercise[];
+};
+
+export type WorkoutCompute = {
+  totalVolume: number;
+  maxWeight: number;
+  perExercise: { name: string; volume: number; max: number }[];
 };
