@@ -17,7 +17,7 @@ export class CompleteWorkoutDialog {
   workout = input.required<Workout>();
 
   workoutDuration = computed(() =>
-    getRangeDuration(this.workout().updatedAt!, this.workout().createdAt),
+    getRangeDuration(this.workout().createdAt, this.workout().updatedAt!),
   );
 
   OnOpenChange(value: boolean) {
