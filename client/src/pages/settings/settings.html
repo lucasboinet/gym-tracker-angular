@@ -42,45 +42,49 @@
     </div>
 
     <!-- BMI Display -->
-    @if (bmiData()) {
-      <div class="bg-blue-50 border shadow rounded-lg p-5 transition-all duration-300">
-        <div class="flex items-start justify-between mb-3">
-          <h3 class="text-sm font-medium text-gray-700">Your BMI</h3>
-          <div class="text-right">
-            <div class="text-2xl font-bold text-gray-900">{{ bmiData()!.value }}</div>
-            <div class="text-xs font-medium text-gray-600 mt-1">{{ bmiData()!.category }}</div>
-          </div>
-        </div>
-
-        <div class="relative mt-4">
-          <div class="h-3 rounded-full overflow-hidden flex">
-            <div class="bg-green-700" style="width: 20%"></div>
-            <div class="bg-green-500" style="width: 20%"></div>
-            <div class="bg-yellow-400" style="width: 20%"></div>
-            <div class="bg-orange-400" style="width: 20%"></div>
-            <div class="bg-red-500" style="width: 20%"></div>
-          </div>
-
-          <div
-            class="absolute top-0 transition-all duration-300"
-            [style.left.%]="bmiData()!.percentage"
-            style="transform: translateX(-50%)"
-          >
-            <div class="w-0.5 h-3 bg-gray-900"></div>
-            <div
-              class="w-4 h-4 bg-white border-2 border-gray-900 rounded-full -mt-0.5 -ml-1.5 shadow-lg"
-            ></div>
-          </div>
-        </div>
-
-        <div class="flex justify-between text-xs text-gray-500 mt-2">
-          <span>15</span>
-          <span>18.5</span>
-          <span>25</span>
-          <span>30</span>
-          <span>40</span>
+    <div class="bg-blue-50 border shadow rounded-lg p-5 transition-all duration-300">
+      <div class="flex items-start justify-between mb-3">
+        <h3 class="text-sm font-medium text-gray-700">Your BMI</h3>
+        <div class="text-right">
+          <div class="text-2xl font-bold text-gray-900">{{ bmiData()?.value }}</div>
+          <div class="text-xs font-medium text-gray-600 mt-1">{{ bmiData()?.category }}</div>
         </div>
       </div>
-    }
+
+      <div #bmiScale class="relative mt-4">
+        <div class="h-3 rounded-full overflow-hidden flex">
+          <span class="bg-green-500 w-full"></span>
+          <span class="bg-yellow-400 w-full"></span>
+          <span class="bg-orange-400 w-full"></span>
+          <span class="bg-red-500 w-full"></span>
+        </div>
+
+        <div
+          class="absolute top-0 transition-all duration-300"
+          [style.left.px]="scaleIndicatorPosition || 0"
+          style="transform: translateX(-50%)"
+        >
+          <div class="w-0.5 h-3 bg-gray-900"></div>
+          <div
+            class="w-4 h-4 bg-white border-2 border-gray-900 rounded-full -mt-0.5 -ml-1.5 shadow-lg"
+          ></div>
+        </div>
+      </div>
+
+      <div class="flex justify-between text-xs text-gray-500 mt-2">
+        <div class="w-full flex justify-end">
+          <span class="transform translate-x-1/2">18.5</span>
+        </div>
+        <div class="w-full flex justify-end">
+          <span class="transform translate-x-1/2">25</span>
+        </div>
+        <div class="w-full flex justify-end">
+          <span class="transform translate-x-1/2">30</span>
+        </div>
+        <div class="w-full flex justify-end">
+          <span class="transform translate-x-1/2"></span>
+        </div>
+      </div>
+    </div>
   </form>
 </div>

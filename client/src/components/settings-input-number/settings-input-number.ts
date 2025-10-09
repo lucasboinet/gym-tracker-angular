@@ -56,7 +56,7 @@ export class SettingsInputNumber {
         this.saved.set(true);
         setTimeout(() => {
           this.saved.set(false);
-        }, 500);
+        }, 1000);
       },
     });
   }
