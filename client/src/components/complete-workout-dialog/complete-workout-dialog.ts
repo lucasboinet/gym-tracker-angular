@@ -13,7 +13,7 @@ export class CompleteWorkoutDialog {
 
   @Input() open = false;
 
-  insights = input.required<WorkoutInsights>();
+  insights = input.required<WorkoutInsights | undefined>();
   workout = input.required<Workout>();
 
   workoutDuration = computed(() =>

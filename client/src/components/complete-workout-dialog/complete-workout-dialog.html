@@ -10,7 +10,7 @@
 >
   <ng-template #headless>
     <div
-      class="w-full max-w-2xl overflow-hidden rounded-2xl border border-blue-500/20 bg-gradient-to-br from-slate-800 to-slate-900 shadow-2xl"
+      class="w-full max-w-2xl overflow-hidden rounded-2xl border border-blue-600 bg-gradient-to-br from-slate-800 to-slate-900 shadow-2xl"
     >
       <!-- Header with Success Icon -->
       <div
@@ -59,7 +59,7 @@
           <div class="mt-1 text-xs text-slate-400">Exercises</div>
         </div>
         <div class="text-center">
-          <div class="text-2xl font-bold text-blue-400">TBD</div>
+          <div class="text-2xl font-bold text-blue-400">{{ workout().calories }}</div>
           <div class="mt-1 text-xs text-slate-400">Calories Burned</div>
         </div>
       </div>
@@ -77,7 +77,7 @@
             <h3 class="text-lg font-semibold text-white">Highlights</h3>
           </div>
           <div class="space-y-2">
-            @for (highlight of insights().highlights; track $index) {
+            @for (highlight of insights()?.highlights; track $index) {
               <div class="rounded-xl border border-yellow-500/30 bg-yellow-500/10 p-4">
                 <div class="flex items-start gap-3">
                   <svg
@@ -98,7 +98,7 @@
               </div>
             }
           </div>
-          @if (!insights() || insights().highlights.length === 0) {
+          @if (!insights() || insights()?.highlights?.length === 0) {
             <div class="bg-slate-800/50 border border-slate-700/50 rounded-xl p-6 text-center">
               <svg
                 class="w-12 h-12 text-slate-600 mx-auto mb-3"
@@ -133,7 +133,7 @@
             <h3 class="text-lg font-semibold text-white">Improvements</h3>
           </div>
           <div class="space-y-2">
-            @for (improvement of insights().improvements; track $index) {
+            @for (improvement of insights()?.improvements; track $index) {
               <div class="rounded-xl border border-green-500/30 bg-green-500/10 p-4">
                 <div class="flex items-start gap-3">
                   <svg
@@ -155,7 +155,7 @@
             }
           </div>
 
-          @if (!insights() || insights().improvements.length === 0) {
+          @if (!insights() || insights()?.improvements?.length === 0) {
             <div class="bg-slate-800/50 border border-slate-700/50 rounded-xl p-6 text-center">
               <svg
                 class="w-12 h-12 text-slate-600 mx-auto mb-3"
@@ -191,7 +191,7 @@
           </div>
 
           <div class="space-y-2">
-            @for (regression of insights().regressions; track $index) {
+            @for (regression of insights()?.regressions; track $index) {
               <div class="rounded-xl border border-red-500/30 bg-red-500/10 p-4">
                 <div class="flex items-start gap-3">
                   <svg
@@ -213,7 +213,7 @@
             }
           </div>
 
-          @if (!insights() || insights().regressions.length === 0) {
+          @if (!insights() || insights()?.regressions?.length === 0) {
             <div class="bg-slate-800/50 border border-slate-700/50 rounded-xl p-6 text-center">
               <svg
                 class="w-12 h-12 text-slate-600 mx-auto mb-3"
@@ -252,7 +252,7 @@
           </div>
 
           <div class="space-y-2">
-            @for (suggestion of insights().suggestions; track $index) {
+            @for (suggestion of insights()?.suggestions; track $index) {
               <div class="rounded-xl border border-blue-500/30 bg-blue-500/10 p-4">
                 <div class="flex items-start gap-3">
                   <svg
@@ -274,7 +274,7 @@
             }
           </div>
 
-          @if (!insights() || insights().suggestions.length === 0) {
+          @if (!insights() || insights()?.suggestions?.length === 0) {
             <div class="bg-slate-800/50 border border-slate-700/50 rounded-xl p-6 text-center">
               <svg
                 class="w-12 h-12 text-slate-600 mx-auto mb-3"

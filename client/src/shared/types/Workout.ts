@@ -6,6 +6,7 @@ export interface Workout {
   createdAt: Date;
   startTime: string;
   endTime?: string;
+  calories?: number;
   exercises: ExerciseType[];
   updatedAt?: Date;
   userId?: string;
