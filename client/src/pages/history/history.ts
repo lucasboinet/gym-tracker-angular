@@ -6,7 +6,7 @@ import { WorkoutService } from '../../services/workout.service';
 import { Workout } from '../../shared/types/Workout';
 
 @Component({
-  selector: 'sessions-page',
+  selector: 'history-page',
   imports: [WorkoutsCalendarComponent, WorkoutsHistory],
   providers: [],
   templateUrl: './history.html',

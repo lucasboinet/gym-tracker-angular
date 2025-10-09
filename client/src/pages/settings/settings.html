@@ -1,0 +1,86 @@
+<div class="px-6 py-4">
+  <div class="flex items-center justify-between mb-6">
+    <h2 class="text-lg font-semibold text-gray-900">Settings</h2>
+  </div>
+
+  <form class="flex flex-col gap-6">
+    <!-- Weight Input -->
+    <settings-input-number
+      [model]="getSetting(SETTINGS_SLUG.WEIGHT)"
+      [unit]="getSetting(SETTINGS_SLUG.WEIGHT_UNIT)"
+      [units]="['kg', 'lbs']"
+      [label]="SETTINGS_INPUT_LABELS[SETTINGS_SLUG.WEIGHT]"
+    />
+
+    <!-- Height Input -->
+    <settings-input-number
+      [model]="getSetting(SETTINGS_SLUG.HEIGHT)"
+      [unit]="getSetting(SETTINGS_SLUG.HEIGHT_UNIT)"
+      [units]="['cm', 'ft']"
+      [label]="SETTINGS_INPUT_LABELS[SETTINGS_SLUG.HEIGHT]"
+    />
+
+    <!-- Info Card -->
+    <div class="space-y-6">
+      <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 flex items-start">
+        <svg
+          class="w-5 h-5 text-blue-500 mt-0.5 mr-3 flex-shrink-0"
+          fill="currentColor"
+          viewBox="0 0 20 20"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+            clip-rule="evenodd"
+          ></path>
+        </svg>
+        <p class="text-sm text-blue-700">
+          Your measurements help us provide accurate workout recommendations and track your
+          progress.
+        </p>
+      </div>
+    </div>
+
+    <!-- BMI Display -->
+    @if (bmiData()) {
+      <div class="bg-blue-50 border shadow rounded-lg p-5 transition-all duration-300">
+        <div class="flex items-start justify-between mb-3">
+          <h3 class="text-sm font-medium text-gray-700">Your BMI</h3>
+          <div class="text-right">
+            <div class="text-2xl font-bold text-gray-900">{{ bmiData()!.value }}</div>
+            <div class="text-xs font-medium text-gray-600 mt-1">{{ bmiData()!.category }}</div>
+          </div>
+        </div>
+
+        <div class="relative mt-4">
+          <div class="h-3 rounded-full overflow-hidden flex">
+            <div class="bg-green-700" style="width: 20%"></div>
+            <div class="bg-green-500" style="width: 20%"></div>
+            <div class="bg-yellow-400" style="width: 20%"></div>
+            <div class="bg-orange-400" style="width: 20%"></div>
+            <div class="bg-red-500" style="width: 20%"></div>
+          </div>
+
+          <div
+            class="absolute top-0 transition-all duration-300"
+            [style.left.%]="bmiData()!.percentage"
+            style="transform: translateX(-50%)"
+          >
+            <div class="w-0.5 h-3 bg-gray-900"></div>
+            <div
+              class="w-4 h-4 bg-white border-2 border-gray-900 rounded-full -mt-0.5 -ml-1.5 shadow-lg"
+            ></div>
+          </div>
+        </div>
+
+        <div class="flex justify-between text-xs text-gray-500 mt-2">
+          <span>15</span>
+          <span>18.5</span>
+          <span>25</span>
+          <span>30</span>
+          <span>40</span>
+        </div>
+      </div>
+    }
+  </form>
+</div>
