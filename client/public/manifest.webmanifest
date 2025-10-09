@@ -2,6 +2,7 @@
   "name": "gym-tracker",
   "short_name": "gym-tracker",
   "display": "standalone",
+  "orientation": "portrait",
   "scope": "./",
   "start_url": "./",
   "icons": [
