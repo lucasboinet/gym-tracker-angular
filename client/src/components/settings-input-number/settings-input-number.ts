@@ -1,8 +1,7 @@
-import { Component, inject, input, model } from '@angular/core';
+import { Component, inject, input, model, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { MessageService } from 'primeng/api';
 import { SettingsService } from '../../services/settings.service';
-import { Setting, SETTINGS, SETTINGS_INPUT_LABELS } from '../../shared/types/Setting';
+import { Setting, SETTINGS } from '../../shared/types/Setting';
 
 @Component({
   selector: 'settings-input-number',
@@ -17,9 +16,10 @@ export class SettingsInputNumber {
   units = input.required<string[]>();
 
   updateTimer: NodeJS.Timeout | undefined = undefined;
+  saved = signal<boolean>(false);
+  loading = signal<boolean>(false);
 
   private settingService = inject(SettingsService);
-  private messageService = inject(MessageService);
 
   handleModelChange(value: any) {
     this.updateSetting(this.model().slug, value);
@@ -30,6 +30,7 @@ export class SettingsInputNumber {
   }
 
   updateSetting(slug: SETTINGS, value: any) {
+    this.loading.set(true);
     if (this.updateTimer) {
       clearTimeout(this.updateTimer);
     }
@@ -51,12 +52,11 @@ export class SettingsInputNumber {
   saveSetting(setting: Setting) {
     this.settingService.saveSetting(setting).subscribe({
       next: () => {
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Setting updated',
-          detail: `${SETTINGS_INPUT_LABELS[setting.slug]} updated successfully`,
-          life: 3000,
-        });
+        this.loading.set(false);
+        this.saved.set(true);
+        setTimeout(() => {
+          this.saved.set(false);
+        }, 500);
       },
     });
   }

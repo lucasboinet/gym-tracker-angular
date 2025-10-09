@@ -33,10 +33,6 @@ export class SettingsPage implements OnInit {
   }
 
   getSetting(slug: SETTINGS): Setting {
-    console.log(
-      slug,
-      this.settingService.settings().find((s) => s.slug === slug),
-    );
     return (
       this.settingService.settings().find((s) => s.slug === slug) || {
         slug,
@@ -52,7 +48,6 @@ export class SettingsPage implements OnInit {
     );
   }
 
-  // Computed signal for BMI calculation
   bmiData = computed<BMIData | null>(() => {
     const weight = this.getSettingValue(SETTINGS.WEIGHT);
     const height = this.getSettingValue(SETTINGS.HEIGHT);
