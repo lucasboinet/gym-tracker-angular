@@ -4,7 +4,10 @@ import { Setting } from "./settings.types";
 export function fromUserId(userId: string) {
   return {
     getAll() {
-      return SettingModel.find({ userId }).sort({ slug: 1 });
+      return SettingModel.find({ userId });
+    },
+    getOneFromSlug(slug: string) {
+      return SettingModel.findOne({ userId, slug });
     },
   };
 }

@@ -29,7 +29,11 @@ export async function saveSetting(
       userId: req.user?._id,
     };
 
-    if (!payload._id) {
+    const settingExist = await settingService
+      .fromUserId(req.user!._id)
+      .getOneFromSlug(payload.slug!);
+
+    if (!settingExist) {
       const setting = await settingService.create(payload);
       res.json(setting);
       return;
