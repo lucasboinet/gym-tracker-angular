@@ -96,7 +96,7 @@ export class SettingsPage implements OnInit {
     const clampedBMI = Math.max(minBMI, Math.min(maxBMI, bmi));
     const ratio = (clampedBMI - minBMI) / (maxBMI - minBMI);
 
-    const scaleWidth = this.bmiScaleRef.nativeElement.offsetWidth;
+    const scaleWidth = this.bmiScaleRef?.nativeElement?.offsetWidth;
     this.scaleIndicatorPosition = ratio * scaleWidth;
   }
 
