@@ -1,8 +1,12 @@
 import { NextFunction, Response } from "express";
 import { AuthenticatedRequest } from "../../shared/types/express";
+import { getUserWeightInKg } from "../settings/settings.function";
+import * as settingService from "../settings/settings.service";
+import { Setting, SETTINGS } from "../settings/settings.types";
 import {
   compareWorkouts,
   computeWorkoutStats,
+  estimateWorkoutCalories,
   getWorkoutInsights,
 } from "./workouts.functions";
 import * as workoutService from "./workouts.service";
@@ -50,11 +54,32 @@ export async function saveWorkout(
   next: NextFunction
 ) {
   try {
-    const workout = await workoutService.update(req.body);
+    const weightSetting = (await settingService
+      .fromUserId(req.user!._id)
+      .getOneFromSlug(SETTINGS.WEIGHT)) as Setting;
+
+    const weightUnitSetting = (await settingService
+      .fromUserId(req.user!._id)
+      .getOneFromSlug(SETTINGS.WEIGHT)) as Setting;
+
+    const userWeightKg = getUserWeightInKg(
+      weightSetting,
+      weightUnitSetting?.value
+    );
+
+    const calories = estimateWorkoutCalories(
+      userWeightKg,
+      req.body.exercises || []
+    );
+
+    const workout = (await workoutService.update({
+      ...req.body,
+      calories,
+    })) as Workout;
+
     const lastWorkout = await workoutService
       .fromUserId(req.user!._id)
-      .getLastWorkoutFromDate(workout!.createdAt);
-    let insights = undefined;
+      .getLastSimilareWorkout(workout);
 
     if (lastWorkout) {
       const compute = computeWorkoutStats(workout as Workout);
@@ -62,10 +87,20 @@ export async function saveWorkout(
 
       const compare = compareWorkouts(compute, lastCompute);
 
-      insights = getWorkoutInsights(compare);
+      const insights = getWorkoutInsights(compare);
+      res.status(201).json({ workout, insights });
+      return;
     }
 
-    res.status(201).json({ workout, insights });
+    res.status(201).json({
+      workout,
+      insights: {
+        highlights: [],
+        improvements: [],
+        regressions: [],
+        suggestions: [],
+      },
+    });
   } catch (error) {
     next(error);
   }

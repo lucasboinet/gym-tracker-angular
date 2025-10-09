@@ -16,6 +16,7 @@ export type Workout = {
   createdAt: Date;
   startTime: string;
   endTime?: string;
+  calories?: number;
   exercises: Exercise[];
 };
 

@@ -22,6 +22,7 @@ const WorkoutSchema = new Schema(
       ref: "Session",
       default: undefined,
     },
+    calories: { type: Number },
     startTime: { type: String, required: true },
     endTime: { type: String, required: false },
     exercises: { type: [ExerciseSchema], required: true },

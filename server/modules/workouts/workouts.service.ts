@@ -3,8 +3,16 @@ import { Workout } from "./workouts.types";
 
 export function fromUserId(userId: string) {
   return {
-    getLastWorkoutFromDate(date: Date) {
-      return WorkoutModel.findOne({ userId, createdAt: { $lt: date } }).sort({
+    getLastSimilareWorkout(workout: Workout) {
+      const exercisesNames = workout.exercises.map((e) => e.name);
+      return WorkoutModel.findOne({
+        userId,
+        $or: [
+          { sessionId: workout.sessionId },
+          { "exercises.name": { $in: exercisesNames } },
+        ],
+        _id: { $ne: workout._id },
+      }).sort({
         createdAt: -1,
       });
     },
