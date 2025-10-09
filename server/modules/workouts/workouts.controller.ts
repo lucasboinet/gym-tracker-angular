@@ -99,6 +99,7 @@ export async function saveWorkout(
         improvements: [],
         regressions: [],
         suggestions: [],
+        meta: {},
       },
     });
   } catch (error) {

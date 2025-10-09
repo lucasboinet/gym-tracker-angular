@@ -1,10 +1,9 @@
-import { Workout, WorkoutCompute } from "./workouts.types";
+import { Workout, WorkoutCompute, WorkoutInsight } from "./workouts.types";
 
 export function computeWorkoutStats(workout: Workout): WorkoutCompute {
   let totalVolume = 0;
   let maxWeight = 0;
   const perExercise = [];
-
   for (const exercise of workout.exercises) {
     const exerciseVolume = exercise.sets.reduce(
       (sum, s) => sum + s.reps * s.weight,
@@ -19,77 +18,148 @@ export function computeWorkoutStats(workout: Workout): WorkoutCompute {
       max: exerciseMax,
     });
   }
-
   return { totalVolume, maxWeight, perExercise };
+}
+
+function isCompound(exerciseName: string): boolean {
+  return false;
+}
+
+function percentChange(current: number, previous: number): number {
+  if (!previous || previous === 0) return 0;
+  return ((current - previous) / previous) * 100;
+}
+
+function computeIntensity(totalVolume: number, durationMs?: number) {
+  if (!durationMs) return undefined;
+  const minutes = durationMs / 60000;
+  return totalVolume / Math.max(minutes, 1);
 }
 
 export function compareWorkouts(
   current: WorkoutCompute,
-  previous: WorkoutCompute
+  previous: WorkoutCompute,
+  durationMs?: number
 ): WorkoutCompute {
-  const stats: WorkoutCompute = {
-    totalVolume:
-      ((current.totalVolume - previous.totalVolume) / previous.totalVolume) *
-      100,
-    maxWeight:
-      ((current.maxWeight - previous.maxWeight) / previous.maxWeight) * 100,
-    perExercise: [],
+  const currentIntensity = computeIntensity(current.totalVolume, durationMs);
+  const prevIntensity = previous.intensity;
+
+  return {
+    totalVolume: percentChange(current.totalVolume, previous.totalVolume),
+    maxWeight: percentChange(current.maxWeight, previous.maxWeight),
+    intensity: percentChange(currentIntensity || 0, prevIntensity || 0),
+    perExercise: current.perExercise
+      .filter((ex) => previous.perExercise.some((e) => e.name === ex.name))
+      .map((ex) => {
+        const prev = previous.perExercise.find((e) => e.name === ex.name)!;
+        const weightedVolume = percentChange(ex.volume, prev.volume);
+        const weightedMax = percentChange(ex.max, prev.max);
+        return { name: ex.name, volume: weightedVolume, max: weightedMax };
+      }),
   };
-
-  for (const ex of current.perExercise) {
-    const prev = previous.perExercise.find((e) => e.name === ex.name);
-    if (!prev) continue;
-    stats.perExercise.push({
-      name: ex.name,
-      volume: ((ex.volume - prev.volume) / prev.volume) * 100,
-      max: ((ex.max - prev.max) / prev.max) * 100,
-    });
-  }
-
-  return stats;
 }
 
-export function getWorkoutInsights(comparison: WorkoutCompute) {
-  const highlights = [];
-  const improvements = [];
-  const regressions = [];
-  const suggestions = [];
+export function getWorkoutInsights(
+  comparison: WorkoutCompute,
+  userWeightKg?: number
+): WorkoutInsight {
+  const highlights: string[] = [];
+  const improvements: string[] = [];
+  const regressions: string[] = [];
+  const suggestions: string[] = [];
 
   if (comparison.totalVolume > 5)
     improvements.push(
-      `Overall workout volume increased by ${comparison.totalVolume.toFixed(
-        1
-      )}%.`
+      `Total workout volume increased by ${comparison.totalVolume.toFixed(1)}%.`
     );
   else if (comparison.totalVolume < -5)
     regressions.push(
-      `Overall volume decreased by ${Math.abs(comparison.totalVolume).toFixed(
-        1
-      )}%.`
+      `Total workout volume dropped by ${Math.abs(
+        comparison.totalVolume
+      ).toFixed(1)}%.`
     );
 
+  let regressionCount = 0;
+  let improvementCount = 0;
+
   for (const ex of comparison.perExercise) {
-    if (ex.volume > 5)
+    const compoundFactor = isCompound(ex.name) ? 1.5 : 1;
+    const weightedVol = ex.volume * compoundFactor;
+
+    if (weightedVol > 5) {
       improvements.push(`${ex.name}: +${ex.volume.toFixed(1)}% volume`);
-    else if (ex.volume < -5)
+      improvementCount++;
+    } else if (weightedVol < -5) {
       regressions.push(
         `${ex.name}: -${Math.abs(ex.volume).toFixed(1)}% volume`
       );
+      regressionCount++;
+    }
 
-    if (ex.max > 0)
+    if (ex.max > 2)
       highlights.push(
         `New PR on ${ex.name}: +${ex.max.toFixed(1)}% max weight`
       );
   }
 
-  if (regressions.length > 2)
-    suggestions.push("Consider taking a rest day or lowering intensity.");
-  if (improvements.length > 3)
+  if (comparison.intensity && Math.abs(comparison.intensity) > 5) {
+    if (comparison.intensity > 5)
+      improvements.push(
+        `Session intensity improved by ${comparison.intensity.toFixed(1)}%.`
+      );
+    else
+      regressions.push(
+        `Session intensity decreased by ${Math.abs(
+          comparison.intensity
+        ).toFixed(1)}%.`
+      );
+  }
+
+  const fatigueDetected =
+    regressionCount >= comparison.perExercise.length / 2 &&
+    comparison.totalVolume < 0;
+
+  if (fatigueDetected)
     suggestions.push(
-      "Great consistency! Try increasing weights slightly next session."
+      "Multiple regressions detected — possible fatigue. Consider a lighter session or rest day."
     );
 
-  return { highlights, improvements, regressions, suggestions };
+  if (improvementCount > 3)
+    suggestions.push(
+      "Strong overall progress — consider adding load or volume next week."
+    );
+  if (regressionCount > 2 && !fatigueDetected)
+    suggestions.push(
+      "Some exercises dropped off — maybe adjust technique or warm-up."
+    );
+  if (highlights.length && improvementCount < 2)
+    suggestions.push(
+      "Nice PRs! Keep consistency to turn them into lasting gains."
+    );
+
+  if (userWeightKg && comparison.perExercise.length > 0) {
+    const bestLift = comparison.perExercise.reduce((a, b) =>
+      a.max > b.max ? a : b
+    );
+    const ratio = (bestLift.max / userWeightKg) * 100;
+    if (ratio > 120)
+      highlights.push(
+        `Your ${bestLift.name} is ${ratio.toFixed(
+          0
+        )}% of bodyweight — strong progress!`
+      );
+  }
+
+  return {
+    highlights,
+    improvements,
+    regressions,
+    suggestions,
+    meta: {
+      intensityChange: comparison.intensity,
+      fatigueDetected,
+    },
+  };
 }
 
 export function estimateExerciseCalories(

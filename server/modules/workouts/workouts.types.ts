@@ -20,8 +20,26 @@ export type Workout = {
   exercises: Exercise[];
 };
 
-export type WorkoutCompute = {
+export interface ExerciseStats {
+  name: string;
+  volume: number;
+  max: number;
+}
+
+export interface WorkoutCompute {
   totalVolume: number;
   maxWeight: number;
-  perExercise: { name: string; volume: number; max: number }[];
-};
+  intensity?: number;
+  perExercise: ExerciseStats[];
+}
+
+export interface WorkoutInsight {
+  highlights: string[];
+  improvements: string[];
+  regressions: string[];
+  suggestions: string[];
+  meta?: {
+    intensityChange?: number;
+    fatigueDetected?: boolean;
+  };
+}
