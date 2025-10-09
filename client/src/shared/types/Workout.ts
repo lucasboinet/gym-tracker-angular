@@ -28,4 +28,8 @@ export interface WorkoutInsights {
   improvements: string[];
   regressions: string[];
   suggestions: string[];
+  meta?: {
+    intensityChange?: number;
+    fatigueDetected?: boolean;
+  };
 }
