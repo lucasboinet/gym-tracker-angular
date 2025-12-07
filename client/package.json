@@ -3,6 +3,7 @@
   "version": "1.0.1",
   "scripts": {
     "ng": "ng",
+    "dev": "ng dev --port 4200",
     "start": "ng serve",
     "build": "ng build",
     "build:prod": "ng build --configuration=production",
@@ -58,6 +59,7 @@
     "@types/jasmine": "~5.1.0",
     "@types/node": "^20.17.19",
     "angular-eslint": "20.3.0",
+    "baseline-browser-mapping": "^2.9.4",
     "eslint": "^9.35.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.4",

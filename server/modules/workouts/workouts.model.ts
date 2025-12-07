@@ -12,6 +12,7 @@ export const SetSchema = new mongoose.Schema(
 export const ExerciseSchema = new mongoose.Schema({
   name: { type: String, required: true },
   sets: { type: [SetSchema], required: true },
+  notes: { type: String, required: false, default: "" },
 });
 
 const WorkoutSchema = new Schema(

@@ -4,4 +4,5 @@ export interface ExerciseType {
   sets: SetType[];
   name: string;
   _id?: string;
+  notes?: string;
 }

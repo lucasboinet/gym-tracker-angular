@@ -26,7 +26,7 @@
   </div>
 
   <!-- Add Set Button -->
-  <div class="px-4 pb-4">
+  <div class="px-4">
     <p-button
       label="Add Set"
       icon="pi pi-plus"
@@ -34,5 +34,19 @@
       styleClass="w-full p-button-outlined"
     >
     </p-button>
+  </div>
+
+  <!-- Exercise notes -->
+  <div class="p-4 flex flex-col gap-2 mt-1">
+    <label for="exercise_notes" class="text-xs font-medium text-gray-500">Notes</label>
+    <textarea
+      [value]="exercise().notes ?? ''"
+      id="exercise_notes"
+      rows="5"
+      cols="30"
+      placeholder="Exercise notes"
+      class="bg-white text-black border border-blue-100 rounded-lg p-2 w-full focus:outline-none shadow resize-none placeholder:text-black/50"
+      (input)="onUpdateExerciseNotes($event)"
+    ></textarea>
   </div>
 </div>

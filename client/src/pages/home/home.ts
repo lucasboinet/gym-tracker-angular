@@ -151,6 +151,18 @@ export class HomePage implements OnInit {
     this.saveCurrentExercises();
   }
 
+  updateExercise(updatedExercise: ExerciseType) {
+    this.gymService.exercises.set(
+      this.gymService.exercises().map((exercise) => {
+        if (exercise._id === updatedExercise._id) {
+          return { ...exercise, ...updatedExercise };
+        }
+        return exercise;
+      }),
+    );
+    this.saveCurrentExercises();
+  }
+
   removeExercise(exerciseId: string) {
     this.confirmationService.confirm({
       message: 'Remove this exercise from your workout?',

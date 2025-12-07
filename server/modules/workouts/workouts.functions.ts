@@ -195,5 +195,5 @@ export function estimateWorkoutCalories(
     );
   }
 
-  return Math.round(totalCalories);
+  return Math.round(totalCalories) || 0;
 }
