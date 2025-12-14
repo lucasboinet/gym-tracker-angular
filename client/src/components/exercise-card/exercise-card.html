@@ -44,7 +44,11 @@
       id="exercise_notes"
       rows="5"
       cols="30"
-      placeholder="Exercise notes"
+      [placeholder]="
+        previousMatchingExercise()?.notes
+          ? `Notes from previous exercise : ${previousMatchingExercise()?.notes}`
+          : 'No notes from previous exercise'
+      "
       class="bg-white text-black border border-blue-100 rounded-lg p-2 w-full focus:outline-none shadow resize-none placeholder:text-black/50"
       (input)="onUpdateExerciseNotes($event)"
     ></textarea>

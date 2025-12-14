@@ -1,8 +1,9 @@
-import { Component, EventEmitter, input, Output } from '@angular/core';
+import { Component, computed, EventEmitter, inject, input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { TextareaModule } from 'primeng/textarea';
+import { WorkoutService } from '../../services/workout.service';
 import { ExerciseType } from '../../shared/types/Exercise';
 import { IRemoveSet, IUpdateSet } from '../../shared/types/Set';
 import { Workout } from '../../shared/types/Workout';
@@ -22,6 +23,21 @@ export class ExerciseCard {
 
   exercise = input.required<ExerciseType>();
   workoutId = input.required<Workout['_id']>();
+
+  workoutService = inject(WorkoutService);
+
+  previousMatchingExercise = computed<ExerciseType | undefined>(() => {
+    const workout = this.workoutService
+      .workouts()
+      .find(
+        (w) =>
+          w._id !== this.workoutId() && w.exercises.find((e) => e.name === this.exercise().name),
+      );
+
+    if (!workout) return;
+
+    return workout.exercises.find((e) => e.name === this.exercise().name && e.notes !== undefined);
+  });
 
   onUpdateExerciseNotes(event: Event) {
     const el = event.target as HTMLTextAreaElement;
