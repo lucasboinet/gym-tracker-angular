@@ -1,0 +1,19 @@
+# Docker reads .dockerignore only from the build context root.
+# Since both services now build with context: . (repo root), this file
+# replaces client/.dockerignore and server/.dockerignore for build purposes.
+
+**/node_modules
+**/dist
+**/build
+**/.angular
+**/.cache
+**/.tmp
+**/.git
+**/*.log
+**/*.tsbuildinfo
+**/.env
+**/.env.*
+!**/.env.production
+**/.vscode
+**/.idea
+**/.DS_Store
