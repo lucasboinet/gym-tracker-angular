@@ -1,11 +1,38 @@
 services:
   frontend:
     build:
-      context: ./frontend
+      context: ./client
     ports:
       - "4200:80"
+    depends_on:
+      - backend
+
   backend:
     build:
-      context: ./backend
+      context: ./server
     ports:
       - "3000:3000"
+    environment:
+      PORT: 3000
+      ORIGIN: "http://localhost:4200"
+      NODE_ENV: production
+      MONGO_URI: "mongodb://root:root@mongo:27017/gym-tracker?authSource=admin"
+      # move these to a real .env / secrets before going further than local testing
+      CRYTO_HASH_SALT: "change-me"
+      CRYPTO_HASH_ITERATION: 1000
+      JWT_SECRET: "change-me"
+      REFRESH_JWT_SECRET: "change-me"
+    depends_on:
+      - mongo
+
+  mongo:
+    image: mongo
+    restart: unless-stopped
+    volumes:
+      - mongo-data:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+
+volumes:
+  mongo-data:
