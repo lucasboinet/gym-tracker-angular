@@ -21,8 +21,28 @@ export function computeWorkoutStats(workout: Workout): WorkoutCompute {
   return { totalVolume, maxWeight, perExercise };
 }
 
+const COMPOUND_KEYWORDS = [
+  "squat",
+  "deadlift",
+  "bench",
+  "press",
+  "overhead",
+  "ohp",
+  "row",
+  "pull-up",
+  "pullup",
+  "chin-up",
+  "chinup",
+  "clean",
+  "snatch",
+  "lunge",
+  "dip",
+  "hip thrust",
+];
+
 function isCompound(exerciseName: string): boolean {
-  return false;
+  const normalized = exerciseName.toLowerCase().trim();
+  return COMPOUND_KEYWORDS.some((keyword) => normalized.includes(keyword));
 }
 
 function percentChange(current: number, previous: number): number {
@@ -164,11 +184,11 @@ export function getWorkoutInsights(
 
 export function estimateExerciseCalories(
   volume: number,
-  isCompound: boolean,
+  compound: boolean,
   durationMin: number,
   userWeightKg: number
 ) {
-  const baseMET = isCompound ? 6.0 : 4.0;
+  const baseMET = compound ? 6.0 : 4.0;
   const intensityFactor = Math.min(1 + volume / (userWeightKg * 1000), 2);
   const adjustedMET = baseMET * intensityFactor;
   return 0.0175 * adjustedMET * userWeightKg * durationMin;
@@ -189,7 +209,7 @@ export function estimateWorkoutCalories(
 
     totalCalories += estimateExerciseCalories(
       volume,
-      false,
+      isCompound(ex.name),
       duration,
       userWeightKg
     );

@@ -60,7 +60,7 @@ export async function saveWorkout(
 
     const weightUnitSetting = (await settingService
       .fromUserId(req.user!._id)
-      .getOneFromSlug(SETTINGS.WEIGHT)) as Setting;
+      .getOneFromSlug(SETTINGS.WEIGHT_UNIT)) as Setting;
 
     const userWeightKg = getUserWeightInKg(
       weightSetting,
