@@ -52,6 +52,14 @@ export class HomePage implements OnInit {
 
   ngOnInit() {
     this.loadCurrentWorkout();
+    this.loadWorkoutHistory();
+  }
+
+  loadWorkoutHistory() {
+    this.gymService.getWorkouts().subscribe({
+      next: (workouts) => this.gymService.workouts.set(workouts),
+      error: (err) => console.error('Failed to load workout history', err),
+    });
   }
 
   async loadCurrentWorkout() {

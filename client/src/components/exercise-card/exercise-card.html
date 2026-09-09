@@ -19,6 +19,7 @@
         [exercise]="exercise()"
         [workoutId]="workoutId()"
         [index]="$index"
+        [fatigued]="fatigued()"
         (removeSet)="onRemoveSet($event.id, $event.index)"
         (updateSet)="onUpdateSet($event.id, $event.index, $event.type, $event.value)"
       />

@@ -4,6 +4,8 @@ import { ButtonModule } from 'primeng/button';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { RestTimerService } from '../../services/rest-timer.service';
 import { WorkoutService } from '../../services/workout.service';
+import { isCompound } from '../../shared/exercises';
+import { SetSuggestion, suggestNextSet } from '../../shared/progression';
 import { ExerciseType } from '../../shared/types/Exercise';
 import { IRemoveSet, IUpdateSet, SetType } from '../../shared/types/Set';
 import { Workout } from '../../shared/types/Workout';
@@ -21,9 +23,27 @@ export class SetInput {
   exercise = input.required<ExerciseType>();
   workoutId = input.required<Workout['_id']>();
   index = input.required<number>();
+  fatigued = input<boolean>(false);
 
   workoutService = inject(WorkoutService);
   restTimer = inject(RestTimerService);
+
+  suggestion = computed<SetSuggestion | null>(() => {
+    const last = this.previousMatchingSet();
+    if (!last) return null;
+    return suggestNextSet(last, {
+      isCompound: isCompound(this.exercise().name),
+      fatigued: this.fatigued(),
+    });
+  });
+
+  applySuggestion() {
+    const suggestion = this.suggestion();
+    if (!suggestion) return;
+    const id = this.exercise()._id!;
+    this.onUpdateSet(id, this.index(), 'weight', suggestion.weight);
+    this.onUpdateSet(id, this.index(), 'reps', suggestion.reps);
+  }
 
   startRest() {
     this.restTimer.start(this.exercise().restTime ?? 0, this.exercise().name);

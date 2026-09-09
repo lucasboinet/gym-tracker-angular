@@ -79,14 +79,34 @@
   </p-button>
 </div>
 
-@if (exercise().restTime) {
-  <button
-    type="button"
-    (click)="startRest()"
-    class="self-start ml-11 flex items-center gap-2 text-xs font-medium text-blue-600 hover:text-blue-700 cursor-pointer bg-blue-50 hover:bg-blue-100 rounded-full px-3 py-1.5 transition-colors"
-  >
-    <i class="pi pi-clock text-xs"></i>
-    Start rest {{ exercise().restTime }}s
-  </button>
-}
+<div class="flex flex-wrap items-center gap-2 ml-11">
+  @if (exercise().restTime) {
+    <button
+      type="button"
+      (click)="startRest()"
+      class="flex items-center gap-2 text-xs font-medium text-blue-600 hover:text-blue-700 cursor-pointer bg-blue-50 hover:bg-blue-100 rounded-full px-3 py-1.5 transition-colors"
+    >
+      <i class="pi pi-clock text-xs"></i>
+      Start rest {{ exercise().restTime }}s
+    </button>
+  }
+
+  @if (suggestion(); as sug) {
+    <button
+      type="button"
+      (click)="applySuggestion()"
+      [title]="sug.reason"
+      class="flex items-center gap-2 text-xs font-medium cursor-pointer rounded-full px-3 py-1.5 transition-colors"
+      [class.text-emerald-700]="sug.kind === 'increase'"
+      [class.bg-emerald-50]="sug.kind === 'increase'"
+      [class.hover:bg-emerald-100]="sug.kind === 'increase'"
+      [class.text-amber-700]="sug.kind === 'hold'"
+      [class.bg-amber-50]="sug.kind === 'hold'"
+      [class.hover:bg-amber-100]="sug.kind === 'hold'"
+    >
+      <i class="pi text-xs" [class.pi-arrow-up-right]="sug.kind === 'increase'" [class.pi-minus]="sug.kind === 'hold'"></i>
+      {{ sug.kind === 'hold' ? 'Hold' : 'Suggest' }} {{ sug.weight }}kg × {{ sug.reps }}
+    </button>
+  }
+</div>
 </div>
