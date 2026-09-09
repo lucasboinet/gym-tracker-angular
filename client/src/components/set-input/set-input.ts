@@ -2,6 +2,7 @@ import { Component, computed, EventEmitter, inject, input, Output } from '@angul
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { InputNumberModule } from 'primeng/inputnumber';
+import { RestTimerService } from '../../services/rest-timer.service';
 import { WorkoutService } from '../../services/workout.service';
 import { ExerciseType } from '../../shared/types/Exercise';
 import { IRemoveSet, IUpdateSet, SetType } from '../../shared/types/Set';
@@ -22,6 +23,11 @@ export class SetInput {
   index = input.required<number>();
 
   workoutService = inject(WorkoutService);
+  restTimer = inject(RestTimerService);
+
+  startRest() {
+    this.restTimer.start(this.exercise().restTime ?? 0, this.exercise().name);
+  }
 
   previousMatchingSet = computed<SetType | undefined>(() => {
     const workout = this.workoutService

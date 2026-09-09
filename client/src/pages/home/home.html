@@ -72,6 +72,8 @@
   (exerciseAdded)="addExercise($event)"
 ></add-exercise-dialog>
 
+<rest-timer />
+
 @if (completedWorkout()) {
   <complete-workout-dialog
     [(open)]="showCompleteWorkout"

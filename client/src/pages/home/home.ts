@@ -13,6 +13,7 @@ import { AddExerciseDialog } from '../../components/add-exercise-dialog/add-exer
 import { CompleteWorkoutDialog } from '../../components/complete-workout-dialog/complete-workout-dialog';
 import { ExerciseCard } from '../../components/exercise-card/exercise-card';
 import { NoActiveWorkout } from '../../components/no-active-workout/no-active-workout';
+import { RestTimer } from '../../components/rest-timer/rest-timer';
 import { WorkoutService } from '../../services/workout.service';
 import { ExerciseType } from '../../shared/types/Exercise';
 import { Workout, WorkoutInsights } from '../../shared/types/Workout';
@@ -33,6 +34,7 @@ import { Workout, WorkoutInsights } from '../../shared/types/Workout';
     AddExerciseDialog,
     ExerciseCard,
     CompleteWorkoutDialog,
+    RestTimer,
   ],
   templateUrl: './home.html',
 })
@@ -92,6 +94,7 @@ export class HomePage implements OnInit {
     const exercise: ExerciseType = {
       name: exerciseName.trim(),
       sets: [{ reps: 0, weight: 0 }],
+      restTime: 90,
     };
 
     this.gymService.exercises.set([...this.gymService.exercises(), exercise]);

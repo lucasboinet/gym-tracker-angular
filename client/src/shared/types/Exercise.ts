@@ -5,4 +5,5 @@ export interface ExerciseType {
   name: string;
   _id?: string;
   notes?: string;
+  restTime?: number;
 }

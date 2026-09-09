@@ -13,6 +13,7 @@ export const ExerciseSchema = new mongoose.Schema({
   name: { type: String, required: true },
   sets: { type: [SetSchema], required: true },
   notes: { type: String, required: false, default: "" },
+  restTime: { type: Number, required: false, default: 0 },
 });
 
 const WorkoutSchema = new Schema(

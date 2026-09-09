@@ -4,6 +4,7 @@ import { MessageService } from 'primeng/api';
 import { Button } from 'primeng/button';
 import { ColorPicker } from 'primeng/colorpicker';
 import { DialogModule } from 'primeng/dialog';
+import { InputNumberModule } from 'primeng/inputnumber';
 import { SessionService } from '../../services/sessions.service';
 import { Session } from '../../shared/types/Session';
 import { AddExerciseDialog } from '../add-exercise-dialog/add-exercise-dialog';
@@ -11,7 +12,14 @@ import { AddExerciseDialog } from '../add-exercise-dialog/add-exercise-dialog';
 @Component({
   templateUrl: './session-dialog.html',
   selector: 'session-dialog',
-  imports: [DialogModule, Button, AddExerciseDialog, FormsModule, ColorPicker],
+  imports: [
+    DialogModule,
+    Button,
+    AddExerciseDialog,
+    FormsModule,
+    ColorPicker,
+    InputNumberModule,
+  ],
 })
 export class SessionDialog {
   @Input({ required: false }) title = 'Create Session';
@@ -43,8 +51,17 @@ export class SessionDialog {
   }
 
   onExerciseAdded(value: string) {
-    this.exercises = [...this.exercises, { name: value, sets: [{ reps: 0, weight: 0 }] }];
+    this.exercises = [
+      ...this.exercises,
+      { name: value, sets: [{ reps: 0, weight: 0 }], restTime: 90 },
+    ];
     this.showAddExercise = false;
+  }
+
+  updateRestTime(index: number, value: number) {
+    this.exercises = this.exercises.map((exercise, i) =>
+      i === index ? { ...exercise, restTime: Math.max(0, value) } : exercise,
+    );
   }
 
   cancelSessionCreation() {

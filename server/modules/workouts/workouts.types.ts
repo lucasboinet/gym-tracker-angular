@@ -7,6 +7,7 @@ export type Exercise = {
   sets: Set[];
   name: string;
   _id: string;
+  restTime?: number;
 };
 
 export type Workout = {
