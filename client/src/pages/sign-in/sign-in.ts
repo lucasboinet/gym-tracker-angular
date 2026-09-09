@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -6,7 +6,8 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { InputTextModule } from 'primeng/inputtext';
@@ -25,7 +26,7 @@ import { UserService } from '../../services/user.service';
     RouterLink,
   ],
 })
-export class SignInPage {
+export class SignInPage implements OnInit {
   loading = false;
   loginForm: FormGroup;
   error = '';
@@ -34,12 +35,25 @@ export class SignInPage {
   auth = inject(AuthService);
   userService = inject(UserService);
   router = inject(Router);
+  route = inject(ActivatedRoute);
+  messageService = inject(MessageService);
 
   constructor() {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(8)]],
     });
+  }
+
+  ngOnInit() {
+    if (this.route.snapshot.queryParamMap.get('registered') === 'true') {
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Account created',
+        detail: 'Your account was created. Please sign in.',
+        life: 4000,
+      });
+    }
   }
 
   onSubmit() {
@@ -59,13 +73,40 @@ export class SignInPage {
           next: () => this.router.navigate(['/']),
           error: () => {
             this.auth.logout(() => this.router.navigate(['/sign-in']));
+            this.showError('Could not load your account. Please sign in again.');
           },
         });
       },
       error: (err) => {
-        this.error = err?.error?.message || 'An error occurred';
+        this.showError(this.resolveError(err));
         this.loading = false;
       },
+    });
+  }
+
+  private resolveError(err: unknown): string {
+    const status = (err as { status?: number })?.status;
+    const message = (err as { error?: { message?: string } })?.error?.message;
+
+    if (message) {
+      return message;
+    }
+    if (status === 401 || status === 403) {
+      return 'Invalid email or password.';
+    }
+    if (status === 0) {
+      return 'Cannot reach the server. Check your connection.';
+    }
+    return 'An error occurred. Please try again.';
+  }
+
+  private showError(detail: string) {
+    this.error = detail;
+    this.messageService.add({
+      severity: 'error',
+      summary: 'Sign in failed',
+      detail,
+      life: 5000,
     });
   }
 

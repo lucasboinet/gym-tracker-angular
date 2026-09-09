@@ -150,12 +150,19 @@ export class AuthService implements HttpInterceptor {
     request?: HttpRequest<any>,
     next?: HttpHandler,
   ) {
-    if (error.status === 401) {
-      if (error.url?.includes('/auth/token/refresh')) {
-        this.clearTokens();
-        this.router.navigate(['/sign-in']);
-      }
+    const isAuthenticatedCall =
+      request?.context.has(TOKEN_CONTEXT) &&
+      request.context.get(TOKEN_CONTEXT) === '<access_token>';
 
+    if (error.status === 401 && error.url?.includes('/auth/token/refresh')) {
+      this.clearTokens();
+      this.router.navigate(['/sign-in']);
+    }
+
+    // Only run the token-refresh/retry flow for authenticated calls whose
+    // access token may have expired. Unauthenticated calls (login, register,
+    // refresh) must surface their original error to the caller.
+    if (error.status === 401 && isAuthenticatedCall) {
       return this.refreshToken().pipe(
         switchMap(() => {
           if (request !== undefined && next !== undefined) {
@@ -165,15 +172,11 @@ export class AuthService implements HttpInterceptor {
           return EMPTY;
         }),
       );
-    } else {
-      let errorMessage = 'An unknown error occurred!';
-      if (error.error instanceof ErrorEvent) {
-        errorMessage = `Error: ${error.error.message}`;
-      } else {
-        errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
-      }
-      return throwError(() => new Error(errorMessage));
     }
+
+    // Preserve the original HttpErrorResponse so callers can read the HTTP
+    // status and the server-provided error message (e.g. error.error.message).
+    return throwError(() => error);
   }
 
   private tokenExpired(token: string) {
@@ -234,7 +237,7 @@ export class AuthService implements HttpInterceptor {
       path: this.registerApiUrl,
       skipAuth: true,
       body: { email, password, confirmPassword },
-    }).pipe(switchMap(() => this.login(email, password)));
+    });
   }
 
   logout(result: () => void) {
