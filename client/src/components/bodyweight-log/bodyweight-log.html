@@ -1,0 +1,77 @@
+<div class="bg-white border shadow rounded-lg p-5">
+  <div class="flex items-start justify-between mb-4">
+    <div>
+      <h3 class="text-sm font-medium text-gray-700">Bodyweight log</h3>
+      <p class="text-xs text-gray-500 mt-0.5">Track your weight over time</p>
+    </div>
+    @if (latest()) {
+      <div class="text-right">
+        <div class="text-2xl font-bold text-gray-900">
+          {{ latest().display }} <span class="text-sm font-medium text-gray-500">{{ unit() }}</span>
+        </div>
+        @if (change() !== null) {
+          <div
+            class="text-xs font-medium mt-0.5"
+            [class.text-green-600]="change()! < 0"
+            [class.text-orange-500]="change()! > 0"
+            [class.text-gray-500]="change() === 0"
+          >
+            {{ change()! > 0 ? '+' : '' }}{{ change() }} {{ unit() }} overall
+          </div>
+        }
+      </div>
+    }
+  </div>
+
+  <!-- Log input -->
+  <div class="flex items-end gap-2">
+    <div class="flex-1">
+      <label class="block text-xs font-medium text-gray-500 mb-1">Log today ({{ unit() }})</label>
+      <p-inputNumber
+        [(ngModel)]="newValue"
+        [min]="0"
+        [max]="500"
+        [minFractionDigits]="0"
+        [maxFractionDigits]="1"
+        mode="decimal"
+        placeholder="e.g. 75"
+        inputStyleClass="w-full"
+        styleClass="w-full"
+      />
+    </div>
+    <p-button
+      label="Log"
+      icon="pi pi-plus"
+      [loading]="saving()"
+      (onClick)="logWeight()"
+    />
+  </div>
+
+  <!-- Recent entries -->
+  @if (displayEntries().length) {
+    <div class="mt-5">
+      <h4 class="text-xs font-medium text-gray-500 mb-2">History</h4>
+      <div class="flex flex-col divide-y divide-gray-100 max-h-64 overflow-y-auto">
+        @for (entry of displayEntries(); track entry._id) {
+          <div class="flex items-center justify-between py-2">
+            <div class="flex flex-col">
+              <span class="text-sm font-medium text-gray-900">
+                {{ entry.display }} {{ unit() }}
+              </span>
+              <span class="text-xs text-gray-400">{{ entry.ago }}</span>
+            </div>
+            <button
+              type="button"
+              class="text-gray-300 hover:text-red-500 cursor-pointer transition-colors"
+              (click)="removeEntry(entry)"
+            >
+              <i class="pi pi-trash text-xs"></i>
+            </button>
+          </div>
+        }
+      </div>
+    </div>
+  } @else {
+    <p class="text-xs text-gray-400 mt-4 text-center">No entries yet. Log your first weight above.</p>
+  }
+</div>

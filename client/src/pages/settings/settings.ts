@@ -8,6 +8,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { BodyweightLog } from '../../components/bodyweight-log/bodyweight-log';
 import { SettingsInputNumber } from '../../components/settings-input-number/settings-input-number';
 import { SettingsService } from '../../services/settings.service';
 import {
@@ -24,7 +25,7 @@ interface BMIData {
 
 @Component({
   selector: 'settings-page',
-  imports: [FormsModule, SettingsInputNumber],
+  imports: [FormsModule, SettingsInputNumber, BodyweightLog],
   templateUrl: './settings.html',
 })
 export class SettingsPage implements OnInit {
