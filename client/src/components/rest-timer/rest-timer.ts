@@ -1,12 +1,9 @@
-import { CommonModule } from '@angular/common';
 import { Component, computed, inject } from '@angular/core';
-import { ButtonModule } from 'primeng/button';
 import { RestTimerService } from '../../services/rest-timer.service';
 
 @Component({
   selector: 'rest-timer',
   templateUrl: './rest-timer.html',
-  imports: [CommonModule, ButtonModule],
 })
 export class RestTimer {
   timer = inject(RestTimerService);

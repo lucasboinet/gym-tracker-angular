@@ -1,8 +1,5 @@
 import { Component, computed, EventEmitter, inject, input, Output } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { ButtonModule } from 'primeng/button';
-import { InputNumberModule } from 'primeng/inputnumber';
-import { TextareaModule } from 'primeng/textarea';
+import { UiButton } from '../ui/button';
 import { WorkoutService } from '../../services/workout.service';
 import { ExerciseType } from '../../shared/types/Exercise';
 import { IRemoveSet, IUpdateSet } from '../../shared/types/Set';
@@ -12,7 +9,7 @@ import { SetInput } from '../set-input/set-input';
 @Component({
   templateUrl: './exercise-card.html',
   selector: 'exercise-card',
-  imports: [FormsModule, ButtonModule, InputNumberModule, SetInput, TextareaModule],
+  imports: [UiButton, SetInput],
 })
 export class ExerciseCard {
   @Output() removeExercise = new EventEmitter<string>();

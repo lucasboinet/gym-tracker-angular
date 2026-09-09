@@ -1,112 +1,87 @@
 <div class="flex flex-col gap-2">
-<div class="flex items-center justify-between gap-3">
-  <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-    <span class="text-sm font-medium text-blue-600">{{ index() + 1 }}</span>
-  </div>
+  <div class="flex items-end justify-between gap-3">
+    <div
+      class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary-500/10 mb-1.5"
+    >
+      <span class="text-sm font-semibold text-primary-400">{{ index() + 1 }}</span>
+    </div>
 
-  <div class="flex flex-col flex-1">
-    <label
-      for="{{ exercise()._id }}-weigth-{{ index() }}"
-      class="block text-xs font-medium text-gray-500 mb-1"
-      >Weight (kg)</label
-    >
-    <!-- <decimal-number-input
-      id="{{ exercise()._id }}-weigth-{{ index() }}"
-      [(model)]="set().weight"
-      [min]="0"
-      [max]="300"
-      (modelChange)="onUpdateSet(exercise()._id!, index(), 'weight', $event)"
-    /> -->
-    <p-inputNumber
-      id="{{ exercise()._id }}-weigth-{{ index() }}"
-      [(ngModel)]="set().weight"
-      (onInput)="onUpdateSet(exercise()._id!, index(), 'weight', +($event.value ?? 0))"
-      [showButtons]="true"
-      mode="decimal"
-      [minFractionDigits]="0"
-      [maxFractionDigits]="2"
-      [min]="0"
-      [step]="1"
-      inputStyleClass="text-center w-full"
-      styleClass="w-full"
-    >
-    </p-inputNumber>
-    @if (previousMatchingSet()) {
-      <span class="text-black opacity-70 text-xs mt-1"
-        >Previous weight : {{ previousMatchingSet()?.weight }}kg</span
+    <div class="flex min-w-0 flex-1 flex-col">
+      <label
+        for="{{ exercise()._id }}-weigth-{{ index() }}"
+        class="mb-1 block text-xs font-medium text-surface-400"
+        >Weight (kg)</label
       >
-    }
-  </div>
+      <ui-number
+        [value]="set().weight"
+        (valueChange)="onUpdateSet(exercise()._id!, index(), 'weight', $event ?? 0)"
+        [min]="0"
+        [step]="1"
+        [maxFractionDigits]="2"
+      />
+      @if (previousMatchingSet()) {
+        <span class="mt-1 text-xs text-surface-500">Prev: {{ previousMatchingSet()?.weight }}kg</span>
+      }
+    </div>
 
-  <div class="flex flex-col flex-1">
-    <label
-      for="{{ exercise()._id }}-reps-{{ index() }}"
-      class="block text-xs font-medium text-gray-500 mb-1"
-      >Reps</label
-    >
-    <!-- <decimal-number-input
-      id="{{ exercise()._id }}-reps-{{ index() }}"
-      [decimal]="false"
-      [min]="0"
-      [max]="50"
-      [(model)]="set().reps"
-      (modelChange)="onUpdateSet(exercise()._id!, index(), 'reps', $event)"
-    /> -->
-    <p-inputNumber
-      id="{{ exercise()._id }}-reps-{{ index() }}"
-      [(ngModel)]="set().reps"
-      (onInput)="onUpdateSet(exercise()._id!, index(), 'reps', +($event.value ?? 0))"
-      [showButtons]="true"
-      [min]="0"
-      [step]="1"
-      inputStyleClass="text-center w-full"
-      styleClass="w-full"
-    >
-    </p-inputNumber>
-    @if (previousMatchingSet()) {
-      <span class="text-black opacity-70 text-xs mt-1"
-        >Previous reps : {{ previousMatchingSet()?.reps }} reps</span
+    <div class="flex min-w-0 flex-1 flex-col">
+      <label
+        for="{{ exercise()._id }}-reps-{{ index() }}"
+        class="mb-1 block text-xs font-medium text-surface-400"
+        >Reps</label
       >
-    }
-  </div>
+      <ui-number
+        [value]="set().reps"
+        (valueChange)="onUpdateSet(exercise()._id!, index(), 'reps', $event ?? 0)"
+        [min]="0"
+        [step]="1"
+      />
+      @if (previousMatchingSet()) {
+        <span class="mt-1 text-xs text-surface-500">Prev: {{ previousMatchingSet()?.reps }} reps</span>
+      }
+    </div>
 
-  <p-button
-    icon="pi pi-minus"
-    (onClick)="onRemoveSet(exercise()._id!, index())"
-    styleClass="p-button-rounded p-button-text p-button-danger p-button-sm"
-    [text]="true"
-  >
-  </p-button>
-</div>
-
-<div class="flex flex-wrap items-center gap-2 ml-11">
-  @if (exercise().restTime) {
     <button
       type="button"
-      (click)="startRest()"
-      class="flex items-center gap-2 text-xs font-medium text-blue-600 hover:text-blue-700 cursor-pointer bg-blue-50 hover:bg-blue-100 rounded-full px-3 py-1.5 transition-colors"
+      class="mb-1 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-surface-500 transition-colors hover:bg-red-500/10 hover:text-red-400 cursor-pointer"
+      (click)="onRemoveSet(exercise()._id!, index())"
     >
-      <i class="pi pi-clock text-xs"></i>
-      Start rest {{ exercise().restTime }}s
+      <i class="pi pi-minus text-sm"></i>
     </button>
-  }
+  </div>
 
-  @if (suggestion(); as sug) {
-    <button
-      type="button"
-      (click)="applySuggestion()"
-      [title]="sug.reason"
-      class="flex items-center gap-2 text-xs font-medium cursor-pointer rounded-full px-3 py-1.5 transition-colors"
-      [class.text-emerald-700]="sug.kind === 'increase'"
-      [class.bg-emerald-50]="sug.kind === 'increase'"
-      [class.hover:bg-emerald-100]="sug.kind === 'increase'"
-      [class.text-amber-700]="sug.kind === 'hold'"
-      [class.bg-amber-50]="sug.kind === 'hold'"
-      [class.hover:bg-amber-100]="sug.kind === 'hold'"
-    >
-      <i class="pi text-xs" [class.pi-arrow-up-right]="sug.kind === 'increase'" [class.pi-minus]="sug.kind === 'hold'"></i>
-      {{ sug.kind === 'hold' ? 'Hold' : 'Suggest' }} {{ sug.weight }}kg × {{ sug.reps }}
-    </button>
-  }
-</div>
+  <div class="ml-11 flex flex-wrap items-center gap-2">
+    @if (exercise().restTime) {
+      <button
+        type="button"
+        (click)="startRest()"
+        class="flex cursor-pointer items-center gap-2 rounded-full bg-surface-800 px-3 py-1.5 text-xs font-medium text-surface-300 transition-colors hover:bg-surface-700 hover:text-primary-400"
+      >
+        <i class="pi pi-clock text-xs"></i>
+        Start rest {{ exercise().restTime }}s
+      </button>
+    }
+
+    @if (suggestion(); as sug) {
+      <button
+        type="button"
+        (click)="applySuggestion()"
+        [title]="sug.reason"
+        class="flex cursor-pointer items-center gap-2 rounded-full px-3 py-1.5 text-xs font-medium transition-colors"
+        [class.text-primary-400]="sug.kind === 'increase'"
+        [class.bg-primary-500/10]="sug.kind === 'increase'"
+        [class.hover:bg-primary-500/20]="sug.kind === 'increase'"
+        [class.text-amber-400]="sug.kind === 'hold'"
+        [class.bg-amber-500/10]="sug.kind === 'hold'"
+        [class.hover:bg-amber-500/20]="sug.kind === 'hold'"
+      >
+        <i
+          class="pi text-xs"
+          [class.pi-arrow-up-right]="sug.kind === 'increase'"
+          [class.pi-minus]="sug.kind === 'hold'"
+        ></i>
+        {{ sug.kind === 'hold' ? 'Hold' : 'Suggest' }} {{ sug.weight }}kg × {{ sug.reps }}
+      </button>
+    }
+  </div>
 </div>

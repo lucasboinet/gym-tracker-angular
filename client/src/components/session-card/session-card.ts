@@ -1,8 +1,7 @@
-import { Component, computed, inject, input, OnInit } from '@angular/core';
+import { Component, computed, ElementRef, HostListener, inject, input, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { ContextMenuService, MenuItem, MessageService } from 'primeng/api';
-import { ContextMenuModule } from 'primeng/contextmenu';
 import { SessionService } from '../../services/sessions.service';
+import { ToastService } from '../../services/toast.service';
 import { WorkoutService } from '../../services/workout.service';
 import { getContrastColor } from '../../shared/colors';
 import { durationFromDate } from '../../shared/dates';
@@ -13,48 +12,45 @@ import { SessionDialog } from '../session-dialog/session-dialog';
 @Component({
   templateUrl: './session-card.html',
   selector: 'session-card',
-  imports: [ContextMenuModule, SessionDialog],
-  providers: [ContextMenuService],
+  imports: [SessionDialog],
 })
-export class SessionCard implements OnInit {
+export class SessionCard {
   session = input.required<Session>();
   durationFromCreatedAt = computed(() => durationFromDate(this.session().createdAt));
-  contextMenuItems: MenuItem[] = [];
   showEditDialog = false;
+  menuOpen = signal(false);
 
   contrastColor = computed(() => getContrastColor(this.session().color, 60));
 
   private workoutService = inject(WorkoutService);
   private sessionService = inject(SessionService);
-  private messageService = inject(MessageService);
+  private toast = inject(ToastService);
   private router = inject(Router);
+  private host = inject(ElementRef);
 
-  ngOnInit(): void {
-    this.contextMenuItems = [
-      {
-        label: 'Edit',
-        icon: 'pi pi-pencil',
-        command: () => {
-          this.showEditDialog = true;
-        },
-      },
-      {
-        label: 'Delete',
-        icon: 'pi pi-trash',
-        command: () => {
-          this.onDeleteSession();
-        },
-      },
-    ];
+  toggleMenu(event: MouseEvent) {
+    event.stopPropagation();
+    this.menuOpen.update((v) => !v);
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent) {
+    if (!this.host.nativeElement.contains(event.target)) {
+      this.menuOpen.set(false);
+    }
+  }
+
+  editSession() {
+    this.menuOpen.set(false);
+    this.showEditDialog = true;
   }
 
   onStartSession() {
     if (this.workoutService.currentWorkout()) {
-      this.messageService.add({
+      this.toast.add({
         severity: 'warn',
         summary: "Can't start session",
         detail: 'You already have an active workout running.',
-        life: 3000,
       });
       return;
     }
@@ -79,17 +75,17 @@ export class SessionCard implements OnInit {
   }
 
   onDeleteSession() {
+    this.menuOpen.set(false);
     this.sessionService.deleteSession(this.session()._id!).subscribe({
       next: () => {
         this.sessionService.sessions.set([
           ...this.sessionService.sessions().filter((s) => s._id !== this.session()._id),
         ]);
 
-        this.messageService.add({
+        this.toast.add({
           severity: 'success',
           summary: 'Session deleted',
           detail: 'The session has been deleted successfully.',
-          life: 3000,
         });
       },
     });

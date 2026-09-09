@@ -1,7 +1,6 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { SelectModule } from 'primeng/select';
 import { BodyweightChart } from '../../components/bodyweight-chart/bodyweight-chart';
+import { UiSelect } from '../../components/ui/select';
 import { WorkoutChart } from '../../components/workout-chart/workout-chart';
 import { BodyweightService } from '../../services/bodyweight.service';
 import { SessionService } from '../../services/sessions.service';
@@ -15,7 +14,7 @@ import { WorkoutStat } from '../../shared/types/Workout';
 @Component({
   templateUrl: './stats.html',
   selector: 'stats-page',
-  imports: [WorkoutChart, BodyweightChart, FormsModule, SelectModule],
+  imports: [WorkoutChart, BodyweightChart, UiSelect],
 })
 export class StatsPage implements OnInit {
   stats = signal<WorkoutStat[]>([]);
@@ -123,11 +122,11 @@ export class StatsPage implements OnInit {
     });
   }
 
-  handleSelectedStatsChange(stat: WorkoutStat) {
+  handleSelectedStatsChange(stat: WorkoutStat | undefined) {
     this.selectedStat.set(stat);
   }
 
-  handleSelectSessionChange(session: Session) {
+  handleSelectSessionChange(session: Session | undefined) {
     this.selectedSession.set(session);
   }
 }

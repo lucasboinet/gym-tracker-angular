@@ -1,8 +1,7 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { MessageService } from 'primeng/api';
-import { ButtonModule } from 'primeng/button';
-import { InputNumberModule } from 'primeng/inputnumber';
+import { UiButton } from '../ui/button';
+import { UiNumber } from '../ui/number-stepper';
+import { ToastService } from '../../services/toast.service';
 import { BodyweightService } from '../../services/bodyweight.service';
 import { SettingsService } from '../../services/settings.service';
 import { durationFromDate } from '../../shared/dates';
@@ -13,12 +12,12 @@ import { fromKg, round1, toKg } from '../../shared/units';
 @Component({
   selector: 'bodyweight-log',
   templateUrl: './bodyweight-log.html',
-  imports: [FormsModule, ButtonModule, InputNumberModule],
+  imports: [UiButton, UiNumber],
 })
 export class BodyweightLog implements OnInit {
   private bodyweightService = inject(BodyweightService);
   private settingsService = inject(SettingsService);
-  private messageService = inject(MessageService);
+  private toast = inject(ToastService);
 
   entries = this.bodyweightService.entries;
   newValue = signal<number | null>(null);
@@ -59,7 +58,7 @@ export class BodyweightLog implements OnInit {
   logWeight() {
     const value = this.newValue();
     if (!value || value <= 0) {
-      this.messageService.add({
+      this.toast.add({
         severity: 'warn',
         summary: 'Invalid weight',
         detail: 'Enter a weight greater than 0.',
@@ -77,7 +76,7 @@ export class BodyweightLog implements OnInit {
         this.syncCurrentWeightSetting(value);
         this.newValue.set(null);
         this.saving.set(false);
-        this.messageService.add({
+        this.toast.add({
           severity: 'success',
           summary: 'Weight logged',
           detail: `${round1(value)} ${this.unit()} recorded.`,
@@ -86,7 +85,7 @@ export class BodyweightLog implements OnInit {
       },
       error: () => {
         this.saving.set(false);
-        this.messageService.add({
+        this.toast.add({
           severity: 'error',
           summary: 'Error',
           detail: 'Failed to log your weight.',

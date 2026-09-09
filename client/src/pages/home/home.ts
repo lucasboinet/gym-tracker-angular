@@ -1,19 +1,12 @@
-import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { ConfirmationService, MessageService } from 'primeng/api';
-import { ButtonModule } from 'primeng/button';
-import { CardModule } from 'primeng/card';
-import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { DialogModule } from 'primeng/dialog';
-import { InputNumberModule } from 'primeng/inputnumber';
-import { InputTextModule } from 'primeng/inputtext';
-import { ToastModule } from 'primeng/toast';
 import { AddExerciseDialog } from '../../components/add-exercise-dialog/add-exercise-dialog';
 import { CompleteWorkoutDialog } from '../../components/complete-workout-dialog/complete-workout-dialog';
 import { ExerciseCard } from '../../components/exercise-card/exercise-card';
 import { NoActiveWorkout } from '../../components/no-active-workout/no-active-workout';
 import { RestTimer } from '../../components/rest-timer/rest-timer';
+import { UiButton } from '../../components/ui/button';
+import { ConfirmService } from '../../services/confirm.service';
+import { ToastService } from '../../services/toast.service';
 import { WorkoutService } from '../../services/workout.service';
 import { ExerciseType } from '../../shared/types/Exercise';
 import { Workout, WorkoutInsights } from '../../shared/types/Workout';
@@ -21,15 +14,7 @@ import { Workout, WorkoutInsights } from '../../shared/types/Workout';
 @Component({
   selector: 'home-page',
   imports: [
-    CommonModule,
-    ButtonModule,
-    CardModule,
-    InputNumberModule,
-    InputTextModule,
-    DialogModule,
-    ToastModule,
-    ConfirmDialogModule,
-    FormsModule,
+    UiButton,
     NoActiveWorkout,
     AddExerciseDialog,
     ExerciseCard,
@@ -44,8 +29,8 @@ export class HomePage implements OnInit {
   updateCurrentWorkoutTimeout: NodeJS.Timeout | undefined;
 
   gymService = inject(WorkoutService);
-  messageService = inject(MessageService);
-  confirmationService = inject(ConfirmationService);
+  toast = inject(ToastService);
+  confirm = inject(ConfirmService);
 
   completedWorkout = signal<Workout | undefined>(undefined);
   completedWorkoutInsights = signal<WorkoutInsights | undefined>(undefined);
@@ -88,10 +73,14 @@ export class HomePage implements OnInit {
       next: (data) => {
         this.gymService.currentWorkout.set(data);
         this.gymService.exercises.set([]);
-        this.showToast('success', 'Workout Started', 'Ready to crush your goals! 💪');
+        this.toast.add({
+          severity: 'success',
+          summary: 'Workout Started',
+          detail: 'Ready to crush your goals! 💪',
+        });
       },
       error: () => {
-        this.showToast('error', 'Error', 'Failed to start workout');
+        this.toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to start workout' });
       },
     });
   }
@@ -175,11 +164,12 @@ export class HomePage implements OnInit {
   }
 
   removeExercise(exerciseId: string) {
-    this.confirmationService.confirm({
+    this.confirm.confirm({
       message: 'Remove this exercise from your workout?',
       header: 'Remove Exercise',
       icon: 'pi pi-exclamation-triangle',
-      acceptButtonStyleClass: 'p-button-danger',
+      acceptLabel: 'Remove',
+      acceptVariant: 'danger',
       accept: () => {
         this.gymService.exercises.set(
           this.gymService.exercises().filter((exercise) => exercise._id !== exerciseId),
@@ -214,7 +204,11 @@ export class HomePage implements OnInit {
 
   async finishWorkout() {
     if (this.gymService.exercises().length === 0) {
-      this.showToast('warn', 'No Exercises', 'Add some exercises before finishing!');
+      this.toast.add({
+        severity: 'warn',
+        summary: 'No Exercises',
+        detail: 'Add some exercises before finishing!',
+      });
       return;
     }
 
@@ -223,10 +217,11 @@ export class HomePage implements OnInit {
       .some((exercise) => exercise.sets.some((set) => set.reps === 0 && set.weight === 0));
 
     if (hasIncompleteExercises) {
-      this.confirmationService.confirm({
+      this.confirm.confirm({
         message: 'Some sets appear incomplete. Finish workout anyway?',
         header: 'Incomplete Sets',
         icon: 'pi pi-question-circle',
+        acceptLabel: 'Finish',
         accept: () => this.completeWorkout(),
       });
     } else {
@@ -264,17 +259,18 @@ export class HomePage implements OnInit {
         this.showCompleteWorkout = true;
       },
       error: () => {
-        this.showToast('error', 'Error', 'Failed to save workout');
+        this.toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to save workout' });
       },
     });
   }
 
   confirmCancelWorkout() {
-    this.confirmationService.confirm({
+    this.confirm.confirm({
       message: 'Cancel this workout? All progress will be lost.',
       header: 'Cancel Workout',
       icon: 'pi pi-exclamation-triangle',
-      acceptButtonStyleClass: 'p-button-danger',
+      acceptLabel: 'Cancel workout',
+      acceptVariant: 'danger',
       accept: () => this.cancelWorkout(),
     });
   }
@@ -286,25 +282,20 @@ export class HomePage implements OnInit {
       next: () => {
         this.gymService.currentWorkout.set(null);
         this.gymService.exercises.set([]);
-        this.showToast('info', 'Workout Cancelled', 'No worries, try again when ready!');
+        this.toast.add({
+          severity: 'info',
+          summary: 'Workout Cancelled',
+          detail: 'No worries, try again when ready!',
+        });
       },
       error: () => {
-        this.showToast('error', 'Error', 'Failed to cancel workout');
+        this.toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to cancel workout' });
       },
     });
   }
 
   onAddExerciseCancel() {
     this.showAddExercise = false;
-  }
-
-  private showToast(severity: string, summary: string, detail: string) {
-    this.messageService.add({
-      severity,
-      summary,
-      detail,
-      life: 3000,
-    });
   }
 
   handleCompleteWorkoutClose(value: boolean) {

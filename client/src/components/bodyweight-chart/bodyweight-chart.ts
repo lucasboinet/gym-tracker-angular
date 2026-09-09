@@ -7,14 +7,14 @@ import {
   input,
   PLATFORM_ID,
 } from '@angular/core';
-import { ChartModule } from 'primeng/chart';
+import { UiChart } from '../ui/chart';
 import { formatDateToISO } from '../../shared/dates';
 import { BodyweightEntry } from '../../shared/types/Bodyweight';
 import { fromKg, round1 } from '../../shared/units';
 
 @Component({
   selector: 'bodyweight-chart',
-  imports: [ChartModule],
+  imports: [UiChart],
   templateUrl: './bodyweight-chart.html',
 })
 export class BodyweightChart {
@@ -40,6 +40,8 @@ export class BodyweightChart {
     if (!isPlatformBrowser(this.platformId)) return;
 
     const documentStyle = getComputedStyle(document.documentElement);
+    const primary = documentStyle.getPropertyValue('--color-primary-400') || '#a4d43b';
+    const muted = documentStyle.getPropertyValue('--color-surface-400') || '#7c8871';
     const sorted = [...this.entries()].sort(
       (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
     );
@@ -51,7 +53,8 @@ export class BodyweightChart {
           label: this.unit(),
           data: sorted.map((e) => round1(fromKg(e.value, this.unit()))),
           fill: false,
-          borderColor: documentStyle.getPropertyValue('--p-blue-500'),
+          borderColor: primary,
+          pointBackgroundColor: primary,
           tension: 0.4,
           cubicInterpolationMode: 'monotone',
         },
@@ -61,18 +64,15 @@ export class BodyweightChart {
     this.options = {
       maintainAspectRatio: false,
       aspectRatio: 0.6,
-      plugins: { legend: false },
-      elements: {
-        point: { pointBackgroundColor: documentStyle.getPropertyValue('--p-blue-500') },
-      },
+      plugins: { legend: { display: false } },
       scales: {
         x: {
-          ticks: { color: documentStyle.getPropertyValue('--p-text-muted-color') },
-          grid: { color: 'transparent', drawBorder: false },
+          ticks: { color: muted },
+          grid: { color: 'transparent' },
         },
         y: {
-          ticks: { color: documentStyle.getPropertyValue('--p-text-muted-color') },
-          grid: { drawBorder: false },
+          ticks: { color: muted },
+          grid: { color: 'rgba(255,255,255,0.06)' },
         },
       },
     };

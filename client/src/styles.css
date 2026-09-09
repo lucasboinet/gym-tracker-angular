@@ -1,51 +1,126 @@
-@import "tailwindcss";
-@plugin "tailwindcss-primeui";
-@import "primeicons/primeicons.css";
+@import 'tailwindcss';
+@import 'primeicons/primeicons.css';
+
+/* ============================================================
+   Design tokens — dark only. Green/yellow primary, tinted dark
+   surfaces. Exposed as CSS vars on :root by Tailwind v4 so both
+   utilities (bg-surface-800, text-primary-400) and JS (charts,
+   getComputedStyle) can read them.
+   ============================================================ */
+@theme {
+  /* Primary — lime / yellow-green */
+  --color-primary-50: #f6fbe9;
+  --color-primary-100: #e9f6c9;
+  --color-primary-200: #d6ee9b;
+  --color-primary-300: #bce266;
+  --color-primary-400: #a4d43b;
+  --color-primary-500: #86bd1f;
+  --color-primary-600: #679513;
+  --color-primary-700: #4f7114;
+  --color-primary-800: #405916;
+  --color-primary-900: #374b17;
+  --color-primary-950: #1b2907;
+  --color-primary: var(--color-primary-400);
+
+  /* Surface — green-tinted dark neutrals */
+  --color-surface-0: #ffffff;
+  --color-surface-50: #f5f7f2;
+  --color-surface-100: #e7ebe1;
+  --color-surface-200: #ccd4c3;
+  --color-surface-300: #a7b29a;
+  --color-surface-400: #7c8871;
+  --color-surface-500: #5c6853;
+  --color-surface-600: #454f3e;
+  --color-surface-700: #333c2d;
+  --color-surface-800: #222a1d;
+  --color-surface-850: #1a2116;
+  --color-surface-900: #141a10;
+  --color-surface-950: #0d1108;
+
+  --font-sans:
+    'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+:root {
+  color-scheme: dark;
+}
 
 html {
-  @apply bg-gradient-to-br from-slate-50 to-blue-50;
-  font-family: Inter var, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", Segoe UI Symbol;
-  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  font-family: var(--font-sans);
+  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: var(--color-surface-950);
 }
 
-.p-select {
-  width: 100% !important;
-  color: var(--color-black) !important;
-  border: 1px solid var(--color-blue-100) !important;
-  background: var(--color-white) !important;
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--color-surface-950);
+  color: var(--color-surface-100);
 }
 
-.p-select-label {
-  color: black !important;
+::selection {
+  background: color-mix(in srgb, var(--color-primary-500) 40%, transparent);
+  color: var(--color-surface-0);
 }
 
-.p-select-overlay {
-  border: 1px solid var(--color-blue-100) !important;
-  border-radius: 0.25rem !important;
-  background: var(--color-white) !important;
+/* ---- Form fields ---------------------------------------------------- */
+.field {
+  width: 100%;
+  background: var(--color-surface-900);
+  color: var(--color-surface-50);
+  border: 1px solid var(--color-surface-700);
+  border-radius: 0.65rem;
+  padding: 0.625rem 0.75rem;
+  outline: none;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
 }
 
-.p-select-option {
-  color: var(--color-black) !important;
-  background: #f7fafd !important;
+.field::placeholder {
+  color: var(--color-surface-500);
 }
 
-.p-select-option-selected {
-  background: #e9f2fa !important;
+.field:focus {
+  border-color: var(--color-primary-500);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary-500) 22%, transparent);
 }
 
-.p-select-option:hover {
-  background: #e9f2fa !important;
+.field.is-invalid {
+  border-color: #f87171;
 }
 
-.p-select-filter {
-  border: 1px solid var(--color-blue-100) !important;
-  background: var(--color-white) !important;
-  color: var(--color-gray-800) !important;
+.field.is-invalid:focus {
+  box-shadow: 0 0 0 3px color-mix(in srgb, #f87171 22%, transparent);
 }
 
-.p-inputnumber-input {
-  background: #ffffff !important;
-  color: #000 !important;
-  border: 1px solid var(--color-blue-100) !important;
+/* Native selects/inputs inside dark UI */
+select.field {
+  appearance: none;
+}
+
+/* ---- Scrollbars ----------------------------------------------------- */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-surface-700);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-surface-600);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-surface-700) transparent;
 }

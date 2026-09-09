@@ -1,18 +1,18 @@
-<div class="bg-white rounded-xl shadow-sm border overflow-hidden">
+<div class="overflow-hidden rounded-2xl border border-surface-800 bg-surface-900">
   <!-- Exercise Header -->
-  <div class="px-4 py-3 bg-gray-50 border-b flex items-center justify-between">
-    <h4 class="font-semibold text-gray-900">{{ exercise().name }}</h4>
-    <p-button
-      icon="pi pi-trash"
-      (onClick)="onRemoveExercise(exercise()._id!)"
-      styleClass="p-button-text p-button-rounded p-button-sm p-button-danger"
-      [text]="true"
+  <div class="flex items-center justify-between border-b border-surface-800 bg-surface-850 px-4 py-3">
+    <h4 class="font-semibold text-surface-50">{{ exercise().name }}</h4>
+    <button
+      type="button"
+      class="flex h-8 w-8 items-center justify-center rounded-lg text-surface-500 transition-colors hover:bg-red-500/10 hover:text-red-400 cursor-pointer"
+      (click)="onRemoveExercise(exercise()._id!)"
     >
-    </p-button>
+      <i class="pi pi-trash text-sm"></i>
+    </button>
   </div>
 
   <!-- Sets -->
-  <div class="p-4 flex flex-col gap-5">
+  <div class="flex flex-col gap-5 p-4">
     @for (set of exercise().sets; track $index) {
       <set-input
         [set]="set"
@@ -28,29 +28,29 @@
 
   <!-- Add Set Button -->
   <div class="px-4">
-    <p-button
+    <ui-button
       label="Add Set"
       icon="pi pi-plus"
+      variant="outline"
+      size="sm"
+      [full]="true"
       (onClick)="onAddSet(exercise()._id!)"
-      styleClass="w-full p-button-outlined"
-    >
-    </p-button>
+    />
   </div>
 
   <!-- Exercise notes -->
-  <div class="p-4 flex flex-col gap-2 mt-1">
-    <label for="exercise_notes" class="text-xs font-medium text-gray-500">Notes</label>
+  <div class="mt-1 flex flex-col gap-2 p-4">
+    <label for="exercise_notes" class="text-xs font-medium text-surface-400">Notes</label>
     <textarea
       [value]="exercise().notes ?? ''"
       id="exercise_notes"
-      rows="5"
-      cols="30"
+      rows="4"
+      class="field resize-none"
       [placeholder]="
         previousMatchingExercise()?.notes
-          ? `Notes from previous exercise : ${previousMatchingExercise()?.notes}`
+          ? 'Notes from previous exercise : ' + previousMatchingExercise()?.notes
           : 'No notes from previous exercise'
       "
-      class="bg-white text-black border border-blue-100 rounded-lg p-2 w-full focus:outline-none shadow resize-none placeholder:text-black/50"
       (input)="onUpdateExerciseNotes($event)"
     ></textarea>
   </div>

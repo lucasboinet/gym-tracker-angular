@@ -1,14 +1,13 @@
-import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ButtonModule } from 'primeng/button';
-import { DialogModule } from 'primeng/dialog';
+import { UiButton } from '../ui/button';
+import { UiDialog } from '../ui/dialog';
 import { COMMON_EXERCISES } from '../../shared/data';
 
 @Component({
   templateUrl: './add-exercise-dialog.html',
   selector: 'add-exercise-dialog',
-  imports: [CommonModule, FormsModule, DialogModule, ButtonModule],
+  imports: [FormsModule, UiDialog, UiButton],
 })
 export class AddExerciseDialog {
   @Output() exerciseAdded = new EventEmitter<string>();

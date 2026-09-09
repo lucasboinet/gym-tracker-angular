@@ -12,7 +12,6 @@ import { routes } from './app.routes';
 import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
 
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import { providePrimeNG } from 'primeng/config';
 import {
   HTTP_INTERCEPTORS,
   provideHttpClient,
@@ -22,7 +21,6 @@ import {
 import { AuthService } from '../services/auth.service';
 import { provideServiceWorker } from '@angular/service-worker';
 import { UserService } from '../services/user.service';
-import AppTheme from './theme.preset';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -32,14 +30,6 @@ export const appConfig: ApplicationConfig = {
     provideClientHydration(withEventReplay()),
     provideHttpClient(withInterceptorsFromDi(), withFetch()),
     provideAnimationsAsync(),
-    providePrimeNG({
-      theme: {
-        preset: AppTheme,
-        options: {
-          darkModelSelector: false,
-        },
-      },
-    }),
     provideServiceWorker('ngsw-worker.js', {
       enabled: !isDevMode(),
       registrationStrategy: 'registerWhenStable:30000',

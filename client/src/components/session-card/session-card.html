@@ -1,61 +1,85 @@
-<div class="bg-white rounded-xl shadow-sm border overflow-hidden hover:shadow-md transition-shadow">
+<div
+  class="overflow-hidden rounded-2xl border border-surface-800 bg-surface-900 transition-colors hover:border-surface-700"
+>
   <div class="p-4">
-    <div class="flex items-start justify-between mb-3">
-      <div class="flex items-center space-x-3">
+    <div class="mb-3 flex items-start justify-between">
+      <div class="flex items-center gap-3">
         <div
-          class="w-12 h-12 rounded-xl flex items-center justify-center"
+          class="flex h-12 w-12 items-center justify-center rounded-xl"
           [style.background]="session().color"
         >
           <i class="pi pi-bolt" [style.color]="contrastColor()"></i>
         </div>
         <div>
-          <h3 class="font-semibold text-gray-900">{{ session().name }}</h3>
-          <p class="text-sm text-gray-500">Created {{ durationFromCreatedAt() }}</p>
+          <h3 class="font-semibold text-surface-50">{{ session().name }}</h3>
+          <p class="text-sm text-surface-400">Created {{ durationFromCreatedAt() }}</p>
         </div>
       </div>
-      <button
-        class="w-8 h-8 flex items-center justify-center hover:bg-gray-100 rounded-lg transition-colors"
-        (click)="cm.toggle($event)"
-      >
-        <i class="pi pi-ellipsis-v text-gray-400"></i>
-      </button>
+
+      <div class="relative">
+        <button
+          type="button"
+          class="flex h-8 w-8 items-center justify-center rounded-lg text-surface-400 transition-colors hover:bg-surface-800 hover:text-surface-100 cursor-pointer"
+          (click)="toggleMenu($event)"
+        >
+          <i class="pi pi-ellipsis-v"></i>
+        </button>
+
+        @if (menuOpen()) {
+          <div
+            class="absolute right-0 top-full z-30 mt-1 w-36 overflow-hidden rounded-xl border border-surface-700 bg-surface-850 py-1 shadow-2xl"
+          >
+            <button
+              type="button"
+              class="flex w-full items-center gap-2.5 px-3.5 py-2 text-sm text-surface-200 transition-colors hover:bg-surface-800 cursor-pointer"
+              (click)="editSession()"
+            >
+              <i class="pi pi-pencil text-xs"></i> Edit
+            </button>
+            <button
+              type="button"
+              class="flex w-full items-center gap-2.5 px-3.5 py-2 text-sm text-red-400 transition-colors hover:bg-surface-800 cursor-pointer"
+              (click)="onDeleteSession()"
+            >
+              <i class="pi pi-trash text-xs"></i> Delete
+            </button>
+          </div>
+        }
+      </div>
     </div>
 
-    <div class="flex items-center space-x-4 text-sm text-gray-500 mb-3">
-      <span class="flex items-center">
-        <i class="pi pi-list mr-1"></i>
+    <div class="mb-3 flex items-center gap-4 text-sm text-surface-400">
+      <span class="flex items-center gap-1.5">
+        <i class="pi pi-list"></i>
         {{ session().exercises.length }} exercises
       </span>
     </div>
 
-    <div class="flex flex-wrap gap-2 mb-4">
+    <div class="mb-4 flex flex-wrap gap-2">
       @for (exercise of session().exercises.slice(0, 3); track $index) {
         <span
-          class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-700"
+          class="inline-flex items-center rounded-full bg-surface-800 px-2.5 py-1 text-xs font-medium text-surface-300"
           >{{ exercise.name }}</span
         >
       }
       @if (session().exercises.length > 3) {
         <span
-          class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-700"
+          class="inline-flex items-center rounded-full bg-primary-500/10 px-2.5 py-1 text-xs font-medium text-primary-400"
           >+{{ session().exercises.length - 3 }} more</span
         >
       }
     </div>
 
-    <div class="flex items-center space-x-3">
-      <button
-        class="flex-1 bg-blue-600 hover:bg-blue-700 cursor-pointer text-white py-2.5 px-4 rounded-lg font-medium transition-colors"
-        (click)="onStartSession()"
-      >
-        <i class="pi pi-play mr-2"></i>
-        Start Session
-      </button>
-    </div>
+    <button
+      type="button"
+      class="flex w-full items-center justify-center gap-2 rounded-xl bg-primary-500 px-4 py-2.5 font-medium text-surface-950 transition-colors hover:bg-primary-400 cursor-pointer"
+      (click)="onStartSession()"
+    >
+      <i class="pi pi-play"></i>
+      Start Session
+    </button>
   </div>
 </div>
-
-<p-contextmenu #cm [model]="contextMenuItems" [pressDelay]="0" />
 
 <session-dialog
   [(open)]="showEditDialog"

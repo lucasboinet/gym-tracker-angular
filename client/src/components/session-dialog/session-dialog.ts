@@ -1,25 +1,17 @@
 import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { MessageService } from 'primeng/api';
-import { Button } from 'primeng/button';
-import { ColorPicker } from 'primeng/colorpicker';
-import { DialogModule } from 'primeng/dialog';
-import { InputNumberModule } from 'primeng/inputnumber';
+import { UiButton } from '../ui/button';
+import { UiDialog } from '../ui/dialog';
+import { UiNumber } from '../ui/number-stepper';
 import { SessionService } from '../../services/sessions.service';
+import { ToastService } from '../../services/toast.service';
 import { Session } from '../../shared/types/Session';
 import { AddExerciseDialog } from '../add-exercise-dialog/add-exercise-dialog';
 
 @Component({
   templateUrl: './session-dialog.html',
   selector: 'session-dialog',
-  imports: [
-    DialogModule,
-    Button,
-    AddExerciseDialog,
-    FormsModule,
-    ColorPicker,
-    InputNumberModule,
-  ],
+  imports: [UiDialog, UiButton, UiNumber, AddExerciseDialog, FormsModule],
 })
 export class SessionDialog {
   @Input({ required: false }) title = 'Create Session';
@@ -30,12 +22,12 @@ export class SessionDialog {
   @Output() openChange = new EventEmitter<boolean>();
 
   private sessionService = inject(SessionService);
-  private messageService = inject(MessageService);
+  private toast = inject(ToastService);
 
   showAddExercise = false;
 
   name: Session['name'] = '';
-  color: Session['color'] = '#f3e8ff';
+  color: Session['color'] = '#a4d43b';
   exercises: Session['exercises'] = [];
 
   handleOnShow() {
@@ -67,7 +59,7 @@ export class SessionDialog {
   cancelSessionCreation() {
     this.name = '';
     this.exercises = [];
-    this.color = '#f3e8ff';
+    this.color = '#a4d43b';
     this.onOpenChange(false);
   }
 
@@ -89,21 +81,19 @@ export class SessionDialog {
 
   updateSession() {
     if (!this.name) {
-      this.messageService.add({
+      this.toast.add({
         severity: 'warn',
         summary: "Can't update session",
         detail: 'Enter a session name to continue',
-        life: 3000,
       });
       return;
     }
 
     if (this.exercises.length === 0) {
-      this.messageService.add({
+      this.toast.add({
         severity: 'warn',
         summary: "Can't update session",
         detail: 'Add at least one exercise to continue',
-        life: 3000,
       });
       return;
     }
@@ -122,11 +112,10 @@ export class SessionDialog {
             .map((s) => (s._id === data._id ? data : s));
           this.sessionService.sessions.set(updatedSessions);
           this.cancelSessionCreation();
-          this.messageService.add({
+          this.toast.add({
             severity: 'success',
             summary: 'Session updated',
             detail: `Session "${data.name}" updated successfully`,
-            life: 3000,
           });
         },
         error: (err) => console.error('Error updating session:', err),
@@ -135,21 +124,19 @@ export class SessionDialog {
 
   createSession() {
     if (!this.name) {
-      this.messageService.add({
+      this.toast.add({
         severity: 'warn',
         summary: "Can't create session",
         detail: 'Enter a session name to continue',
-        life: 3000,
       });
       return;
     }
 
     if (this.exercises.length === 0) {
-      this.messageService.add({
+      this.toast.add({
         severity: 'warn',
         summary: "Can't create session",
         detail: 'Add at least one exercise to continue',
-        life: 3000,
       });
       return;
     }
@@ -164,11 +151,10 @@ export class SessionDialog {
         next: (data) => {
           this.sessionService.sessions.set([...this.sessionService.sessions(), data]);
           this.cancelSessionCreation();
-          this.messageService.add({
+          this.toast.add({
             severity: 'success',
             summary: 'Session created',
             detail: `Session "${data.name}" created successfully`,
-            life: 3000,
           });
         },
         error: (err) => console.error('Error creating session:', err),

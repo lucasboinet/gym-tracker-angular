@@ -1,76 +1,74 @@
-<p-dialog
+<ui-dialog
   header="Workout History"
-  [(visible)]="open"
+  [visible]="open"
   (visibleChange)="handleVisibleChange($event)"
-  [modal]="true"
-  [style]="{ width: '95vw', height: '90vh' }"
-  [maximizable]="false"
-  [draggable]="false"
-  [resizable]="false"
+  maxWidth="40rem"
+  panelClass="h-[85vh]"
 >
-  <div class="h-full overflow-y-auto">
-    @if (workouts.length === 0) {
-      <div class="flex flex-col items-center justify-center py-12 text-center">
-        <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-          <i class="pi pi-history text-gray-400 text-xl"></i>
-        </div>
-        <p class="text-gray-500">No workouts completed yet!</p>
-        <p class="text-sm text-gray-400 mt-1">Your workout history will appear here</p>
+  @if (workouts.length === 0) {
+    <div class="flex flex-col items-center justify-center py-12 text-center">
+      <div class="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-surface-800">
+        <i class="pi pi-history text-xl text-surface-500"></i>
       </div>
-    }
+      <p class="text-surface-400">No workouts completed yet!</p>
+      <p class="mt-1 text-sm text-surface-500">Your workout history will appear here</p>
+    </div>
+  }
 
-    <div class="space-y-4">
-      @for (workout of workouts; track workout._id) {
-        <div class="bg-white rounded-lg border p-4">
-          <!-- Workout Header -->
-          <div class="flex items-center justify-between mb-3">
-            <div>
-              <div class="flex items-center gap-2">
-                <h4 class="font-semibold text-gray-900">
-                  {{ workout.createdAt | date: 'MMM d, y' }}
-                </h4>
-                <button class="text-blue-500 cursor-pointer" (click)="removeWorkout(workout._id!)">
-                  <i class="pi pi-trash text-[10px]"></i>
-                </button>
-              </div>
-              <p class="text-sm text-gray-500">{{ workout.startTime }} - {{ workout.endTime }}</p>
+  <div class="space-y-4">
+    @for (workout of workouts; track workout._id) {
+      <div class="rounded-2xl border border-surface-800 bg-surface-850 p-4">
+        <!-- Workout Header -->
+        <div class="mb-3 flex items-center justify-between">
+          <div>
+            <div class="flex items-center gap-2">
+              <h4 class="font-semibold text-surface-50">
+                {{ workout.createdAt | date: 'MMM d, y' }}
+              </h4>
+              <button
+                type="button"
+                class="text-surface-500 hover:text-red-400 cursor-pointer transition-colors"
+                (click)="removeWorkout(workout._id!)"
+              >
+                <i class="pi pi-trash text-[10px]"></i>
+              </button>
             </div>
-            <div>
-              <div class="text-sm text-gray-500">{{ workout.exercises.length }} exercises</div>
-              <div class="text-sm text-gray-500">{{ workout.calories }} calories</div>
-            </div>
+            <p class="text-sm text-surface-400">{{ workout.startTime }} - {{ workout.endTime }}</p>
           </div>
+          <div class="text-right">
+            <div class="text-sm text-surface-400">{{ workout.exercises.length }} exercises</div>
+            <div class="text-sm text-surface-400">{{ workout.calories }} calories</div>
+          </div>
+        </div>
 
-          <!-- Exercise Summary -->
-          <div class="space-y-3">
-            @for (exercise of workout.exercises; track exercise._id) {
-              <div class="bg-gray-50 rounded-lg p-3">
-                <h5 class="font-medium text-gray-900 mb-2">{{ exercise.name }}</h5>
-                <div class="flex flex-wrap gap-2">
-                  @for (set of exercise.sets; track $index) {
-                    <span
-                      class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-blue-100 text-blue-700"
-                    >
-                      {{ set.weight }}kg × {{ set.reps }}
-                    </span>
-                  }
-                </div>
-
-                @if (!!exercise.notes) {
-                  <div class="flex flex-col gap-2 mt-4">
-                    <h5 class="font-medium text-gray-900">Notes</h5>
-
-                    <span
-                      class="text-black text-sm bg-gray-100 p-2 rounded-lg border border-gray-200"
-                      >{{ exercise.notes }}</span
-                    >
-                  </div>
+        <!-- Exercise Summary -->
+        <div class="space-y-3">
+          @for (exercise of workout.exercises; track exercise._id) {
+            <div class="rounded-xl border border-surface-800 bg-surface-900 p-3">
+              <h5 class="mb-2 font-medium text-surface-100">{{ exercise.name }}</h5>
+              <div class="flex flex-wrap gap-2">
+                @for (set of exercise.sets; track $index) {
+                  <span
+                    class="inline-flex items-center rounded-md bg-primary-500/10 px-2 py-1 text-xs font-medium text-primary-400"
+                  >
+                    {{ set.weight }}kg × {{ set.reps }}
+                  </span>
                 }
               </div>
-            }
-          </div>
+
+              @if (!!exercise.notes) {
+                <div class="mt-4 flex flex-col gap-2">
+                  <h5 class="font-medium text-surface-100">Notes</h5>
+                  <span
+                    class="rounded-lg border border-surface-800 bg-surface-950 p-2 text-sm text-surface-300"
+                    >{{ exercise.notes }}</span
+                  >
+                </div>
+              }
+            </div>
+          }
         </div>
-      }
-    </div>
+      </div>
+    }
   </div>
-</p-dialog>
+</ui-dialog>

@@ -1,62 +1,53 @@
-<div class="p-4 space-y-6">
-  <h2 class="text-lg font-semibold text-gray-900">Last workouts stats</h2>
+<div class="mx-auto max-w-2xl space-y-6 p-4">
+  <h2 class="text-lg font-semibold text-surface-50">Last workouts stats</h2>
 
-  <div class="flex items-center gap-2">
-    <p-select
+  <div class="flex flex-col gap-2 sm:flex-row">
+    <ui-select
+      class="flex-1"
       [options]="stats()"
-      [(ngModel)]="selectedStat"
+      [value]="selectedStat()"
       optionLabel="exerciseName"
       [filter]="true"
-      filterBy="exerciseName"
       [showClear]="true"
       placeholder="Select an exercise"
-      (ngModelChange)="handleSelectedStatsChange($event)"
-    >
-      <ng-template #selectedItem let-selectedOption>
-        <div>{{ selectedOption.exerciseName }}</div>
-      </ng-template>
-      <ng-template let-stat #item>
-        <div>{{ stat.exerciseName }}</div>
-      </ng-template>
-    </p-select>
+      (valueChange)="handleSelectedStatsChange($event)"
+    />
 
-    <p-select
+    <ui-select
+      class="flex-1"
       [options]="sessionService.sessions()"
-      [(ngModel)]="selectedSession"
+      [value]="selectedSession()"
       optionLabel="name"
       [showClear]="true"
       placeholder="Select a session"
-      (ngModelChange)="handleSelectSessionChange($event)"
-    >
-      <ng-template #selectedItem let-selectedOption>
-        <div>{{ selectedOption.name }}</div>
-      </ng-template>
-      <ng-template let-session #item>
-        <div>{{ session.name }}</div>
-      </ng-template>
-    </p-select>
+      (valueChange)="handleSelectSessionChange($event)"
+    />
   </div>
 
   <div class="flex flex-col gap-6">
     @for (stat of filteredStats(); track $index) {
       <workout-chart [stat]="stat" />
+    } @empty {
+      <p class="py-8 text-center text-sm text-surface-500">No workout stats yet.</p>
     }
   </div>
 
   <!-- Bodyweight -->
-  <div class="pt-2 space-y-4">
-    <h2 class="text-lg font-semibold text-gray-900">Bodyweight</h2>
+  <div class="space-y-4 pt-2">
+    <h2 class="text-lg font-semibold text-surface-50">Bodyweight</h2>
 
     @if (strengthRatio(); as sr) {
-      <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 flex items-center justify-between">
+      <div
+        class="flex items-center justify-between rounded-2xl border border-primary-500/20 bg-primary-500/5 p-4"
+      >
         <div>
-          <h3 class="text-sm font-medium text-gray-700">Strength-to-bodyweight</h3>
-          <p class="text-xs text-gray-500 mt-0.5">
+          <h3 class="text-sm font-medium text-surface-200">Strength-to-bodyweight</h3>
+          <p class="mt-0.5 text-xs text-surface-400">
             Best {{ sr.exercise }} ({{ sr.liftDisplay }} {{ unit() }}) vs {{ sr.bwDisplay }}
             {{ unit() }}
           </p>
         </div>
-        <div class="text-2xl font-bold text-blue-600">{{ sr.ratio }}×</div>
+        <div class="text-2xl font-bold text-primary-400">{{ sr.ratio }}×</div>
       </div>
     }
 

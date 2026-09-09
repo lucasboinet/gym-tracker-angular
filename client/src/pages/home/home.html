@@ -1,4 +1,4 @@
-<div class="px-4 pb-20">
+<div class="mx-auto max-w-2xl px-4 pb-24">
   <!-- Start Screen -->
   @if (!this.gymService.currentWorkout()) {
     <no-active-workout (startWorkout)="startWorkout()"></no-active-workout>
@@ -6,19 +6,19 @@
 
   <!-- Active Workout -->
   @if (this.gymService.currentWorkout()) {
-    <div class="py-4 flex flex-col gap-4">
+    <div class="flex flex-col gap-4 py-4">
       <!-- Workout Info Card -->
-      <div class="bg-white rounded-xl p-4 shadow-sm border">
-        <div class="flex items-center justify-between mb-2">
-          <h3 class="font-semibold text-gray-900">Today's Workout</h3>
+      <div class="rounded-2xl border border-surface-800 bg-surface-900 p-4">
+        <div class="mb-1.5 flex items-center justify-between">
+          <h3 class="font-semibold text-surface-50">Today's Workout</h3>
           <span
-            class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800"
+            class="inline-flex items-center rounded-full bg-primary-500/10 px-2.5 py-1 text-xs font-medium text-primary-400"
           >
-            <div class="w-2 h-2 bg-green-400 rounded-full mr-1.5 animate-pulse"></div>
+            <span class="mr-1.5 h-2 w-2 animate-pulse rounded-full bg-primary-400"></span>
             Active
           </span>
         </div>
-        <p class="text-sm text-gray-600">
+        <p class="text-sm text-surface-400">
           Started at {{ this.gymService.currentWorkout()!.startTime }}
         </p>
       </div>
@@ -37,32 +37,29 @@
       }
 
       <!-- Add Exercise Button -->
-      <p-button
+      <ui-button
         label="Add Exercise"
         icon="pi pi-plus"
+        variant="outline"
+        size="lg"
+        [full]="true"
         (onClick)="showAddExercise = true"
-        styleClass="w-full p-button-lg p-button-outlined"
-      >
-      </p-button>
+      />
     </div>
 
     <!-- Fixed Bottom Actions -->
-    <div class="fixed bottom-0 left-0 right-0 bg-white border-t p-4 flex justify-between">
-      <p-button
-        label="Cancel"
-        icon="pi pi-times"
-        (onClick)="confirmCancelWorkout()"
-        styleClass="p-button-danger p-button-outlined"
-      >
-      </p-button>
-
-      <p-button
-        label="Finish"
-        icon="pi pi-check"
-        (onClick)="finishWorkout()"
-        styleClass="p-button-success"
-      >
-      </p-button>
+    <div
+      class="fixed inset-x-0 bottom-0 z-40 border-t border-surface-800 bg-surface-950/90 p-4 backdrop-blur-lg"
+    >
+      <div class="mx-auto flex max-w-2xl justify-between gap-3">
+        <ui-button
+          label="Cancel"
+          icon="pi pi-times"
+          variant="danger"
+          (onClick)="confirmCancelWorkout()"
+        />
+        <ui-button label="Finish" icon="pi pi-check" variant="primary" (onClick)="finishWorkout()" />
+      </div>
     </div>
   }
 </div>

@@ -1,19 +1,21 @@
 <app-update-banner />
 
-<div id="splash-screen" class="absolute inset-0 flex justify-center items-center bg-white z-[100]">
+<div
+  id="splash-screen"
+  class="absolute inset-0 z-[100] flex items-center justify-center bg-surface-950"
+>
   <div
-    class="spinner border-4 border-l-4 w-12 h-12 rounded-full border-black/10 border-l-blue-500"
+    class="spinner h-12 w-12 rounded-full border-4 border-l-4 border-surface-800 border-l-primary-400"
   ></div>
 </div>
 
-<main class="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+<main class="min-h-screen bg-surface-950 text-surface-100">
   @if (authService.isLoggedIn()) {
     <menu-bar />
   }
 
-  <p-toast position="top-center"></p-toast>
-
-  <p-confirmDialog></p-confirmDialog>
+  <ui-toast />
+  <ui-confirm-dialog />
 
   <router-outlet />
 </main>

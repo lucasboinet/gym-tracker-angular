@@ -1,14 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
-import { MessageService } from 'primeng/api';
-import { DialogModule } from 'primeng/dialog';
+import { UiDialog } from '../ui/dialog';
+import { ToastService } from '../../services/toast.service';
 import { WorkoutService } from '../../services/workout.service';
 import { Workout } from '../../shared/types/Workout';
 
 @Component({
   selector: 'workouts-history-dialog',
-  imports: [CommonModule, DialogModule],
-  providers: [MessageService],
+  imports: [CommonModule, UiDialog],
   templateUrl: './workouts-history-dialog.html',
 })
 export class WorkoutsHistory {
@@ -18,7 +17,7 @@ export class WorkoutsHistory {
   @Output() workoutDelete = new EventEmitter<string>();
 
   private workoutService = inject(WorkoutService);
-  private messageService = inject(MessageService);
+  private toast = inject(ToastService);
 
   handleVisibleChange(value: boolean) {
     this.openChange.emit(value);
@@ -33,19 +32,17 @@ export class WorkoutsHistory {
 
         this.workoutDelete.emit(workoutId);
 
-        this.messageService.add({
+        this.toast.add({
           severity: 'success',
           summary: 'Workout',
           detail: `Workout deleted successfully`,
-          life: 3000,
         });
       },
       error: () => {
-        this.messageService.add({
+        this.toast.add({
           severity: 'error',
           summary: 'Workout',
           detail: `Something wrong happened while deleting this workout`,
-          life: 3000,
         });
       },
     });

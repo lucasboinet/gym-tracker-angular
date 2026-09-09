@@ -7,24 +7,15 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { MessageService } from 'primeng/api';
-import { ButtonModule } from 'primeng/button';
-import { CardModule } from 'primeng/card';
-import { InputTextModule } from 'primeng/inputtext';
+import { UiButton } from '../../components/ui/button';
+import { ToastService } from '../../services/toast.service';
 import { AuthService } from '../../services/auth.service';
 import { passwordMatchValidator } from '../../shared/validators/auth';
 
 @Component({
   templateUrl: './sign-up.html',
   selector: 'sign-up-page',
-  imports: [
-    FormsModule,
-    ButtonModule,
-    InputTextModule,
-    CardModule,
-    ReactiveFormsModule,
-    RouterLink,
-  ],
+  imports: [FormsModule, UiButton, ReactiveFormsModule, RouterLink],
 })
 export class SignUpPage {
   loading = false;
@@ -34,7 +25,7 @@ export class SignUpPage {
   fb = inject(FormBuilder);
   auth = inject(AuthService);
   router = inject(Router);
-  messageService = inject(MessageService);
+  toast = inject(ToastService);
 
   constructor() {
     this.registerForm = this.fb.group(
@@ -91,7 +82,7 @@ export class SignUpPage {
 
   private showError(detail: string) {
     this.error = detail;
-    this.messageService.add({
+    this.toast.add({
       severity: 'error',
       summary: 'Sign up failed',
       detail,

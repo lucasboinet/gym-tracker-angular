@@ -7,24 +7,15 @@ import {
   Validators,
 } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { MessageService } from 'primeng/api';
-import { ButtonModule } from 'primeng/button';
-import { CardModule } from 'primeng/card';
-import { InputTextModule } from 'primeng/inputtext';
+import { UiButton } from '../../components/ui/button';
+import { ToastService } from '../../services/toast.service';
 import { AuthService } from '../../services/auth.service';
 import { UserService } from '../../services/user.service';
 
 @Component({
   templateUrl: './sign-in.html',
   selector: 'sign-in-page',
-  imports: [
-    FormsModule,
-    ButtonModule,
-    InputTextModule,
-    CardModule,
-    ReactiveFormsModule,
-    RouterLink,
-  ],
+  imports: [FormsModule, UiButton, ReactiveFormsModule, RouterLink],
 })
 export class SignInPage implements OnInit {
   loading = false;
@@ -36,7 +27,7 @@ export class SignInPage implements OnInit {
   userService = inject(UserService);
   router = inject(Router);
   route = inject(ActivatedRoute);
-  messageService = inject(MessageService);
+  toast = inject(ToastService);
 
   constructor() {
     this.loginForm = this.fb.group({
@@ -47,7 +38,7 @@ export class SignInPage implements OnInit {
 
   ngOnInit() {
     if (this.route.snapshot.queryParamMap.get('registered') === 'true') {
-      this.messageService.add({
+      this.toast.add({
         severity: 'success',
         summary: 'Account created',
         detail: 'Your account was created. Please sign in.',
@@ -102,7 +93,7 @@ export class SignInPage implements OnInit {
 
   private showError(detail: string) {
     this.error = detail;
-    this.messageService.add({
+    this.toast.add({
       severity: 'error',
       summary: 'Sign in failed',
       detail,

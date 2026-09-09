@@ -1,17 +1,16 @@
 import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { ConfirmationService, MessageService } from 'primeng/api';
-import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { ToastModule } from 'primeng/toast';
 import { MenuBar } from '../components/menu/menu';
+import { UiConfirmDialog } from '../components/ui/confirm-dialog';
+import { UiToast } from '../components/ui/toast';
 import { UpdateBannerComponent } from '../components/update-banner/update-banner';
 import { AuthService } from '../services/auth.service';
+import { ToastService } from '../services/toast.service';
 import { WorkoutService } from '../services/workout.service';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, ConfirmDialogModule, ToastModule, UpdateBannerComponent, MenuBar],
-  providers: [MessageService, ConfirmationService],
+  imports: [RouterOutlet, UiToast, UiConfirmDialog, UpdateBannerComponent, MenuBar],
   templateUrl: './app.html',
   styleUrl: './app.css',
 })
@@ -20,7 +19,7 @@ export class App implements OnInit {
 
   workoutService = inject(WorkoutService);
   authService = inject(AuthService);
-  messageService = inject(MessageService);
+  toast = inject(ToastService);
   cdr = inject(ChangeDetectorRef);
 
   ngOnInit(): void {
@@ -38,16 +37,7 @@ export class App implements OnInit {
         },
       });
     } catch {
-      this.showToast('error', 'Error', 'Failed to load workouts');
+      this.toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to load workouts' });
     }
-  }
-
-  private showToast(severity: string, summary: string, detail: string) {
-    this.messageService.add({
-      severity,
-      summary,
-      detail,
-      life: 3000,
-    });
   }
 }

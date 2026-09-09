@@ -1,6 +1,6 @@
-<div
-  class="flex flex-col items-center gap-3 p-3 bg-white rounded-xl shadow-sm border hover:shadow-md transition-shadow"
->
-  <span class="text-black font-semibold">{{ stat().exerciseName }}</span>
-  <p-chart type="line" [data]="data" [options]="options" class="h-[30rem] w-full" />
+<div class="flex flex-col gap-3 rounded-2xl border border-surface-800 bg-surface-900 p-4">
+  <span class="font-semibold text-surface-50">{{ stat().exerciseName }}</span>
+  <div class="h-72 w-full">
+    <ui-chart type="line" [data]="data" [options]="options" />
+  </div>
 </div>

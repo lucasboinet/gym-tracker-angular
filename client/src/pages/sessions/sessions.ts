@@ -1,13 +1,12 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { ButtonModule } from 'primeng/button';
 import { SessionCard } from '../../components/session-card/session-card';
 import { SessionDialog } from '../../components/session-dialog/session-dialog';
+import { UiButton } from '../../components/ui/button';
 import { SessionService } from '../../services/sessions.service';
 
 @Component({
   selector: 'sessions-page',
-  imports: [ButtonModule, SessionCard, SessionDialog],
-  providers: [],
+  imports: [UiButton, SessionCard, SessionDialog],
   templateUrl: './sessions.html',
 })
 export class SessionsPage implements OnInit {

@@ -1,47 +1,43 @@
-<div>
-  <div class="px-4 pb-20">
-    <!-- My Sessions Section -->
-    <div class="py-4">
-      <div class="flex items-center justify-between mb-4">
-        <h2 class="text-lg font-semibold text-gray-900">My Sessions</h2>
-        @if (this.sessionService.sessions().length > 0) {
-          <button
-            class="bg-blue-600 hover:bg-blue-700 cursor-pointer text-white py-2 px-3 rounded-md font-medium transition-colors text-sm flex items-center"
-            (click)="openCreateDialog = true"
-          >
-            <i class="pi pi-history mr-2"></i>
-            Create
-          </button>
-        }
-      </div>
-
-      <div class="flex flex-col gap-4">
-        <!-- Session Card 1 -->
-        @for (session of this.sessionService.sessions(); track session._id) {
-          <session-card [session]="session"></session-card>
-        }
-      </div>
-
-      <!-- Empty State (hidden by default) -->
-      @if (this.sessionService.sessions().length === 0) {
-        <div class="py-12 text-center">
-          <div
-            class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4"
-          >
-            <i class="pi pi-plus text-gray-400 text-xl"></i>
-          </div>
-          <h3 class="text-lg font-medium text-gray-900 mb-2">No workout sessions yet</h3>
-          <p class="text-gray-500 mb-6">Create your first workout template to get started</p>
-          <button
-            class="bg-blue-600 hover:bg-blue-700 text-white px-6 cursor-pointer py-3 rounded-lg font-medium transition-colors"
-            (click)="openCreateDialog = true"
-          >
-            <i class="pi pi-plus mr-2"></i>
-            Create your first session
-          </button>
-        </div>
+<div class="mx-auto max-w-2xl px-4 pb-20">
+  <div class="py-4">
+    <div class="mb-4 flex items-center justify-between">
+      <h2 class="text-lg font-semibold text-surface-50">My Sessions</h2>
+      @if (this.sessionService.sessions().length > 0) {
+        <ui-button
+          label="Create"
+          icon="pi pi-plus"
+          size="sm"
+          (onClick)="openCreateDialog = true"
+        />
       }
     </div>
+
+    <div class="flex flex-col gap-4">
+      @for (session of this.sessionService.sessions(); track session._id) {
+        <session-card [session]="session"></session-card>
+      }
+    </div>
+
+    <!-- Empty State -->
+    @if (this.sessionService.sessions().length === 0) {
+      <div class="py-16 text-center">
+        <div
+          class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-surface-800"
+        >
+          <i class="pi pi-plus text-xl text-surface-500"></i>
+        </div>
+        <h3 class="mb-2 text-lg font-medium text-surface-100">No workout sessions yet</h3>
+        <p class="mb-6 text-surface-400">Create your first workout template to get started</p>
+        <div class="mx-auto max-w-xs">
+          <ui-button
+            label="Create your first session"
+            icon="pi pi-plus"
+            [full]="true"
+            (onClick)="openCreateDialog = true"
+          />
+        </div>
+      </div>
+    }
   </div>
 
   <session-dialog

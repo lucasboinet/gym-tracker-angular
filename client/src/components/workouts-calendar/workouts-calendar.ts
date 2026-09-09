@@ -131,7 +131,7 @@ export class WorkoutsCalendarComponent implements OnInit, OnChanges {
       .sessions()
       .find((session) => session._id === event.sessionId);
 
-    if (!matchingSession) return '#3b82f6';
+    if (!matchingSession) return '#a4d43b';
 
     return matchingSession.color;
   }

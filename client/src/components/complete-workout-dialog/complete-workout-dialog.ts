@@ -1,12 +1,12 @@
 import { Component, computed, EventEmitter, input, Input, Output } from '@angular/core';
-import { Dialog } from 'primeng/dialog';
+import { UiDialog } from '../ui/dialog';
 import { getRangeDuration } from '../../shared/dates';
 import { Workout, WorkoutInsights } from '../../shared/types/Workout';
 
 @Component({
   templateUrl: './complete-workout-dialog.html',
   selector: 'complete-workout-dialog',
-  imports: [Dialog],
+  imports: [UiDialog],
 })
 export class CompleteWorkoutDialog {
   @Output() openChange = new EventEmitter<boolean>();

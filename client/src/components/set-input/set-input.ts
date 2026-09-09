@@ -1,7 +1,5 @@
 import { Component, computed, EventEmitter, inject, input, Output } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { ButtonModule } from 'primeng/button';
-import { InputNumberModule } from 'primeng/inputnumber';
+import { UiNumber } from '../ui/number-stepper';
 import { RestTimerService } from '../../services/rest-timer.service';
 import { WorkoutService } from '../../services/workout.service';
 import { isCompound } from '../../shared/exercises';
@@ -13,7 +11,7 @@ import { Workout } from '../../shared/types/Workout';
 @Component({
   templateUrl: './set-input.html',
   selector: 'set-input',
-  imports: [FormsModule, ButtonModule, InputNumberModule],
+  imports: [UiNumber],
 })
 export class SetInput {
   @Output() updateSet = new EventEmitter<IUpdateSet>();
