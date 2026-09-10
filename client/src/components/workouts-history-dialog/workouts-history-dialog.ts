@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { UiDialog } from '../ui/dialog';
 import { ToastService } from '../../services/toast.service';
 import { WorkoutService } from '../../services/workout.service';
@@ -7,7 +8,7 @@ import { Workout } from '../../shared/types/Workout';
 
 @Component({
   selector: 'workouts-history-dialog',
-  imports: [CommonModule, UiDialog],
+  imports: [CommonModule, UiDialog, RouterLink],
   templateUrl: './workouts-history-dialog.html',
 })
 export class WorkoutsHistory {

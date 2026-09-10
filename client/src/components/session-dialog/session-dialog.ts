@@ -1,3 +1,4 @@
+import { CdkDragDrop, DragDropModule, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { UiButton } from '../ui/button';
@@ -11,7 +12,7 @@ import { AddExerciseDialog } from '../add-exercise-dialog/add-exercise-dialog';
 @Component({
   templateUrl: './session-dialog.html',
   selector: 'session-dialog',
-  imports: [UiDialog, UiButton, UiNumber, AddExerciseDialog, FormsModule],
+  imports: [UiDialog, UiButton, UiNumber, AddExerciseDialog, FormsModule, DragDropModule],
 })
 export class SessionDialog {
   @Input({ required: false }) title = 'Create Session';
@@ -65,6 +66,13 @@ export class SessionDialog {
 
   removeExercise(index: number) {
     this.exercises = this.exercises.filter((_, i) => i !== index);
+  }
+
+  reorderExercises(event: CdkDragDrop<unknown>) {
+    if (event.previousIndex === event.currentIndex) return;
+    const exercises = [...this.exercises];
+    moveItemInArray(exercises, event.previousIndex, event.currentIndex);
+    this.exercises = exercises;
   }
 
   handleExecuteAction() {

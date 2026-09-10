@@ -1,3 +1,4 @@
+import { DragDropModule } from '@angular/cdk/drag-drop';
 import { Component, computed, EventEmitter, inject, input, Output } from '@angular/core';
 import { UiButton } from '../ui/button';
 import { WorkoutService } from '../../services/workout.service';
@@ -9,7 +10,7 @@ import { SetInput } from '../set-input/set-input';
 @Component({
   templateUrl: './exercise-card.html',
   selector: 'exercise-card',
-  imports: [UiButton, SetInput],
+  imports: [UiButton, SetInput, DragDropModule],
 })
 export class ExerciseCard {
   @Output() removeExercise = new EventEmitter<string>();

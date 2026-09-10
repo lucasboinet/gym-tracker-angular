@@ -1,3 +1,4 @@
+import { CdkDragDrop, DragDropModule, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Component, computed, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { AddExerciseDialog } from '../../components/add-exercise-dialog/add-exercise-dialog';
 import { CompleteWorkoutDialog } from '../../components/complete-workout-dialog/complete-workout-dialog';
@@ -22,6 +23,7 @@ import { Workout, WorkoutInsights } from '../../shared/types/Workout';
     ExerciseCard,
     CompleteWorkoutDialog,
     RestTimer,
+    DragDropModule,
   ],
   templateUrl: './home.html',
 })
@@ -109,6 +111,14 @@ export class HomePage implements OnInit, OnDestroy {
         this.toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to start workout' });
       },
     });
+  }
+
+  reorderExercises(event: CdkDragDrop<unknown>) {
+    if (event.previousIndex === event.currentIndex) return;
+    const exercises = [...this.gymService.exercises()];
+    moveItemInArray(exercises, event.previousIndex, event.currentIndex);
+    this.gymService.exercises.set(exercises);
+    this.saveCurrentExercises();
   }
 
   addExercise(exerciseName: string) {

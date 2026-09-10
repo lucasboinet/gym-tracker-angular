@@ -1,5 +1,11 @@
 <div class="flex flex-col gap-3 rounded-2xl border border-surface-800 bg-surface-900 p-4">
-  <span class="font-semibold text-surface-50">{{ stat().exerciseName }}</span>
+  <a
+    [routerLink]="['/exercise', stat().exerciseName]"
+    class="group flex items-center gap-2 font-semibold text-surface-50 hover:text-primary-400 cursor-pointer transition-colors"
+  >
+    {{ stat().exerciseName }}
+    <i class="pi pi-arrow-up-right text-xs text-surface-500 group-hover:text-primary-400"></i>
+  </a>
   <div class="h-72 w-full">
     <ui-chart type="line" [data]="data" [options]="options" />
   </div>

@@ -1,11 +1,12 @@
 import { isPlatformBrowser } from '@angular/common';
 import { ChangeDetectorRef, Component, inject, input, OnInit, PLATFORM_ID } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { UiChart } from '../ui/chart';
 import { WorkoutStat } from '../../shared/types/Workout';
 
 @Component({
   selector: 'workout-chart',
-  imports: [UiChart],
+  imports: [UiChart, RouterLink],
   templateUrl: './workout-chart.html',
 })
 export class WorkoutChart implements OnInit {

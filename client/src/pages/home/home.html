@@ -28,17 +28,21 @@
       </div>
 
       <!-- Exercises -->
-      @for (exercise of this.gymService.exercises(); track exercise._id) {
-        <exercise-card
-          [exercise]="exercise"
-          [workoutId]="this.gymService.currentWorkout()?._id"
-          (addSet)="addSet($event)"
-          (removeExercise)="removeExercise($event)"
-          (removeSet)="removeSet($event.id, $event.index)"
-          (updateSet)="updateSet($event.id, $event.index, $event.type, $event.value)"
-          (updateExercise)="updateExercise($event)"
-        />
-      }
+      <div cdkDropList (cdkDropListDropped)="reorderExercises($event)" class="flex flex-col gap-4">
+        @for (exercise of this.gymService.exercises(); track exercise._id) {
+          <exercise-card
+            cdkDrag
+            [cdkDragDisabled]="this.gymService.exercises().length < 2"
+            [exercise]="exercise"
+            [workoutId]="this.gymService.currentWorkout()?._id"
+            (addSet)="addSet($event)"
+            (removeExercise)="removeExercise($event)"
+            (removeSet)="removeSet($event.id, $event.index)"
+            (updateSet)="updateSet($event.id, $event.index, $event.type, $event.value)"
+            (updateExercise)="updateExercise($event)"
+          />
+        }
+      </div>
 
       <!-- Add Exercise Button -->
       <ui-button

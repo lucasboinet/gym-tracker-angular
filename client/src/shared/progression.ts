@@ -15,6 +15,12 @@ export interface SetSuggestion {
   reason?: string;
 }
 
+/** Estimated one-rep max (Epley formula). Returns 0 for empty sets. */
+export function estimate1RM(weight: number, reps: number): number {
+  if (!weight || !reps) return 0;
+  return weight * (1 + reps / 30);
+}
+
 /** Progression weight step in kg for the given lift type. */
 export function progressionIncrementKg(isCompound: boolean): number {
   return isCompound ? 2.5 : 1.25;

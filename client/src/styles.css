@@ -167,6 +167,23 @@ select.field {
   border-radius: 0.5rem;
 }
 
+/* ---- Drag & drop (CDK) ---------------------------------------------- */
+.cdk-drag-preview {
+  border-radius: 1rem;
+  box-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.5),
+    0 0 0 1px color-mix(in srgb, var(--color-primary-500) 40%, transparent);
+}
+
+.cdk-drag-placeholder {
+  opacity: 0.4;
+}
+
+.cdk-drag-animating,
+.cdk-drop-list-dragging .cdk-drag {
+  transition: transform 0.2s cubic-bezier(0, 0, 0.2, 1);
+}
+
 /* ---- Scrollbars ----------------------------------------------------- */
 ::-webkit-scrollbar {
   width: 8px;

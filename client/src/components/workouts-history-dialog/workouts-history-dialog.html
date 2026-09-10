@@ -45,7 +45,14 @@
         <div class="space-y-3">
           @for (exercise of workout.exercises; track exercise._id) {
             <div class="rounded-xl border border-surface-800 bg-surface-900 p-3">
-              <h5 class="mb-2 font-medium text-surface-100">{{ exercise.name }}</h5>
+              <a
+                [routerLink]="['/exercise', exercise.name]"
+                (click)="handleVisibleChange(false)"
+                class="mb-2 inline-flex items-center gap-1.5 font-medium text-surface-100 hover:text-primary-400 cursor-pointer transition-colors"
+              >
+                {{ exercise.name }}
+                <i class="pi pi-arrow-up-right text-[10px] text-surface-500"></i>
+              </a>
               <div class="flex flex-wrap gap-2">
                 @for (set of exercise.sets; track $index) {
                   <span

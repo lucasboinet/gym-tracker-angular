@@ -1,4 +1,5 @@
-import { inject, Injectable } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import { inject, Injectable, PLATFORM_ID } from '@angular/core';
 import {
   ActivatedRouteSnapshot,
   CanActivate,
@@ -6,8 +7,6 @@ import {
   RouterStateSnapshot,
   UrlTree,
 } from '@angular/router';
-import { Observable, of } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
 import { AuthService } from '../services/auth.service';
 import { UserService } from '../services/user.service';
 
@@ -16,27 +15,29 @@ export class AuthGuard implements CanActivate {
   auth = inject(AuthService);
   userService = inject(UserService);
   router = inject(Router);
+  private platformId = inject(PLATFORM_ID);
 
-  canActivate(
-    route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot,
-  ): Observable<boolean | UrlTree> {
+  canActivate(_route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean | UrlTree {
+    // On the server there is no localStorage, so auth state is unknown. Let the
+    // route render and defer the real check to the browser — otherwise every
+    // protected route gets a sign-in redirect baked into the SSR HTML.
+    if (!isPlatformBrowser(this.platformId)) {
+      return true;
+    }
+
+    // A valid (non-expired) refresh token is enough to enter — no need to block
+    // on the user profile. This avoids the sign-in flash on a hard reload.
     if (!this.auth.isLoggedIn()) {
-      return of(this.router.createUrlTree(['/sign-in'], { queryParams: { returnUrl: state.url } }));
+      return this.router.createUrlTree(['/sign-in'], { queryParams: { returnUrl: state.url } });
     }
 
-    if (this.userService.currentUser) {
-      return of(true);
+    // Load the profile in the background if we don't have it yet. A real auth
+    // failure is handled by the HTTP interceptor (refresh → redirect); a
+    // transient error must not log the user out here.
+    if (!this.userService.currentUser) {
+      this.userService.loadUser().subscribe({ error: () => {} });
     }
 
-    return this.userService.loadUser().pipe(
-      map(() => true),
-      catchError(() => {
-        this.auth.logout(() => {
-          this.router.navigate(['/sign-in']);
-        });
-        return of(false);
-      }),
-    );
+    return true;
   }
 }

@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { AuthGuard } from '../guards/auth.guard';
+import { ExercisePage } from '../pages/exercise/exercise';
 import { HistoryPage } from '../pages/history/history';
 import { HomePage } from '../pages/home/home';
 import { SessionsPage } from '../pages/sessions/sessions';
@@ -37,6 +38,12 @@ export const routes: Routes = [
     title: 'Stats',
     path: 'stats',
     component: StatsPage,
+    canActivate: [AuthGuard],
+  },
+  {
+    title: 'Exercise',
+    path: 'exercise/:name',
+    component: ExercisePage,
     canActivate: [AuthGuard],
   },
   {
