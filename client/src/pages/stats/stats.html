@@ -1,65 +1,95 @@
-<div class="mx-auto max-w-2xl space-y-6 p-4">
-  <h2 class="text-lg font-semibold text-surface-50">Last workouts stats</h2>
-
-  <div class="flex flex-col gap-2 sm:flex-row">
-    <ui-select
-      class="flex-1"
-      [options]="stats()"
-      [value]="selectedStat()"
-      optionLabel="exerciseName"
-      [filter]="true"
-      [showClear]="true"
-      placeholder="Select an exercise"
-      (valueChange)="handleSelectedStatsChange($event)"
-    />
-
-    <ui-select
-      class="flex-1"
-      [options]="sessionService.sessions()"
-      [value]="selectedSession()"
-      optionLabel="name"
-      [showClear]="true"
-      placeholder="Select a session"
-      (valueChange)="handleSelectSessionChange($event)"
-    />
+<div class="mx-auto max-w-3xl space-y-8 p-4">
+  <!-- KPI overview -->
+  <div class="grid grid-cols-2 gap-3 lg:grid-cols-4">
+    <div class="rounded-2xl border border-surface-800 bg-surface-900 p-4">
+      <div class="text-[11px] uppercase tracking-wide text-surface-500">Exercises</div>
+      <div class="mt-1 text-2xl font-bold text-surface-50">{{ exercisesTracked() }}</div>
+    </div>
+    <div class="rounded-2xl border border-surface-800 bg-surface-900 p-4">
+      <div class="text-[11px] uppercase tracking-wide text-surface-500">Best lift</div>
+      @if (bestLift(); as bl) {
+        <div class="mt-1 text-2xl font-bold text-primary-400">
+          {{ bl.value }} <span class="text-xs font-medium text-surface-500">{{ unit() }}</span>
+        </div>
+        <div class="mt-0.5 truncate text-[11px] text-surface-500">{{ bl.exercise }}</div>
+      } @else {
+        <div class="mt-1 text-2xl font-bold text-surface-600">—</div>
+      }
+    </div>
+    <div class="rounded-2xl border border-surface-800 bg-surface-900 p-4">
+      <div class="text-[11px] uppercase tracking-wide text-surface-500">Bodyweight</div>
+      @if (bodyweightDisplay() !== null) {
+        <div class="mt-1 text-2xl font-bold text-surface-50">
+          {{ bodyweightDisplay() }} <span class="text-xs font-medium text-surface-500">{{ unit() }}</span>
+        </div>
+      } @else {
+        <div class="mt-1 text-2xl font-bold text-surface-600">—</div>
+      }
+    </div>
+    <div class="rounded-2xl border border-surface-800 bg-surface-900 p-4">
+      <div class="text-[11px] uppercase tracking-wide text-surface-500">Strength ratio</div>
+      @if (strengthRatio(); as sr) {
+        <div class="mt-1 text-2xl font-bold text-primary-400">{{ sr.ratio }}×</div>
+        <div class="mt-0.5 truncate text-[11px] text-surface-500">{{ sr.exercise }}</div>
+      } @else {
+        <div class="mt-1 text-2xl font-bold text-surface-600">—</div>
+      }
+    </div>
   </div>
 
-  <div class="flex flex-col gap-6">
+  <!-- Exercises -->
+  <div class="space-y-4">
+    <div class="flex flex-wrap items-center justify-between gap-3">
+      <h2 class="text-lg font-semibold text-surface-50">Exercises</h2>
+      <div class="flex flex-1 justify-end gap-2">
+        <ui-select
+          class="min-w-0 flex-1 sm:max-w-52"
+          [options]="stats()"
+          [value]="selectedStat()"
+          optionLabel="exerciseName"
+          [filter]="true"
+          [showClear]="true"
+          placeholder="Exercise"
+          (valueChange)="handleSelectedStatsChange($event)"
+        />
+        <ui-select
+          class="min-w-0 flex-1 sm:max-w-52"
+          [options]="sessionService.sessions()"
+          [value]="selectedSession()"
+          optionLabel="name"
+          [showClear]="true"
+          placeholder="Session"
+          (valueChange)="handleSelectSessionChange($event)"
+        />
+      </div>
+    </div>
+
     @if (loading()) {
-      @for (s of skeletons; track s) {
-        <div class="rounded-2xl border border-surface-800 bg-surface-900 p-4">
-          <div class="skeleton mb-4 h-4 w-1/3"></div>
-          <div class="skeleton h-64 w-full !rounded-xl"></div>
-        </div>
-      }
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        @for (s of skeletons; track s) {
+          <div class="rounded-2xl border border-surface-800 bg-surface-900 p-4">
+            <div class="skeleton mb-3 h-4 w-1/2"></div>
+            <div class="skeleton mb-3 h-12 w-full !rounded-lg"></div>
+            <div class="skeleton h-6 w-1/3"></div>
+          </div>
+        }
+      </div>
     } @else {
-      @for (stat of filteredStats(); track $index) {
-        <workout-chart [stat]="stat" />
-      } @empty {
-        <p class="py-8 text-center text-sm text-surface-500">No workout stats yet.</p>
-      }
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        @for (stat of filteredStats(); track stat.exerciseName) {
+          <exercise-stat-card [stat]="stat" [unit]="unit()" />
+        } @empty {
+          <p class="col-span-full py-8 text-center text-sm text-surface-500">
+            No workout stats yet.
+          </p>
+        }
+      </div>
     }
   </div>
 
   <!-- Bodyweight -->
-  <div class="space-y-4 pt-2">
+  <div class="space-y-4">
     <h2 class="text-lg font-semibold text-surface-50">Bodyweight</h2>
-
-    @if (strengthRatio(); as sr) {
-      <div
-        class="flex items-center justify-between rounded-2xl border border-primary-500/20 bg-primary-500/5 p-4"
-      >
-        <div>
-          <h3 class="text-sm font-medium text-surface-200">Strength-to-bodyweight</h3>
-          <p class="mt-0.5 text-xs text-surface-400">
-            Best {{ sr.exercise }} ({{ sr.liftDisplay }} {{ unit() }}) vs {{ sr.bwDisplay }}
-            {{ unit() }}
-          </p>
-        </div>
-        <div class="text-2xl font-bold text-primary-400">{{ sr.ratio }}×</div>
-      </div>
-    }
-
     <bodyweight-chart [entries]="bodyweightService.entries()" [unit]="unit()" />
   </div>
 </div>

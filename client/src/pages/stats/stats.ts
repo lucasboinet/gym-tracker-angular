@@ -1,7 +1,7 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { BodyweightChart } from '../../components/bodyweight-chart/bodyweight-chart';
+import { ExerciseStatCard } from '../../components/exercise-stat-card/exercise-stat-card';
 import { UiSelect } from '../../components/ui/select';
-import { WorkoutChart } from '../../components/workout-chart/workout-chart';
 import { BodyweightService } from '../../services/bodyweight.service';
 import { SessionService } from '../../services/sessions.service';
 import { SettingsService } from '../../services/settings.service';
@@ -14,7 +14,7 @@ import { WorkoutStat } from '../../shared/types/Workout';
 @Component({
   templateUrl: './stats.html',
   selector: 'stats-page',
-  imports: [WorkoutChart, BodyweightChart, UiSelect],
+  imports: [ExerciseStatCard, BodyweightChart, UiSelect],
 })
 export class StatsPage implements OnInit {
   stats = signal<WorkoutStat[]>([]);
@@ -83,6 +83,20 @@ export class StatsPage implements OnInit {
       liftDisplay: round1(fromKg(lift.weight, this.unit())),
       bwDisplay: round1(fromKg(bw, this.unit())),
     };
+  });
+
+  // --- KPI tiles ---
+  exercisesTracked = computed(() => this.stats().length);
+
+  bestLift = computed(() => {
+    const lift = this.bestLiftKg();
+    if (!lift) return null;
+    return { value: round1(fromKg(lift.weight, this.unit())), exercise: lift.exercise };
+  });
+
+  bodyweightDisplay = computed(() => {
+    const bw = this.latestBodyweightKg();
+    return bw === null ? null : round1(fromKg(bw, this.unit()));
   });
 
   ngOnInit() {
