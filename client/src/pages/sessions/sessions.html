@@ -12,6 +12,27 @@
       }
     </div>
 
+    @if (loading()) {
+      <div class="flex flex-col gap-4">
+        @for (s of skeletons; track s) {
+          <div class="rounded-2xl border border-surface-800 bg-surface-900 p-4">
+            <div class="flex items-center gap-3">
+              <div class="skeleton h-12 w-12 !rounded-xl"></div>
+              <div class="flex-1 space-y-2">
+                <div class="skeleton h-4 w-1/3"></div>
+                <div class="skeleton h-3 w-1/4"></div>
+              </div>
+            </div>
+            <div class="mt-4 flex gap-2">
+              <div class="skeleton h-6 w-20 !rounded-full"></div>
+              <div class="skeleton h-6 w-24 !rounded-full"></div>
+            </div>
+            <div class="skeleton mt-4 h-10 w-full !rounded-xl"></div>
+          </div>
+        }
+      </div>
+    }
+
     <div class="flex flex-col gap-4">
       @for (session of this.sessionService.sessions(); track session._id) {
         <session-card [session]="session"></session-card>
@@ -19,7 +40,7 @@
     </div>
 
     <!-- Empty State -->
-    @if (this.sessionService.sessions().length === 0) {
+    @if (!loading() && this.sessionService.sessions().length === 0) {
       <div class="py-16 text-center">
         <div
           class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-surface-800"

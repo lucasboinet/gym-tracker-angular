@@ -21,6 +21,7 @@ import {
 import { AuthService } from '../services/auth.service';
 import { provideServiceWorker } from '@angular/service-worker';
 import { UserService } from '../services/user.service';
+import { catchError, of } from 'rxjs';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -36,7 +37,9 @@ export const appConfig: ApplicationConfig = {
     }),
     provideAppInitializer(() => {
       const auth = inject(UserService);
-      return auth.loadUser();
+      // Never let a failed user load (expired token, backend down) reject
+      // bootstrap — that would leave the app stuck on the splash screen.
+      return auth.loadUser().pipe(catchError(() => of(null)));
     }),
     { provide: HTTP_INTERCEPTORS, useClass: AuthService, multi: true },
   ],

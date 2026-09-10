@@ -10,6 +10,8 @@ import {
 import { FormsModule } from '@angular/forms';
 import { BodyweightLog } from '../../components/bodyweight-log/bodyweight-log';
 import { SettingsInputNumber } from '../../components/settings-input-number/settings-input-number';
+import { UiToggle } from '../../components/ui/toggle';
+import { PreferencesService } from '../../services/preferences.service';
 import { SettingsService } from '../../services/settings.service';
 import {
   Setting,
@@ -25,11 +27,12 @@ interface BMIData {
 
 @Component({
   selector: 'settings-page',
-  imports: [FormsModule, SettingsInputNumber, BodyweightLog],
+  imports: [FormsModule, SettingsInputNumber, BodyweightLog, UiToggle],
   templateUrl: './settings.html',
 })
 export class SettingsPage implements OnInit {
   settingService = inject(SettingsService);
+  prefs = inject(PreferencesService);
 
   SETTINGS_SLUG = SETTINGS;
   SETTINGS_INPUT_LABELS = SETTINGS_INPUT_LABELS;

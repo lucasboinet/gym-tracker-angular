@@ -7,7 +7,7 @@ import { ToastMessage, ToastService, ToastSeverity } from '../../services/toast.
     <div class="pointer-events-none fixed inset-x-0 top-0 z-[200] flex flex-col items-center gap-2 p-4">
       @for (msg of toast.messages(); track msg.id) {
         <div
-          class="pointer-events-auto flex w-full max-w-sm items-start gap-3 rounded-xl border bg-surface-850/95 p-3.5 shadow-2xl backdrop-blur"
+          class="ui-anim-toast pointer-events-auto flex w-full max-w-sm items-start gap-3 rounded-xl border bg-surface-850/95 p-3.5 shadow-2xl backdrop-blur"
           [class]="border(msg.severity)"
         >
           <i class="pi mt-0.5" [class]="icon(msg.severity) + ' ' + accent(msg.severity)"></i>

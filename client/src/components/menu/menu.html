@@ -1,3 +1,4 @@
+<!-- Top bar -->
 <div class="sticky top-0 z-50 border-b border-surface-800 bg-surface-950/80 backdrop-blur-lg">
   <div class="mx-auto flex max-w-4xl items-center justify-between px-4 py-3">
     <div routerLink="/" class="flex cursor-pointer items-center gap-2.5">
@@ -9,7 +10,17 @@
       <h1 class="text-base font-bold tracking-tight text-surface-50">Gym Tracker</h1>
     </div>
 
-    <nav class="flex items-center gap-1">
+    <!-- Desktop nav -->
+    <nav class="hidden items-center gap-1 sm:flex">
+      <a
+        routerLink="/"
+        routerLinkActive="!bg-surface-800 !text-primary-400"
+        [routerLinkActiveOptions]="{ exact: true }"
+        class="flex h-9 w-9 items-center justify-center rounded-lg text-surface-400 transition-colors hover:bg-surface-800 hover:text-surface-100"
+        aria-label="Workout"
+      >
+        <i class="pi pi-play"></i>
+      </a>
       <a
         routerLink="/stats"
         routerLinkActive="!bg-surface-800 !text-primary-400"
@@ -48,3 +59,50 @@
     </nav>
   </div>
 </div>
+
+<!-- Mobile bottom nav -->
+<nav
+  class="fixed inset-x-0 bottom-0 z-50 grid grid-cols-5 border-t border-surface-800 bg-surface-950/90 backdrop-blur-lg sm:hidden"
+>
+  <a
+    routerLink="/"
+    routerLinkActive="!text-primary-400"
+    [routerLinkActiveOptions]="{ exact: true }"
+    class="flex flex-col items-center gap-0.5 py-2.5 text-surface-400 transition-colors"
+  >
+    <i class="pi pi-play text-base"></i>
+    <span class="text-[10px] font-medium">Workout</span>
+  </a>
+  <a
+    routerLink="/stats"
+    routerLinkActive="!text-primary-400"
+    class="flex flex-col items-center gap-0.5 py-2.5 text-surface-400 transition-colors"
+  >
+    <i class="pi pi-chart-bar text-base"></i>
+    <span class="text-[10px] font-medium">Stats</span>
+  </a>
+  <a
+    routerLink="/sessions"
+    routerLinkActive="!text-primary-400"
+    class="flex flex-col items-center gap-0.5 py-2.5 text-surface-400 transition-colors"
+  >
+    <i class="pi pi-file text-base"></i>
+    <span class="text-[10px] font-medium">Sessions</span>
+  </a>
+  <a
+    routerLink="/history"
+    routerLinkActive="!text-primary-400"
+    class="flex flex-col items-center gap-0.5 py-2.5 text-surface-400 transition-colors"
+  >
+    <i class="pi pi-history text-base"></i>
+    <span class="text-[10px] font-medium">History</span>
+  </a>
+  <a
+    routerLink="/settings"
+    routerLinkActive="!text-primary-400"
+    class="flex flex-col items-center gap-0.5 py-2.5 text-surface-400 transition-colors"
+  >
+    <i class="pi pi-cog text-base"></i>
+    <span class="text-[10px] font-medium">Settings</span>
+  </a>
+</nav>

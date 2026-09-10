@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { AddExerciseDialog } from '../../components/add-exercise-dialog/add-exercise-dialog';
 import { CompleteWorkoutDialog } from '../../components/complete-workout-dialog/complete-workout-dialog';
 import { ExerciseCard } from '../../components/exercise-card/exercise-card';
@@ -6,6 +6,8 @@ import { NoActiveWorkout } from '../../components/no-active-workout/no-active-wo
 import { RestTimer } from '../../components/rest-timer/rest-timer';
 import { UiButton } from '../../components/ui/button';
 import { ConfirmService } from '../../services/confirm.service';
+import { PreferencesService } from '../../services/preferences.service';
+import { RestTimerService } from '../../services/rest-timer.service';
 import { ToastService } from '../../services/toast.service';
 import { WorkoutService } from '../../services/workout.service';
 import { ExerciseType } from '../../shared/types/Exercise';
@@ -23,7 +25,7 @@ import { Workout, WorkoutInsights } from '../../shared/types/Workout';
   ],
   templateUrl: './home.html',
 })
-export class HomePage implements OnInit {
+export class HomePage implements OnInit, OnDestroy {
   showAddExercise = false;
   showCompleteWorkout = false;
   updateCurrentWorkoutTimeout: NodeJS.Timeout | undefined;
@@ -31,13 +33,37 @@ export class HomePage implements OnInit {
   gymService = inject(WorkoutService);
   toast = inject(ToastService);
   confirm = inject(ConfirmService);
+  private prefs = inject(PreferencesService);
+  private restTimer = inject(RestTimerService);
 
   completedWorkout = signal<Workout | undefined>(undefined);
   completedWorkoutInsights = signal<WorkoutInsights | undefined>(undefined);
 
+  private now = signal<number>(Date.now());
+  private tickId: ReturnType<typeof setInterval> | undefined;
+
+  /** Live elapsed time since the active workout started (H:MM:SS or M:SS). */
+  elapsed = computed<string>(() => {
+    const workout = this.gymService.currentWorkout();
+    if (!workout?.createdAt) return '';
+    const start = new Date(workout.createdAt).getTime();
+    const total = Math.max(0, Math.floor((this.now() - start) / 1000));
+    const h = Math.floor(total / 3600);
+    const m = Math.floor((total % 3600) / 60);
+    const s = total % 60;
+    const mm = m.toString().padStart(2, '0');
+    const ss = s.toString().padStart(2, '0');
+    return h > 0 ? `${h}:${mm}:${ss}` : `${m}:${ss}`;
+  });
+
   ngOnInit() {
     this.loadCurrentWorkout();
     this.loadWorkoutHistory();
+    this.tickId = setInterval(() => this.now.set(Date.now()), 1000);
+  }
+
+  ngOnDestroy() {
+    if (this.tickId !== undefined) clearInterval(this.tickId);
   }
 
   loadWorkoutHistory() {
@@ -103,22 +129,28 @@ export class HomePage implements OnInit {
     const exerciseIndex = this.gymService.exercises().findIndex((ex) => ex._id === exerciseId);
     if (exerciseIndex === -1) return;
 
-    const lastSet = this.gymService.exercises()[exerciseIndex].sets.slice(-1)[0];
+    const exercise = this.gymService.exercises()[exerciseIndex];
+    const lastSet = exercise.sets.slice(-1)[0];
     const newSet = { ...lastSet };
 
     this.gymService.exercises.set(
-      this.gymService.exercises().map((exercise) => {
-        if (exercise._id === exerciseId) {
+      this.gymService.exercises().map((ex) => {
+        if (ex._id === exerciseId) {
           return {
-            ...exercise,
-            sets: [...exercise.sets, newSet],
+            ...ex,
+            sets: [...ex.sets, newSet],
           };
         }
-        return exercise;
+        return ex;
       }),
     );
 
     this.saveCurrentExercises();
+
+    // Adding the next set means the previous one is done — start rest if enabled.
+    if (this.prefs.autoRest() && exercise.restTime) {
+      this.restTimer.start(exercise.restTime, exercise.name);
+    }
   }
 
   updateSet(exerciseId: string, setIndex: number, field: 'reps' | 'weight', value: number) {

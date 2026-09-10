@@ -8,11 +8,11 @@ import { UiButton } from './button';
   template: `
     @if (confirm.current(); as c) {
       <div
-        class="fixed inset-0 z-[150] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
+        class="ui-anim-fade fixed inset-0 z-[150] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
         (click)="confirm.reject()"
       >
         <div
-          class="w-full max-w-sm rounded-2xl border border-surface-700 bg-surface-900 p-6 shadow-2xl"
+          class="ui-anim-pop w-full max-w-sm rounded-2xl border border-surface-700 bg-surface-900 p-6 shadow-2xl"
           (click)="$event.stopPropagation()"
         >
           <div class="flex items-start gap-4">

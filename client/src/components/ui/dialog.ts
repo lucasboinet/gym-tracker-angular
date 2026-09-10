@@ -19,16 +19,16 @@ import {
   template: `
     @if (visible()) {
       <div
-        class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
+        class="ui-anim-fade fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
         (click)="onBackdrop()"
       >
         @if (bare()) {
-          <div class="w-full max-w-2xl" [style.max-width]="maxWidth()" (click)="$event.stopPropagation()">
+          <div class="ui-anim-pop w-full max-w-2xl" [style.max-width]="maxWidth()" (click)="$event.stopPropagation()">
             <ng-content />
           </div>
         } @else {
           <div
-            class="ui-dialog-panel flex w-full flex-col overflow-hidden rounded-2xl border border-surface-700 bg-surface-900 shadow-2xl"
+            class="ui-anim-pop ui-dialog-panel flex w-full flex-col overflow-hidden rounded-2xl border border-surface-700 bg-surface-900 shadow-2xl"
             [class]="panelClass()"
             [style.max-width]="maxWidth()"
             (click)="$event.stopPropagation()"

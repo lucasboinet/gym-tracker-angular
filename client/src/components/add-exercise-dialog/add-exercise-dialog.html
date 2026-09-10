@@ -13,10 +13,27 @@
       <input
         id="exercise-name"
         type="text"
-        [(ngModel)]="newExerciseName"
+        [ngModel]="query()"
+        (ngModelChange)="query.set($event)"
+        (keydown.enter)="onExerciseAdded(query())"
         placeholder="Enter exercise name"
         class="field"
       />
+
+      @if (suggestions().length) {
+        <div class="mt-2 overflow-hidden rounded-xl border border-surface-800 bg-surface-850">
+          @for (name of suggestions(); track name) {
+            <button
+              type="button"
+              class="flex w-full items-center gap-2.5 px-3.5 py-2 text-left text-sm text-surface-200 transition-colors hover:bg-surface-800 cursor-pointer"
+              (click)="onExerciseAdded(name)"
+            >
+              <i class="pi pi-history text-xs text-surface-500"></i>
+              {{ name }}
+            </button>
+          }
+        </div>
+      }
     </div>
 
     <div>
@@ -40,8 +57,8 @@
       label="Add Custom"
       icon="pi pi-check"
       [full]="true"
-      [disabled]="!newExerciseName.trim()"
-      (onClick)="onExerciseAdded(newExerciseName)"
+      [disabled]="!query().trim()"
+      (onClick)="onExerciseAdded(query())"
     />
   </div>
 </ui-dialog>

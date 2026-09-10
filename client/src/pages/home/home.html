@@ -18,9 +18,13 @@
             Active
           </span>
         </div>
-        <p class="text-sm text-surface-400">
-          Started at {{ this.gymService.currentWorkout()!.startTime }}
-        </p>
+        <div class="flex items-center gap-3 text-sm text-surface-400">
+          <span>Started at {{ this.gymService.currentWorkout()!.startTime }}</span>
+          <span class="flex items-center gap-1.5 tabular-nums text-primary-400">
+            <i class="pi pi-stopwatch text-xs"></i>
+            {{ elapsed() }}
+          </span>
+        </div>
       </div>
 
       <!-- Exercises -->
@@ -49,7 +53,7 @@
 
     <!-- Fixed Bottom Actions -->
     <div
-      class="fixed inset-x-0 bottom-0 z-40 border-t border-surface-800 bg-surface-950/90 p-4 backdrop-blur-lg"
+      class="fixed inset-x-0 bottom-16 z-40 border-t border-surface-800 bg-surface-950/90 p-4 backdrop-blur-lg sm:bottom-0"
     >
       <div class="mx-auto flex max-w-2xl justify-between gap-3">
         <ui-button

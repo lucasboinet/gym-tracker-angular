@@ -1,5 +1,6 @@
 import { Component, computed, ElementRef, HostListener, inject, input, signal } from '@angular/core';
 import { Router } from '@angular/router';
+import { ConfirmService } from '../../services/confirm.service';
 import { SessionService } from '../../services/sessions.service';
 import { ToastService } from '../../services/toast.service';
 import { WorkoutService } from '../../services/workout.service';
@@ -25,6 +26,7 @@ export class SessionCard {
   private workoutService = inject(WorkoutService);
   private sessionService = inject(SessionService);
   private toast = inject(ToastService);
+  private confirm = inject(ConfirmService);
   private router = inject(Router);
   private host = inject(ElementRef);
 
@@ -76,6 +78,17 @@ export class SessionCard {
 
   onDeleteSession() {
     this.menuOpen.set(false);
+    this.confirm.confirm({
+      header: 'Delete session',
+      message: `Delete "${this.session().name}"? This can't be undone.`,
+      icon: 'pi pi-trash',
+      acceptLabel: 'Delete',
+      acceptVariant: 'danger',
+      accept: () => this.deleteSession(),
+    });
+  }
+
+  private deleteSession() {
     this.sessionService.deleteSession(this.session()._id!).subscribe({
       next: () => {
         this.sessionService.sessions.set([

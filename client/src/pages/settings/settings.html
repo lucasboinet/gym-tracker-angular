@@ -20,6 +20,22 @@
       [label]="SETTINGS_INPUT_LABELS[SETTINGS_SLUG.HEIGHT]"
     />
 
+    <!-- Preferences -->
+    <div class="rounded-2xl border border-surface-800 bg-surface-900 p-4">
+      <div class="flex items-center justify-between gap-4">
+        <div>
+          <h3 class="text-sm font-medium text-surface-200">Auto-start rest timer</h3>
+          <p class="mt-0.5 text-xs text-surface-500">
+            Start the rest countdown automatically when you add a set.
+          </p>
+        </div>
+        <ui-toggle
+          [checked]="prefs.autoRest()"
+          (checkedChange)="prefs.setAutoRest($event)"
+        />
+      </div>
+    </div>
+
     <!-- Bodyweight tracking -->
     <bodyweight-log />
 

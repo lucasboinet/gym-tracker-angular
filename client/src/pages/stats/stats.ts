@@ -20,6 +20,8 @@ export class StatsPage implements OnInit {
   stats = signal<WorkoutStat[]>([]);
   selectedStat = signal<WorkoutStat | undefined>(undefined);
   selectedSession = signal<Session | undefined>(undefined);
+  loading = signal<boolean>(true);
+  skeletons = [0, 1];
 
   filteredStats = computed(() => {
     let statsToFiler = this.stats();
@@ -107,9 +109,11 @@ export class StatsPage implements OnInit {
     this.workoutService.getWorkoutStats().subscribe({
       next: (data) => {
         this.stats.set(data);
+        this.loading.set(false);
       },
       error: (err) => {
         console.error('Failed to fetch workout stats', err);
+        this.loading.set(false);
       },
     });
   }
