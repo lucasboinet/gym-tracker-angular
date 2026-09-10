@@ -6,4 +6,6 @@ export interface ExerciseType {
   _id?: string;
   notes?: string;
   restTime?: number;
+  /** Exercises sharing this id (and adjacent in the list) form a superset. */
+  supersetId?: string;
 }

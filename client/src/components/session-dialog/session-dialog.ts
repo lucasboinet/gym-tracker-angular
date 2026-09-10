@@ -6,6 +6,14 @@ import { UiDialog } from '../ui/dialog';
 import { UiNumber } from '../ui/number-stepper';
 import { SessionService } from '../../services/sessions.service';
 import { ToastService } from '../../services/toast.service';
+import {
+  addToSuperset,
+  blocksToExercises,
+  buildBlocks,
+  convertToSuperset,
+  removeFromSuperset,
+  ungroupSuperset,
+} from '../../shared/supersets';
 import { Session } from '../../shared/types/Session';
 import { AddExerciseDialog } from '../add-exercise-dialog/add-exercise-dialog';
 
@@ -26,6 +34,7 @@ export class SessionDialog {
   private toast = inject(ToastService);
 
   showAddExercise = false;
+  addToSupersetId: string | null = null;
 
   name: Session['name'] = '';
   color: Session['color'] = '#a4d43b';
@@ -44,10 +53,13 @@ export class SessionDialog {
   }
 
   onExerciseAdded(value: string) {
-    this.exercises = [
-      ...this.exercises,
-      { name: value, sets: [{ reps: 0, weight: 0 }], restTime: 90 },
-    ];
+    const exercise = { name: value, sets: [{ reps: 0, weight: 0 }], restTime: 90 };
+    if (this.addToSupersetId) {
+      this.exercises = addToSuperset(this.exercises, this.addToSupersetId, exercise);
+      this.addToSupersetId = null;
+    } else {
+      this.exercises = [...this.exercises, exercise];
+    }
     this.showAddExercise = false;
   }
 
@@ -68,11 +80,32 @@ export class SessionDialog {
     this.exercises = this.exercises.filter((_, i) => i !== index);
   }
 
-  reorderExercises(event: CdkDragDrop<unknown>) {
+  get blocks() {
+    return buildBlocks(this.exercises);
+  }
+
+  reorderBlocks(event: CdkDragDrop<unknown>) {
     if (event.previousIndex === event.currentIndex) return;
-    const exercises = [...this.exercises];
-    moveItemInArray(exercises, event.previousIndex, event.currentIndex);
-    this.exercises = exercises;
+    const blocks = [...this.blocks];
+    moveItemInArray(blocks, event.previousIndex, event.currentIndex);
+    this.exercises = blocksToExercises(blocks);
+  }
+
+  convertRowToSuperset(index: number) {
+    this.exercises = convertToSuperset(this.exercises, index);
+  }
+
+  removeRowFromSuperset(index: number) {
+    this.exercises = removeFromSuperset(this.exercises, index);
+  }
+
+  ungroup(supersetId: string) {
+    this.exercises = ungroupSuperset(this.exercises, supersetId);
+  }
+
+  openAddToSuperset(supersetId: string) {
+    this.addToSupersetId = supersetId;
+    this.showAddExercise = true;
   }
 
   handleExecuteAction() {

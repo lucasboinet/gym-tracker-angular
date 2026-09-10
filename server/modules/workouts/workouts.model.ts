@@ -14,6 +14,7 @@ export const ExerciseSchema = new mongoose.Schema({
   sets: { type: [SetSchema], required: true },
   notes: { type: String, required: false, default: "" },
   restTime: { type: Number, required: false, default: 0 },
+  supersetId: { type: String, required: false },
 });
 
 const WorkoutSchema = new Schema(

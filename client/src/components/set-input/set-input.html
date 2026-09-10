@@ -51,7 +51,7 @@
   </div>
 
   <div class="ml-11 flex flex-wrap items-center gap-2">
-    @if (exercise().restTime) {
+    @if (exercise().restTime && showRest()) {
       <button
         type="button"
         (click)="startRest()"

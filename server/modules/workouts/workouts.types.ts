@@ -8,6 +8,7 @@ export type Exercise = {
   name: string;
   _id: string;
   restTime?: number;
+  supersetId?: string;
 };
 
 export type Workout = {

@@ -6,6 +6,14 @@ import { ExerciseCard } from '../../components/exercise-card/exercise-card';
 import { NoActiveWorkout } from '../../components/no-active-workout/no-active-workout';
 import { RestTimer } from '../../components/rest-timer/rest-timer';
 import { UiButton } from '../../components/ui/button';
+import {
+  addToSuperset,
+  blocksToExercises,
+  buildBlocks,
+  convertToSuperset,
+  removeFromSuperset,
+  ungroupSuperset,
+} from '../../shared/supersets';
 import { ConfirmService } from '../../services/confirm.service';
 import { PreferencesService } from '../../services/preferences.service';
 import { RestTimerService } from '../../services/rest-timer.service';
@@ -30,6 +38,8 @@ import { Workout, WorkoutInsights } from '../../shared/types/Workout';
 export class HomePage implements OnInit, OnDestroy {
   showAddExercise = false;
   showCompleteWorkout = false;
+  /** When set, the add-exercise dialog inserts into this superset. */
+  addToSupersetId: string | null = null;
   updateCurrentWorkoutTimeout: NodeJS.Timeout | undefined;
 
   gymService = inject(WorkoutService);
@@ -43,6 +53,9 @@ export class HomePage implements OnInit, OnDestroy {
 
   private now = signal<number>(Date.now());
   private tickId: ReturnType<typeof setInterval> | undefined;
+
+  /** Exercise list grouped into render blocks (standalone + supersets). */
+  blocks = computed(() => buildBlocks(this.gymService.exercises()));
 
   /** Live elapsed time since the active workout started (H:MM:SS or M:SS). */
   elapsed = computed<string>(() => {
@@ -113,12 +126,36 @@ export class HomePage implements OnInit, OnDestroy {
     });
   }
 
-  reorderExercises(event: CdkDragDrop<unknown>) {
+  reorderBlocks(event: CdkDragDrop<unknown>) {
     if (event.previousIndex === event.currentIndex) return;
-    const exercises = [...this.gymService.exercises()];
-    moveItemInArray(exercises, event.previousIndex, event.currentIndex);
-    this.gymService.exercises.set(exercises);
+    const blocks = [...this.blocks()];
+    moveItemInArray(blocks, event.previousIndex, event.currentIndex);
+    this.gymService.exercises.set(blocksToExercises(blocks));
     this.saveCurrentExercises();
+  }
+
+  onConvertToSuperset(exerciseId: string) {
+    const index = this.gymService.exercises().findIndex((ex) => ex._id === exerciseId);
+    if (index === -1) return;
+    this.gymService.exercises.set(convertToSuperset(this.gymService.exercises(), index));
+    this.saveCurrentExercises();
+  }
+
+  onRemoveFromSuperset(exerciseId: string) {
+    const index = this.gymService.exercises().findIndex((ex) => ex._id === exerciseId);
+    if (index === -1) return;
+    this.gymService.exercises.set(removeFromSuperset(this.gymService.exercises(), index));
+    this.saveCurrentExercises();
+  }
+
+  onUngroupSuperset(supersetId: string) {
+    this.gymService.exercises.set(ungroupSuperset(this.gymService.exercises(), supersetId));
+    this.saveCurrentExercises();
+  }
+
+  openAddToSuperset(supersetId: string) {
+    this.addToSupersetId = supersetId;
+    this.showAddExercise = true;
   }
 
   addExercise(exerciseName: string) {
@@ -130,7 +167,14 @@ export class HomePage implements OnInit, OnDestroy {
       restTime: 90,
     };
 
-    this.gymService.exercises.set([...this.gymService.exercises(), exercise]);
+    if (this.addToSupersetId) {
+      this.gymService.exercises.set(
+        addToSuperset(this.gymService.exercises(), this.addToSupersetId, exercise),
+      );
+      this.addToSupersetId = null;
+    } else {
+      this.gymService.exercises.set([...this.gymService.exercises(), exercise]);
+    }
     this.saveCurrentExercises();
     this.showAddExercise = false;
   }
@@ -158,7 +202,11 @@ export class HomePage implements OnInit, OnDestroy {
     this.saveCurrentExercises();
 
     // Adding the next set means the previous one is done — start rest if enabled.
-    if (this.prefs.autoRest() && exercise.restTime) {
+    // In a superset, rest only fires after the last exercise of the group.
+    const list = this.gymService.exercises();
+    const nextInSameGroup =
+      !!exercise.supersetId && list[exerciseIndex + 1]?.supersetId === exercise.supersetId;
+    if (this.prefs.autoRest() && exercise.restTime && !nextInSameGroup) {
       this.restTimer.start(exercise.restTime, exercise.name);
     }
   }

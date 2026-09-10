@@ -22,6 +22,7 @@ export class SetInput {
   workoutId = input.required<Workout['_id']>();
   index = input.required<number>();
   fatigued = input<boolean>(false);
+  showRest = input<boolean>(true);
 
   workoutService = inject(WorkoutService);
   restTimer = inject(RestTimerService);

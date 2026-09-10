@@ -28,19 +28,78 @@
       </div>
 
       <!-- Exercises -->
-      <div cdkDropList (cdkDropListDropped)="reorderExercises($event)" class="flex flex-col gap-4">
-        @for (exercise of this.gymService.exercises(); track exercise._id) {
-          <exercise-card
-            cdkDrag
-            [cdkDragDisabled]="this.gymService.exercises().length < 2"
-            [exercise]="exercise"
-            [workoutId]="this.gymService.currentWorkout()?._id"
-            (addSet)="addSet($event)"
-            (removeExercise)="removeExercise($event)"
-            (removeSet)="removeSet($event.id, $event.index)"
-            (updateSet)="updateSet($event.id, $event.index, $event.type, $event.value)"
-            (updateExercise)="updateExercise($event)"
-          />
+      <div cdkDropList (cdkDropListDropped)="reorderBlocks($event)" class="flex flex-col gap-4">
+        @for (block of blocks(); track block.key) {
+          @if (block.type === 'single') {
+            <exercise-card
+              cdkDrag
+              [cdkDragDisabled]="blocks().length < 2"
+              [exercise]="block.items[0].exercise"
+              [workoutId]="this.gymService.currentWorkout()?._id"
+              (addSet)="addSet($event)"
+              (removeExercise)="removeExercise($event)"
+              (removeSet)="removeSet($event.id, $event.index)"
+              (updateSet)="updateSet($event.id, $event.index, $event.type, $event.value)"
+              (updateExercise)="updateExercise($event)"
+              (convertToSuperset)="onConvertToSuperset($event)"
+            />
+          } @else {
+            <div
+              cdkDrag
+              [cdkDragDisabled]="blocks().length < 2"
+              class="rounded-2xl border border-primary-500/40 bg-primary-500/5 p-3"
+            >
+              <div class="mb-3 flex items-center justify-between px-1">
+                <div class="flex items-center gap-2">
+                  <button
+                    cdkDragHandle
+                    type="button"
+                    class="flex h-7 w-6 cursor-grab items-center justify-center text-primary-400/70 transition-colors hover:text-primary-400 active:cursor-grabbing"
+                    aria-label="Reorder superset"
+                  >
+                    <i class="pi pi-bars text-sm"></i>
+                  </button>
+                  <span class="text-sm font-semibold text-primary-400">Superset</span>
+                  <span class="text-xs text-surface-500">{{ block.items.length }} exercises</span>
+                </div>
+                <button
+                  type="button"
+                  title="Ungroup superset"
+                  class="flex h-7 items-center gap-1.5 rounded-lg px-2 text-xs text-surface-400 transition-colors hover:bg-surface-800 hover:text-surface-200 cursor-pointer"
+                  (click)="onUngroupSuperset(block.supersetId!)"
+                >
+                  <i class="pi pi-times text-xs"></i> Ungroup
+                </button>
+              </div>
+
+              <div class="flex flex-col gap-3">
+                @for (item of block.items; track item.exercise._id) {
+                  <exercise-card
+                    [exercise]="item.exercise"
+                    [workoutId]="this.gymService.currentWorkout()?._id"
+                    [inSuperset]="true"
+                    [showHandle]="false"
+                    [memberLabel]="'' + item.position"
+                    [showRest]="item.showRest"
+                    (addSet)="addSet($event)"
+                    (removeExercise)="removeExercise($event)"
+                    (removeSet)="removeSet($event.id, $event.index)"
+                    (updateSet)="updateSet($event.id, $event.index, $event.type, $event.value)"
+                    (updateExercise)="updateExercise($event)"
+                    (removeFromSuperset)="onRemoveFromSuperset($event)"
+                  />
+                }
+              </div>
+
+              <button
+                type="button"
+                class="mt-3 flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-primary-500/40 py-2.5 text-sm font-medium text-primary-400 transition-colors hover:bg-primary-500/10 cursor-pointer"
+                (click)="openAddToSuperset(block.supersetId!)"
+              >
+                <i class="pi pi-plus text-xs"></i> Add exercise
+              </button>
+            </div>
+          }
         }
       </div>
 

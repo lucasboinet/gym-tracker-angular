@@ -18,9 +18,19 @@ export class ExerciseCard {
   @Output() updateSet = new EventEmitter<IUpdateSet>();
   @Output() removeSet = new EventEmitter<IRemoveSet>();
   @Output() updateExercise = new EventEmitter<ExerciseType>();
+  @Output() convertToSuperset = new EventEmitter<string>();
+  @Output() removeFromSuperset = new EventEmitter<string>();
 
   exercise = input.required<ExerciseType>();
   workoutId = input.required<Workout['_id']>();
+  /** True when rendered inside a superset box. */
+  inSuperset = input<boolean>(false);
+  /** 1-based position label inside the superset. */
+  memberLabel = input<string>('');
+  /** Whether the drag handle is shown (hidden inside a superset box). */
+  showHandle = input<boolean>(true);
+  /** Whether the rest control is shown (only last member of a superset). */
+  showRest = input<boolean>(true);
 
   workoutService = inject(WorkoutService);
 
@@ -78,5 +88,13 @@ export class ExerciseCard {
 
   onAddSet(id: string) {
     this.addSet.emit(id);
+  }
+
+  onConvertToSuperset() {
+    this.convertToSuperset.emit(this.exercise()._id!);
+  }
+
+  onRemoveFromSuperset() {
+    this.removeFromSuperset.emit(this.exercise()._id!);
   }
 }
