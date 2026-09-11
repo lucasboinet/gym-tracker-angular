@@ -7,8 +7,10 @@ import {
   inject,
 } from '@angular/core';
 import { provideRouter } from '@angular/router';
+import { TitleStrategy } from '@angular/router';
 
 import { routes } from './app.routes';
+import { AppTitleStrategy } from './title-strategy';
 import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
 
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
@@ -42,5 +44,6 @@ export const appConfig: ApplicationConfig = {
       return auth.loadUser().pipe(catchError(() => of(null)));
     }),
     { provide: HTTP_INTERCEPTORS, useClass: AuthService, multi: true },
+    { provide: TitleStrategy, useClass: AppTitleStrategy },
   ],
 };
